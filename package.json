@@ -17,7 +17,8 @@
         "@ccp-eva/media-recorder": "^2.1.1",
         "@vite-pwa/assets-generator": "^1.0.0",
         "babel": "^6.23.0",
-        "detectrtc": "^1.4.1"
+        "detectrtc": "^1.4.1",
+        "gsap": "^3.13.0"
     },
     "devDependencies": {
         "@babel/core": "^7.26.0",

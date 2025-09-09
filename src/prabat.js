@@ -1,6 +1,7 @@
 import "./css/prabat.css";
 import * as mrec from "@ccp-eva/media-recorder";
 import * as DetectRTC from "detectrtc";
+import { gsap } from "gsap";
 
 import { downloadData } from "./js/downloadData.js";
 import { uploadData } from "./js/uploadData.js";
@@ -347,11 +348,41 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       betweenTrials.style.display = "flex";
       betweenTrialsBackground.style.opacity = 1;
+
+      const trialAudio = currentTrial.querySelector("audio");
+
+      // const TalkingImg = document.getElementById(
+      // `background-talking`,
+      // )
+      // const BackgroundImg = document.getElementById(
+      //     `background`,
+      // )
+      // await gsap
+      //     .timeline()
+      //     .to(BackgroundImg, {
+      //      onStart: () => {
+      //        trialAudio.play();
+      //        }  }
+      //     )
+      //     .to(BackgroundImg, {
+      //       duration: 0.5,
+      //       autoAlpha: 0,})
+      //     .to(TalkingImg, {
+      //       duration: 0.5,
+      //       autoAlpha: 1,}, '<')
+      //     .to(BackgroundImg, {
+      //       delay: 1,
+      //       duration: 0.5,
+      //       autoAlpha: 0,})
+      //     .to(TalkingImg, {
+      //       duration: 0.5,
+      //       autoAlpha: 1,}, '<')
+
       //await pause(150);
 
       // play audio of current trial
       // Play the audio element contained in currentTrial
-      const trialAudio = currentTrial.querySelector("audio");
+      
       if (trialAudio) {
         trialAudio.play();
       }
