@@ -4,18 +4,17 @@
 export async function downloadData(safe, ID){
   safe.forEach((item) => {
     item.subjID = ID;
-    item.correct = item.targetWord === item.chosenWord;
+    item.correct = item.targetObject === item.chosenObject;
   });
 
   // convert object into CSV string
   const titleKeys = [
     'subjID',
     'trial',
-    'wordClass',
-    'targetWord',
-    'chosenWord',
-    'chosenCategory',
+    'targetObject',
+    'chosenObject',
     'chosenPosition',
+    'chosenCategory',
     'correct',
     'timestamp',
     'responseTime',
@@ -24,11 +23,10 @@ export async function downloadData(safe, ID){
   const columnNames = [
     'id',
     'trial',
-    'word_class',
-    'target_word',
-    'chosen_word',
-    'chosen_category',
+    'targetObject',
+    'chosenObject',
     'chosen_position',
+    'chosenCategory',
     'correct',
     'timestamp',
     'responsetime_ms',

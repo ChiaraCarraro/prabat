@@ -1,4 +1,23 @@
 import "./css/landingpages.css";
+// import { loadLanguage } from "./js/loadLanguage.js"; // adjust path as needed
+
+// // Get language from URL
+// const params = new URLSearchParams(window.location.search);
+// const lang = params.get("lang") || "en";
+
+
+// const webcam =
+//   new URL(document.location.href).searchParams.get('webcam') || false;
+
+// const subjID =
+// new URL(document.location.href).searchParams.get('ID') || 'testID';
+  
+// // Load localized text/images
+// (async () => {
+//   await loadLanguage(lang);
+// })();
+
+// -------------------------------------------------------------------------------------
 
 // document.addEventListener("DOMContentLoaded", () => {
 //   const button = document.getElementById("confirm-btn");

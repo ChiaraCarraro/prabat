@@ -14,6 +14,7 @@ export default defineConfig({
       input: {
         index: './src/index.html',
         instructions: './src/instructions.html',
+        id: './src/id.html',
         prabat: './src/prabat.html',
         goodbye: './src/goodbye.html',
       },

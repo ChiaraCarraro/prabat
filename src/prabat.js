@@ -42,7 +42,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Iterate over trial divs and set their IDs
   trialDivs.forEach((div, index) => {
-    div.id = `trial${index}`;
+    const trialId = `trial${index}`;
+    div.id = trialId;
+
+    // find the prompt audio inside this div
+    const promptAudio = div.querySelector("audio.prompt");
+    if (promptAudio) {
+      promptAudio.id = trialId; // set same id as the trial container
+    }
   });
 
   //------------------------------------------------------------------
@@ -119,27 +126,34 @@ document.addEventListener("DOMContentLoaded", async function () {
     event.target.style.border = "0.3vw solid blue";
 
     // Play the audio with id "response" if it exists
-    const responseAudio = currentTrial.querySelector('audio#response');
+    const responseAudio = currentTrial.querySelector('audio.response');
     if (responseAudio) {
       responseAudio.play();
+      const backgroundImg = currentTrial.querySelector("#background");
+      if (backgroundImg) {
+        backgroundImg.style.display = "none";
+      }
+      // Hide the image with id "background-talking"
       const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
       if (backgroundTalkingImg) {
         backgroundTalkingImg.style.display = "block";
       }
     }
 
-    responseAudio.onended = () => {
-        // Show the image with id "background"
-        const backgroundImg = currentTrial.querySelector("#background");
-        if (backgroundImg) {
-          backgroundImg.style.display = "block";
-        }
-        // Hide the image with id "background-talking"
-        const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-        if (backgroundTalkingImg) {
-          backgroundTalkingImg.style.display = "none";
-        }
-      };
+    if (responseAudio) {
+      responseAudio.onended = () => {
+          // Show the image with id "background"
+          const backgroundImg = currentTrial.querySelector("#background");
+          if (backgroundImg) {
+            backgroundImg.style.display = "block";
+          }
+          // Hide the image with id "background-talking"
+          const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
+          if (backgroundTalkingImg) {
+            backgroundTalkingImg.style.display = "none";
+          }
+        };
+    }
 
     // save response
     // trial - 2 since array starts at zero (-1) and continue click already advanced trial count (-1)
@@ -147,19 +161,17 @@ document.addEventListener("DOMContentLoaded", async function () {
       timestamp: new Date(parseInt(t1)).toISOString(),
       responseTime: t1 - t0,
       trial: trialNr,
-      // split('/').pop(): splits string at / and keeps only last element
-      // then remove N_ and .jpg
-      targetObject: allAudios[trialNr - 1].src
-        .split("/")
-        .pop()
-        .replace(".mp3", "")
-        .replace(".wav", ""),
+      targetObject: currentTrial.querySelector('img[data-word-category="target"]').src
+      .split("/")
+      .pop()
+      .replace('.svg', ''),
       chosenObject: event.target.src
-        .split("/")
-        .pop()
-        .replace('.svg', '')
-        .replace('.gif', ''),
-      chosenPosition: event.target.id,
+      .split("/")
+      .pop()
+      .replace('.svg', '')
+      .replace('.gif', ''),
+      chosenCategory: event.target.dataset.wordCategory,
+      chosenPosition: event.target.closest('div').id,
     };
 
     button.addEventListener("click", handleContinueClick, {
@@ -179,6 +191,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       console.log(allAudios[trialNr]);
       console.log(responseLog);
     }
+
+    // console.log(skipAdvance);
+    // if (skipAdvance) {
+    //   skipAdvance = false; // consume the flag so future continues behave normally
+    // } else {
+    //   trialNr++;
+    // }
 
     // enable fullscreen and have short break, before first trial starts
     if (trialNr === 0) {
@@ -230,14 +249,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       const images = window.localizedIntroImages || [
         "images/backgrounds/start_1_waving.svg",
         "images/backgrounds/start_1.svg",
-        "images/backgrounds/start_2.svg",
-        "images/backgrounds/start_3.svg",
+        "images/backgrounds/start_2_house.svg",
+        "images/backgrounds/start_3_parents.svg",
+        "images/backgrounds/start_3_friends.svg",
         "images/backgrounds/start_4.svg"
       ];
 
 
       let currentIndex = 0;
-      const imgElement = document.getElementById("background");
+      const imgElement = document.getElementById("background-start");
       const ContinueStar = document.getElementById("continue-star");
 
       function showNextImage() {
@@ -248,14 +268,16 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (currentImage.includes("start_1_waving")) {
           setTimeout(showNextImage, 3000);
         } else if (currentImage.includes("start_1")) {
-          setTimeout(showNextImage, 2500);
-        } else if (currentImage.includes("start_2")) {
-          setTimeout(showNextImage, 6000);
-        } else if (currentImage.includes("start_3")) {
-          setTimeout(showNextImage, 9000);
+          setTimeout(showNextImage, 2000);
+        } else if (currentImage.includes("start_2_house")) {
+          setTimeout(showNextImage, 4000);
+        } else if (currentImage.includes("start_3_parents")) {
+          setTimeout(showNextImage, 4000);
+        } else if (currentImage.includes("start_3_friends")) {
+         setTimeout(showNextImage, 12000);
         } else if (currentImage.includes("start_4")) {
-          ContinueStar.style.opacity = "1";
         }
+
         currentIndex++;
 
       }
@@ -273,6 +295,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // transition images for trials that need multiple slides
 
     if (currentTrial.classList.contains("transitionSlide")) {
+      console.log(286);
       betweenTrialsBackground.src = "images/backgrounds/background_empty.svg";
       headingTestsound.style.display = "none";
       // pause audio (that might be playing if speaker item was clicked and prompt was repeated)
@@ -281,16 +304,17 @@ document.addEventListener("DOMContentLoaded", async function () {
       const lastTrial = document.getElementById(`trial${trialNr - 1}`);
       lastTrial.style.display = "none";
 
-      betweenTrials.style.display = "flex";
-      betweenTrialsBackground.style.opacity = 1;
+      // betweenTrials.style.display = "flex";
+      // betweenTrialsBackground.style.opacity = 1;
       //await pause(150);
 
-      const trialAudio = currentTrial.querySelector("audio#prompt");
+      const trialAudio = currentTrial.querySelector("audio.prompt");
 
       if (currentTrial.classList.contains("silent") == false) {
         // play audio of current trial
         if (trialAudio) {
           trialAudio.play();
+          console.log(trialAudio);
         }
       }
 
@@ -309,20 +333,21 @@ document.addEventListener("DOMContentLoaded", async function () {
       //betweenTrials.style.display = 'none';
 
       currentTrial.style.display = "block";
+      console.log(currentTrial);
 
       if (currentTrial.classList.contains("silent")) {
         // Wait for the animation to end, then continue
         currentTrial.addEventListener(
           "animationend",
           async () => {
-            await pause(2000);
+            await pause(100);
             handleContinueClick(new Event("click"));
           },
           { once: true }
         );
       } else {
         trialAudio.onended = async () => {
-          await pause(2000);
+          await pause(100);
           handleContinueClick(new Event("click"));
         };
       }
@@ -333,9 +358,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       trialNr > 0 &&
       currentTrial.classList.contains("transitionSlide") == false
     ) {
+      console.log(347);
       const imgEl = document.getElementById("background");
       if (imgEl && window.localizedImages?.background) {
         imgEl.src = window.localizedImages.background;
+      }
+
+      const imgElTalk = document.getElementById("background-talking");
+      if (imgEl && window.localizedImages?.background) {
+        imgElTalk.src = window.localizedImages.background;
       }
 
       const currentTrial = document.getElementById(`trial${trialNr}`);
@@ -345,9 +376,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       allAudios[trialNr - 1].currentTime = 0;
       const lastTrial = document.getElementById(`trial${trialNr - 1}`);
       lastTrial.style.display = "none";
+      imgElTalk.style.display = "block";
 
-      betweenTrials.style.display = "flex";
-      betweenTrialsBackground.style.opacity = 1;
+      // betweenTrials.style.display = "flex";
+      // betweenTrialsBackground.style.opacity = 1;
 
       const trialAudio = currentTrial.querySelector("audio");
 
@@ -384,6 +416,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Play the audio element contained in currentTrial
       
       if (trialAudio) {
+        console.log(trialAudio);
         trialAudio.play();
       }
 
@@ -391,6 +424,16 @@ document.addEventListener("DOMContentLoaded", async function () {
       t0 = new Date().getTime();
 
       betweenTrials.style.display = "none";
+
+      const backgroundImg = currentTrial.querySelector("#background");
+      if (backgroundImg) {
+        backgroundImg.style.display = "none";
+      }
+      // Hide the image with id "background-talking"
+      const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
+      if (backgroundTalkingImg) {
+        backgroundTalkingImg.style.display = "block";
+      }
 
       //document.body.style.backgroundImage = "url('images/backgrounds/background01.png')";
       //document.body.style.backgroundSize = "cover";
@@ -424,24 +467,190 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
       };
     }
+    console.log(trialNr);
     trialNr++;
   };
 
   //------------------------------------------------------------------
   // define speaker click
   //------------------------------------------------------------------
+  // const handleSpeakerClick = async (event) => { 
+  //   event.preventDefault(); 
+  //   // use trial - 1 since the trial count already went up in the continue click function 
+  //   // pause audio 
+  //   if (trialNr > 1) { 
+  //     allAudios[trialNr].pause(); 
+  //     allAudios[trialNr].currentTime = 0;
+  //   } // play audio of current trial 
+  //   allAudios[trialNr].play(); 
+  // };
+
+  let skipAdvance = false;
+
   const handleSpeakerClick = async (event) => {
     event.preventDefault();
+    const currentTrial = document.getElementById(`trial${trialNr - 1}`);
+    console.log(currentTrial);
+    if (!currentTrial) return;
+    
+    if (currentTrial.classList.contains("Informativeness")) {
+      console.log(currentTrial.classList);
+      console.log("starting"+trialNr);
+      trialNr = trialNr - 3;             // point to the trial you want
+      skipAdvance = true;                 // don’t auto ++ on this pass
 
-    // use trial - 1 since the trial count already went up in the continue click function
-    // pause audio
-    if (trialNr > 1) {
-      allAudios[trialNr - 1].pause();
-      allAudios[trialNr - 1].currentTime = 0;
+      const button = document.getElementById("prabat-button");
+      if (button) {
+        // reattach the listener because it was added with { once: true }
+        button.removeEventListener("click", handleContinueClick);
+        button.addEventListener("click", handleContinueClick, { capture: false, once: true });
+        button.click();
+        currentTrial.style.display = "none";
+      }
+      return;
+    } else if (currentTrial.classList.contains("EmotionalProsody")) {
+      trialNr = trialNr - 4;             // point to the trial you want
+      skipAdvance = true;                 // don’t auto ++ on this pass
+
+      const button = document.getElementById("prabat-button");
+      if (button) {
+        // reattach the listener because it was added with { once: true }
+        button.removeEventListener("click", handleContinueClick);
+        button.addEventListener("click", handleContinueClick, { capture: false, once: true });
+        button.click();
+        currentTrial.style.display = "none";
+      }
+      return;
+    } else if (currentTrial.classList.contains("SpeakersPreference")) {
+      trialNr = trialNr - 8;             // point to the trial you want
+      skipAdvance = true;                 // don’t auto ++ on this pass
+
+      const button = document.getElementById("prabat-button");
+      if (button) {
+        // reattach the listener because it was added with { once: true }
+        button.removeEventListener("click", handleContinueClick);
+        button.addEventListener("click", handleContinueClick, { capture: false, once: true });
+        button.click();
+        currentTrial.style.display = "none";
+      }
+      return;
+    } else if (currentTrial.classList.contains("DiscourseNovelty")) {
+      trialNr = trialNr - 6;             // point to the trial you want
+      skipAdvance = true;                 // don’t auto ++ on this pass
+
+      const button = document.getElementById("prabat-button");
+      if (button) {
+        // reattach the listener because it was added with { once: true }
+        button.removeEventListener("click", handleContinueClick);
+        button.addEventListener("click", handleContinueClick, { capture: false, once: true });
+        button.click();
+        currentTrial.style.display = "none";
+      }
+      return;
+    } else if (currentTrial.classList.contains("ConversationalPerspectiveTaking")) {
+      trialNr = trialNr - 3;             // point to the trial you want
+      skipAdvance = true;                 // don’t auto ++ on this pass
+
+      const button = document.getElementById("prabat-button");
+      if (button) {
+        // reattach the listener because it was added with { once: true }
+        button.removeEventListener("click", handleContinueClick);
+        button.addEventListener("click", handleContinueClick, { capture: false, once: true });
+        button.click();
+        currentTrial.style.display = "none";
+      }
+      return;
+    } else if (currentTrial.classList.contains("ListenerConversationalPerspectiveTaking")) {
+      trialNr = trialNr - 2;             // point to the trial you want
+      skipAdvance = true;                 // don’t auto ++ on this pass
+
+      const button = document.getElementById("prabat-button");
+      if (button) {
+        // reattach the listener because it was added with { once: true }
+        button.removeEventListener("click", handleContinueClick);
+        button.addEventListener("click", handleContinueClick, { capture: false, once: true });
+        button.click();
+        currentTrial.style.display = "none";
+      }
+      return;
+    } else if (currentTrial.classList.contains("Gesture")) {
+      trialNr = trialNr - 2;             // point to the trial you want
+      skipAdvance = true;                 // don’t auto ++ on this pass
+
+      const button = document.getElementById("prabat-button");
+      if (button) {
+        // reattach the listener because it was added with { once: true }
+        button.removeEventListener("click", handleContinueClick);
+        button.addEventListener("click", handleContinueClick, { capture: false, once: true });
+        button.click();
+        currentTrial.style.display = "none";
+      }
+      return;
+    } else if (currentTrial.classList.contains("transitionSlide")) {
+      const speakerButton = document.getElementById("speaker");
+      if (speakerButton) {
+        speakerButton.disabled = true;     // make it inactive
+      }
+      return;
+    } else {
+      // const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
+      // backgroundTalkingImg.style.display = "block";
+      // find the audio inside with the same id as the trial div
+      const trialId = currentTrial.id; // e.g. "trial0", "trial1"
+      const trialAudio = currentTrial.querySelector(`audio#${trialId}`);
+      if (!trialAudio) return;
+
+      // stop any currently playing audio (if you're using global lastPlayed)
+      if (!trialAudio.paused) {
+        trialAudio.pause();
+        trialAudio.currentTime = 0;
+      }
+
+      // (re)start the audio
+      trialAudio.currentTime = 0;
+      await trialAudio.play();
+      const backgroundImg = currentTrial.querySelector("#background");
+      if (backgroundImg) {
+        backgroundImg.style.display = "none";
+        console.log(426);
+      }
+      // Hide the image with id "background-talking"
+      const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
+      if (backgroundTalkingImg) {
+        backgroundTalkingImg.style.display = "block";
+        console.log(432);
+      }
+
+      trialAudio.onended = () => {
+        console.log(431);
+        // Show the image with id "background"
+        const backgroundImg = currentTrial.querySelector("#background");
+        if (backgroundImg) {
+          backgroundImg.style.display = "block";
+          console.log(436);
+        }
+        // Hide the image with id "background-talking"
+        const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
+        if (backgroundTalkingImg) {
+          backgroundTalkingImg.style.display = "none";
+          console.log(442);
+        }
+      };
+
+
+
+      // trialAudio.onended = () => {
+      //     // Show the image with id "background"
+      //     const backgroundImg = currentTrial.querySelector("#background");
+      //     if (backgroundImg) {
+      //       backgroundImg.style.display = "block";
+      //     }
+      //     // Hide the image with id "background-talking"
+      //     if (backgroundTalkingImg) {
+      //       backgroundTalkingImg.style.display = "none";
+      //     }
+      //   };
     }
-
-    // play audio of current trial
-    allAudios[trialNr - 1].play();
   };
 
   //------------------------------------------------------------------

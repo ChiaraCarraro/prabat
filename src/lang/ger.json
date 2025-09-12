@@ -12,12 +12,13 @@
 "letsgo": "Los geht's!",
 "headingfullscreen": "Nehmen Sie sich so viel Zeit, wie Sie möchten. \n\nFalls Ihr Kind unruhig wird oder sich langweilt, können Sie jederzeit eine kurze Pause machen. \n\nWenn Ihr Kind Sie um Rat fragt oder sich unsicher ist, sagen Sie bitte 'Zeig, was Du denkst'. Alles, was Ihr Kind antwortet, ist prima. Bitte helfen Sie Ihrem Kind nicht bei den Aufgaben - wir wollen ja etwas über Kinder lernen! \n\n Bitte klicken Sie jetzt auf 'WEITER', um den Vollbildmodus zu aktivieren.",
 "noiseQuestion": "Haben Sie gerade ein kurzes Klimper-Geräusch gehört? \n\nSuper! Falls nicht, klicken Sie bitte auf das Lautsprecher-Symbol, um Ihren Ton zu testen. \n\n Bitte klicken Sie jetzt auf 'WEITER', um mit dem Spiel zu beginnen.",
-
+"goodbyeMessage": "Die Studie wurde erfolgreich beendet. Der Download der Daten wird gestartet (Pop-up beachten).",
 "introImages": [
     "images/ger/backgrounds/start_1_waving.svg",
     "images/ger/backgrounds/start_1.svg",
-    "images/ger/backgrounds/start_2.svg",
-    "images/ger/backgrounds/start_3.svg",
+    "images/ger/backgrounds/start_2_house.svg",
+    "images/ger/backgrounds/start_3_parents.svg",
+    "images/ger/backgrounds/start_3_friends.svg",
     "images/ger/backgrounds/start_4.svg"
   ]
 
