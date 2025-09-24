@@ -128,31 +128,33 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Play the audio with id "response" if it exists
     const responseAudio = currentTrial.querySelector('audio.response');
     if (responseAudio) {
+      // Disable the button while audio is playing
+      button.disabled = true;
+      button.style.backgroundColor = "hsl(199, 100%, 21%)";
       responseAudio.play();
       const backgroundImg = currentTrial.querySelector("#background");
       if (backgroundImg) {
-        backgroundImg.style.display = "none";
+      backgroundImg.style.display = "none";
       }
       // Hide the image with id "background-talking"
       const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
       if (backgroundTalkingImg) {
-        backgroundTalkingImg.style.display = "block";
+      backgroundTalkingImg.style.display = "block";
       }
-    }
-
-    if (responseAudio) {
       responseAudio.onended = () => {
-          // Show the image with id "background"
-          const backgroundImg = currentTrial.querySelector("#background");
-          if (backgroundImg) {
-            backgroundImg.style.display = "block";
-          }
-          // Hide the image with id "background-talking"
-          const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-          if (backgroundTalkingImg) {
-            backgroundTalkingImg.style.display = "none";
-          }
-        };
+        // Re-enable the button when audio ends
+        button.disabled = false;
+        // Show the image with id "background"
+        const backgroundImg = currentTrial.querySelector("#background");
+        if (backgroundImg) {
+          backgroundImg.style.display = "block";
+        }
+        // Hide the image with id "background-talking"
+        const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
+        if (backgroundTalkingImg) {
+          backgroundTalkingImg.style.display = "none";
+        }
+      };
     }
 
     // save response
@@ -164,7 +166,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       targetObject: currentTrial.querySelector('img[data-word-category="target"]').src
       .split("/")
       .pop()
-      .replace('.svg', ''),
+      .replace('.svg', '')
+      .replace('.gif', ''),
       chosenObject: event.target.src
       .split("/")
       .pop()
@@ -246,14 +249,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Story
 
     if (trialNr === 1) {
-      const images = window.localizedIntroImages || [
-        "images/backgrounds/start_1_waving.svg",
-        "images/backgrounds/start_1.svg",
-        "images/backgrounds/start_2_house.svg",
-        "images/backgrounds/start_3_parents.svg",
-        "images/backgrounds/start_3_friends.svg",
-        "images/backgrounds/start_4.svg"
-      ];
+      const images = window.localizedIntroImages 
 
 
       let currentIndex = 0;
@@ -356,9 +352,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     // hide last Trial, show background (empty pictures) instead
     if (
       trialNr > 0 &&
-      currentTrial.classList.contains("transitionSlide") == false
+      currentTrial.classList.contains("transitionSlide") == false 
     ) {
-      console.log(347);
       const imgEl = document.getElementById("background");
       if (imgEl && window.localizedImages?.background) {
         imgEl.src = window.localizedImages.background;
@@ -416,7 +411,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Play the audio element contained in currentTrial
       
       if (trialAudio) {
-        console.log(trialAudio);
         trialAudio.play();
       }
 
@@ -494,8 +488,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (!currentTrial) return;
     
     if (currentTrial.classList.contains("Informativeness")) {
-      console.log(currentTrial.classList);
-      console.log("starting"+trialNr);
       trialNr = trialNr - 3;             // point to the trial you want
       skipAdvance = true;                 // don’t auto ++ on this pass
 
@@ -522,7 +514,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
       return;
     } else if (currentTrial.classList.contains("SpeakersPreference")) {
-      trialNr = trialNr - 8;             // point to the trial you want
+      trialNr = trialNr - 6;             // point to the trial you want
       skipAdvance = true;                 // don’t auto ++ on this pass
 
       const button = document.getElementById("prabat-button");
@@ -592,6 +584,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         speakerButton.disabled = true;     // make it inactive
       }
       return;
+    } else if (currentTrial.id === "trial0") {
+      const testSoundElement = document.getElementById('testsound');
+      if (testSoundElement) {
+        testSoundElement.play();
+      } else {
+        console.warn('Element with ID "testsound" not found.');
+      }
     } else {
       // const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
       // backgroundTalkingImg.style.display = "block";
@@ -600,40 +599,36 @@ document.addEventListener("DOMContentLoaded", async function () {
       const trialAudio = currentTrial.querySelector(`audio#${trialId}`);
       if (!trialAudio) return;
 
-      // stop any currently playing audio (if you're using global lastPlayed)
-      if (!trialAudio.paused) {
-        trialAudio.pause();
-        trialAudio.currentTime = 0;
-      }
+      // // stop any currently playing audio (if you're using global lastPlayed)
+      // if (!trialAudio.paused) {
+      //   trialAudio.pause();
+      //   trialAudio.currentTime = 0;
+      // }
 
       // (re)start the audio
       trialAudio.currentTime = 0;
       await trialAudio.play();
+      console.log("played");
       const backgroundImg = currentTrial.querySelector("#background");
       if (backgroundImg) {
         backgroundImg.style.display = "none";
-        console.log(426);
       }
       // Hide the image with id "background-talking"
       const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
       if (backgroundTalkingImg) {
         backgroundTalkingImg.style.display = "block";
-        console.log(432);
       }
 
       trialAudio.onended = () => {
-        console.log(431);
         // Show the image with id "background"
         const backgroundImg = currentTrial.querySelector("#background");
         if (backgroundImg) {
           backgroundImg.style.display = "block";
-          console.log(436);
         }
         // Hide the image with id "background-talking"
         const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
         if (backgroundTalkingImg) {
           backgroundTalkingImg.style.display = "none";
-          console.log(442);
         }
       };
 

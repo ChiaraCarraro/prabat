@@ -2,10 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script src="./prabat.js" type="module" defer></script>
+    <script src="prabat.js" type="module" defer></script>
     <!-- <link rel="stylesheet" href="prabat.css" /> -->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="%BASE_URL%">
 
     <!-- Favicon -->
     <link rel="icon" href="./logos/cipcip.svg" />
@@ -60,7 +61,7 @@
             <audio data-audio="intro.mp3"></audio>
             <img
                 id="background-start"
-                data-img=""
+                src=""
                 style="opacity: 1; 
                 height: 100vh; 
                 width: 100%; 
@@ -80,7 +81,6 @@
               />
             </div>
           </div>
-
 
           <!-- FAMILIARIZATION TRIALS -->
           <!-- Familiarization trial 1-->
@@ -128,7 +128,6 @@
               </div>
             </div>
           </div>
-
           <!-- Familiarization trial 2-->
 
           <div class="flex-sheet trials mutex-noun" style="display: none; height: 100%"> 
@@ -447,7 +446,7 @@
                   class="object"
                   data-word-category="target"
                   src="images/objects/still_umbrella.svg"
-                  style="height: auto; width: 80%; margin-bottom: 100px; "
+                  style="height: auto; width: 60%; margin-bottom: 70px; "
                 />
               </div>
               <div id="right">
@@ -532,7 +531,7 @@
                 <img
                   class="object"
                   data-word-category="dist1"
-                  src="images/objects/balloon_weird.svg"
+                  src="images/objects/balloon_square.svg"
                   style="height: auto; width: 70%; margin-bottom: 50px;"
                 />
               </div>
@@ -896,11 +895,11 @@
             <audio class="prompt" data-audio="watermelon.mp3" ></audio>
             <img
                 id="background"
-                data-img="backgrounds/background_task.svg"
+                data-img="backgrounds/background_task_DiscCont.svg"
             />
             <img
                 id="background-talking"
-                data-img="backgrounds/background_task_talking.svg"
+                data-img="backgrounds/background_task_DiscCont_talking.svg"
             />
             <div class="character" style="position: relative;">
               <img
@@ -941,11 +940,11 @@
             <audio class="prompt" data-audio="apple.mp3" ></audio>
             <img
                 id="background"
-                data-img="backgrounds/background_task.svg"
+                data-img="backgrounds/background_task_DiscCont.svg"
             />
             <img
                 id="background-talking"
-                data-img="backgrounds/background_task_talking.svg"
+                data-img="backgrounds/background_task_DiscCont_talking.svg"
             />
             <div class="character" style="position: relative;">
               <img
@@ -986,11 +985,11 @@
             <audio class="prompt" data-audio="DiscCont3.mp3" ></audio>
             <img
                 id="background"
-                data-img="backgrounds/background_task.svg"
+                data-img="backgrounds/background_task_DiscCont.svg"
             />
             <img
                 id="background-talking"
-                data-img="backgrounds/background_task_talking.svg"
+                data-img="backgrounds/background_task_DiscCont_talking.svg"
             />
             <div class="character" style="position: relative;">
               <img
@@ -1034,11 +1033,11 @@
             <audio class="prompt" data-audio="orange.mp3" ></audio>
             <img
                 id="background"
-                data-img="backgrounds/background_task.svg"
+                data-img="backgrounds/background_task_DiscCont.svg"
             />
             <img
                 id="background-talking"
-                data-img="backgrounds/background_task_talking.svg"
+                data-img="backgrounds/background_task_DiscCont_talking.svg"
             />
             <div class="character" style="position: relative;">
               <img
@@ -1079,11 +1078,11 @@
             <audio class="prompt" data-audio="banana.mp3" ></audio>
             <img
                 id="background"
-                data-img="backgrounds/background_task.svg"
+                data-img="backgrounds/background_task_DiscCont.svg"
             />
             <img
                 id="background-talking"
-                data-img="backgrounds/background_task_talking.svg"
+                data-img="backgrounds/background_task_DiscCont_talking.svg"
             />
             <div class="character" style="position: relative;">
               <img
@@ -1125,11 +1124,11 @@
             <audio class="response" data-audio="ThankYou2.mp3"></audio>
             <img
                 id="background"
-                data-img="backgrounds/background_task.svg"
+                data-img="backgrounds/background_task_DiscCont.svg"
             />
             <img
                 id="background-talking"
-                data-img="backgrounds/background_task_talking.svg"
+                data-img="backgrounds/background_task_DiscCont_talking.svg"
             />
             <div class="character" style="position: relative;">
               <img
@@ -1590,7 +1589,7 @@
 
           <!-- girl is away-->
           <div class="flex-sheet trials transitionSlide" style="display: none; height: 100%"> 
-            <audio class="prompt" src="audio/neutral.mp3" muted></audio>
+            <audio class="prompt" src="audio/palvi1.mp3" muted></audio>
             <img
               id="background"
               data-img="backgrounds/background_empty.svg"
@@ -1631,59 +1630,6 @@
             </div>
           </div>
 
-          <!-- objects disappear-->
-
-          <div class="flex-sheet trials transitionSlide" style="display: none; height: 100%"> 
-            <audio class="prompt" src="audio/neutral.mp3" muted></audio>
-            <img
-              id="background"
-              data-img="backgrounds/background_empty.svg"
-            />
-          </div>
-
-          <!-- objects reappear-->
-
-          <div class="flex-sheet trials transitionSlide silent" style="display: none; height: 100%"> 
-            <audio class="prompt" src="audio/neutral.mp3" muted></audio>
-            <img
-              id="background"
-              data-img="backgrounds/background_empty.svg"
-            />
-            <div class="character" style="position: relative;">
-              <img
-              id="character"
-              class="upper-left"
-              src="images/agents/girl.svg"
-              style="opacity: 0; position: relative; z-index: 1;"
-              />
-            </div>
-            <div id= "rowTransition" class="row transition">
-              <div id="left">
-                <img
-                  class="object transition slide-down"
-                  data-word-category="target"
-                  src="images/objects/novel_J.svg"
-                  style="height: auto; width: 50%; opacity: 0;"
-                />
-              </div>
-              <div id="center">
-                <img
-                  class="object transition slide-down"
-                  data-word-category="dist1"
-                  src="images/objects/novel_K.svg"
-                  style="height: auto; width: 65%; opacity: 0; animation-delay: 1s;"
-                />
-              </div>
-              <div id="right">
-                <img
-                  class="object transition slide-down"
-                  data-word-category="dist2"
-                  src="images/objects/novel_L.svg"
-                  style="height: auto; width: 50%; opacity: 0; animation-delay: 2s;"
-                />
-              </div>
-            </div>
-          </div>
 
           <!-- CRITICAL trial speaker's preference-->
 
@@ -2091,7 +2037,7 @@
                 <img
                   class="object transition"
                   data-word-category="dist3"
-                  data-img="objects/baby_playing.svg"
+                  data-img="objects/Gesture_item1_option3.svg"
                   style="height: auto; width: 60%; margin-top: 15vh; opacity: 0;"
                 />
               </div>
@@ -2324,7 +2270,7 @@
                 <img
                   class="object"
                   data-word-category="dist2"
-                  src="images/objects/scissor.svg"
+                  data-img="objects/ConvImp2_3.svg"
                   style="height: 85%"
                 />
               </div>
@@ -2474,8 +2420,7 @@
                 />
               </div>
             </div>
-          </div>
-
+          </div>         
 
           <!-- CONVERSATIONAL PERSPECTIVE TAKING trial 27 -->
           
@@ -2753,7 +2698,100 @@
           </div>
 
 
+          <!-- GESTURE 3 - trial 30 -->
 
+          <!-- transition slide - ella looks at brother -->
+
+          <div class="flex-sheet trials transitionSlide" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="Mmh0.mp3" ></audio>
+            <img
+                id="background"
+                data-img="backgrounds/Gesture_item3_request_initial.svg"
+                />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              data-img="objects/kickingmother.gif"
+              style="position: relative; z-index: 1; margin-top: 3vh; max-height: 100%;"
+              />
+            </div>
+            <div id="rowTransition" class="row transition">
+              <div id="left">
+                <img
+                  class="object transition"
+                  data-word-category="target"
+                  data-img="objects/Gesture_item3_option1.svg"
+                  style="height: auto; width: 60%; margin-top: 12vh; opacity: 0;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object transition"
+                  data-word-category="dist1"
+                  data-img="objects/Gesture_item3_option3.svg"
+                  style="height: auto; width: 60%; margin-top: 12vh; opacity: 0;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object transition"
+                  data-word-category="dist2"
+                  data-img="objects/Gesture_item3_option2.svg"
+                  style="height: auto; width: 60%; margin-top: 12vh; opacity: 0;"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- gesture 3 CRITICAL -->
+
+          <div class="flex-sheet trials Gesture" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="WhatShouldIDo.mp3" ></audio>
+            <audio class="response" data-audio="ThankYou4Tip.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/Gesture_item3_request_notalk.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/Gesture_item3_request_talk.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              data-img="objects/kickingmother.gif"
+              style="position: relative; z-index: 1; margin-top: 3vh; max-height: 100%;"
+              />
+            </div>
+            <div class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  data-img="objects/Gesture_item3_option1.svg"
+                  style="height: auto; width: 80%; margin-top: 11vh; opacity: 1;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  data-img="objects/Gesture_item3_option3.svg"
+                  style="height: auto; width: 80%; margin-top: 11vh; opacity: 1;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  data-img="objects/Gesture_item3_option2.svg"
+                  style="height: auto; width: 80%; margin-top: 11vh; opacity: 1;"
+                />
+              </div>
+            </div>
+          </div>
 
 
           <!-- end of main-flex-sheet -->

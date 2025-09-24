@@ -156,7 +156,7 @@ body {
 }
 
 .custom-button {
-  background-color: var(--ccp-minerva-green) !important;
+  background-color: var(--ccp-minerva-green);
   color: white;
   border: none;
   margin-top: 5px;
@@ -168,7 +168,7 @@ body {
 }
 
 .custom-button:disabled {
-  background-color: hsl(188, 100%, 36%) !important;
+  background-color: hsl(188, 100%, 36%);
 }
 
 @keyframes slideDown {

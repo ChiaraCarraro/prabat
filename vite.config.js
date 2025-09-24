@@ -65,7 +65,7 @@ export default defineConfig({
       },
 
       injectManifest: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,mp3,gif}'],
+        globPatterns: ['**/*.{js,json,css,html,svg,png,ico,mp3,gif}'],
         maximumFileSizeToCacheInBytes: 500000000000,
       },
 
@@ -77,9 +77,9 @@ export default defineConfig({
       },
       // to cache images and pdfs, serve them offline
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,mp3,pdf,gif}'],
+        globPatterns: ['**/*.{js,json,css,html,svg,png,ico,mp3,pdf,gif}'],
       },
-      includeAssets: ['**/*.{js,css,html,svg,png,ico,mp3,pdf,gif}'],
+      includeAssets: ['**/*.{js,json,css,html,svg,png,ico,mp3,pdf,gif}'],
     }),
   ],
   resolve: {

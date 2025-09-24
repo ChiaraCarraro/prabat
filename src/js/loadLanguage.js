@@ -3,11 +3,11 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 // src/loadLanguage.js (adjust paths if this file lives in src/js/)
-import ger from '../lang/ger.json';
-import sw  from '../lang/sw.json';
-import ki  from '../lang/ki.json';
-import en  from '../lang/en.json';
-import tr  from '../lang/tr.json';
+import ger from '../../public/lang/ger.json';
+import sw  from '../../public/lang/sw.json';
+import ki  from '../../public/lang/ki.json';
+import en  from '../../public/lang/en.json';
+import tr  from '../../public/lang/tr.json';
 
 const DICT = { ger, sw, ki, en, tr };
 
