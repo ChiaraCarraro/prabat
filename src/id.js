@@ -47,7 +47,7 @@ button.addEventListener("click", (event) => {
   const params = new URLSearchParams(window.location.search);
   const lang = params.get("lang");
 
-  localStorage.setItem("storedChoices", JSON.stringify({ ID: subjID, webcam }));
+  localStorage.setItem("storedChoices", JSON.stringify({ ID: subjID, webcam: webcam, lang: lang }));
   window.location.href = `./instructions.html?lang=${lang}&ID=${subjID}&webcam=${webcam}`;
 });
 

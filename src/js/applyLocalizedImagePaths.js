@@ -9,5 +9,6 @@ export const applyLocalizedImagePaths = (lang) => {
   allImgs.forEach(img => {
     const relPath = img.getAttribute("data-img");
     img.src = `images/${folder}/${relPath}`;
+    console.log(`Setting image src to: ${img.src}`);
   });
 }

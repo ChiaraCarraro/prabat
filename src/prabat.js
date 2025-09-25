@@ -22,15 +22,19 @@ if (storedChoices) {
   studyChoices = JSON.parse(storedChoices);
 } else {
   console.error("No data found in local storage");
+  // get them from the URL parameters
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const lang = urlParams.get("lang") || "en"; // fallback to English
+  // const urlParams = new URLSearchParams(window.location.search);
+  // const lang = urlParams.get("lang") || "en"; // fallback to English
+  console.log(studyChoices);
+  const lang = studyChoices?.lang || "ger"
+  console.log(lang);
   await loadLanguage(lang);
   
   applyLocalizedImagePaths(lang); 
-  applyLocalizedAudioPaths(lang);  
+  applyLocalizedAudioPaths(lang);   
 
 
   const devmode = false;
@@ -224,29 +228,27 @@ document.addEventListener("DOMContentLoaded", async function () {
     // end of trials
     if (trialNr === trialDivs.length) {
       console.log("Hola");
-      debugger;
-      await downloadData(responseLog.data, responseLog.meta.subjID);
-      await pause(3000);
-      await downloadVideo(
-        responseLog.meta.iOSSafari,
-        responseLog.meta.webcam,
-        responseLog.meta.subjID,
-        mrec
-      );
-      await pause(5000);
-      debugger;
-      await uploadData(responseLog.data, responseLog.meta.subjID);
-      debugger;
-      // await pause(2000);
-      
       // debugger;
-      // // await pause(2000);
-      // await uploadVideo(
+      // await downloadData(responseLog.data, responseLog.meta.subjID);
+      // await pause(3000);
+      // await downloadVideo(
       //   responseLog.meta.iOSSafari,
       //   responseLog.meta.webcam,
       //   responseLog.meta.subjID,
       //   mrec
       // );
+      // await pause(5000);
+      // debugger;
+      // await uploadData(responseLog.data, responseLog.meta.subjID);
+      // debugger;
+      // await pause(2000);
+      debugger;
+      await uploadVideo(
+        responseLog.meta.iOSSafari,
+        responseLog.meta.webcam,
+        responseLog.meta.subjID,
+        mrec
+      );
       // debugger;
       // await pause(3000);
       studyChoices.ID = responseLog.meta.subjID;
