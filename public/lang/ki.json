@@ -14,10 +14,11 @@
 "noiseQuestion": "No wĩrĩa ũgĩcokia ũhoro mũno wa gũtũma? \n\nĨĩ! Nĩ ũtacokia, hũra kĩmenyithia kĩa thiomi kũhihinyanĩria thimũ yaku. \n\n Rĩu hũra 'NEXT' nĩguo wone mũbira ũcio.", 
 
 "introImages": [
-    "images/ki/backgrounds/start_1_waving_kenya.svg",
-    "images/ki/backgrounds/start_1_kenya.svg",
-    "images/ki/backgrounds/start_2_Kenya.svg",
-    "images/ki/backgrounds/start_3_kenya.svg",
-    "images/ki/backgrounds/start_4_kenya.svg"
+    "images/ki/backgrounds/start_1_waving.svg",
+    "images/ki/backgrounds/start_1.svg",
+    "images/ki/backgrounds/start_2_house.svg",
+    "images/ki/backgrounds/start_3_parents.svg",
+    "images/ki/backgrounds/start_3_friends.svg",
+    "images/ki/backgrounds/start_4.svg"
   ]
 }

@@ -14,11 +14,12 @@
   "noiseQuestion": "Je, umesikia sauti fupi ya kunguruma? \n\nNdiyo! Ikiwa hujasikia, bofya alama ya spika ili kujaribu sauti yako. \n\n Bofya 'NEXT' sasa ili kuendelea.",
 
   "introImages": [
-    "images/ki/backgrounds/start_1_waving_kenya.svg",
-    "images/ki/backgrounds/start_1_kenya.svg",
-    "images/ki/backgrounds/start_2_kenya.svg",
-    "images/ki/backgrounds/start_3_kenya.svg",
-    "images/ki/backgrounds/start_4_kenya.svg"
+    "images/ki/backgrounds/start_1_waving.svg",
+    "images/ki/backgrounds/start_1.svg",
+    "images/ki/backgrounds/start_2_house.svg",
+    "images/ki/backgrounds/start_3_parents.svg",
+    "images/ki/backgrounds/start_3_friends.svg",
+    "images/ki/backgrounds/start_4.svg"
   ]
 
 }
