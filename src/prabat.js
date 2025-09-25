@@ -223,12 +223,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // end of trials
     if (trialNr === trialDivs.length) {
-      await uploadVideo(
-        responseLog.meta.iOSSafari,
-        responseLog.meta.webcam,
-        responseLog.meta.subjID,
-        mrec
-      );
+      console.log("Hola");
+      debugger;
+      await downloadData(responseLog.data, responseLog.meta.subjID);
       await pause(3000);
       await downloadVideo(
         responseLog.meta.iOSSafari,
@@ -236,14 +233,24 @@ document.addEventListener("DOMContentLoaded", async function () {
         responseLog.meta.subjID,
         mrec
       );
-      await pause(2000);
+      await pause(5000);
+      debugger;
       await uploadData(responseLog.data, responseLog.meta.subjID);
-      await pause(2000);
-      await downloadData(responseLog.data, responseLog.meta.subjID);
-      await pause(2000);
+      debugger;
+      // await pause(2000);
+      
+      // debugger;
+      // // await pause(2000);
+      // await uploadVideo(
+      //   responseLog.meta.iOSSafari,
+      //   responseLog.meta.webcam,
+      //   responseLog.meta.subjID,
+      //   mrec
+      // );
+      // debugger;
+      // await pause(3000);
       studyChoices.ID = responseLog.meta.subjID;
       window.location.href = `./goodbye.html`;
-      
     }
 
     // Story
@@ -352,7 +359,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // hide last Trial, show background (empty pictures) instead
     if (
       trialNr > 0 &&
-      currentTrial.classList.contains("transitionSlide") == false 
+      currentTrial.classList.contains("transitionSlide") == false
     ) {
       const imgEl = document.getElementById("background");
       if (imgEl && window.localizedImages?.background) {

@@ -6,7 +6,7 @@ export async function downloadVideo(iOSSafari, webcam, subjID, mrec) {
 
   try {
     debugger;
-    if (!iOSSafari && webcam) {
+    if (!iOSSafari && (webcam === "true"))  {
         mrec.stopRecorder();
 
         // give some time to create Video Blob
