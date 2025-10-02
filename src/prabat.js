@@ -23,10 +23,9 @@ if (storedChoices) {
 } else {
   console.error("No data found in local storage");
 }
+const lang = studyChoices?.lang || "ger"; // fallback to English
 
 document.addEventListener("DOMContentLoaded", async function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const lang = urlParams.get("lang") || "en"; // fallback to English
   await loadLanguage(lang);
   
   applyLocalizedImagePaths(lang); 
@@ -102,6 +101,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const speaker = document.getElementById("speaker");
   const headingFullscreen = document.getElementById("heading-fullscreen");
   const headingTestsound = document.getElementById("heading-testsound");
+  let skipAdvance;
   //------------------------------------------------------------------
   // define response click
   //------------------------------------------------------------------
@@ -126,21 +126,20 @@ document.addEventListener("DOMContentLoaded", async function () {
     event.target.style.border = "0.3vw solid blue";
 
     // Play the audio with id "response" if it exists
-    const responseAudio = currentTrial.querySelector('audio.response');
+    const responseAudio = currentTrial.querySelector('audio.preResponse');
     if (responseAudio) {
       // Disable the button while audio is playing
       button.disabled = true;
       button.style.backgroundColor = "hsl(199, 100%, 21%)";
       responseAudio.play();
       const backgroundImg = currentTrial.querySelector("#background");
-      if (backgroundImg) {
-      backgroundImg.style.display = "none";
-      }
-      // Hide the image with id "background-talking"
+      // show the image with id "background-talking"
       const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-      if (backgroundTalkingImg) {
-      backgroundTalkingImg.style.display = "block";
+      if (!responseAudio.src.includes("Mmh")) {
+        backgroundImg.style.display = "none";
+        backgroundTalkingImg.style.display = "block";
       }
+
       responseAudio.onended = () => {
         // Re-enable the button when audio ends
         button.disabled = false;
@@ -189,6 +188,42 @@ document.addEventListener("DOMContentLoaded", async function () {
   const handleContinueClick = async (event) => {
     event.preventDefault();
 
+    if (skipAdvance === false && trialNr > 0) {
+      const prevTrialIndex = trialNr - 1;
+      const prevTrial = document.getElementById(`trial${prevTrialIndex}`);
+      let prevResponseAudio = null;
+      if (prevTrial) {
+        prevResponseAudio = prevTrial.querySelector('audio.response');
+      }
+      if (prevResponseAudio) {
+        // Hide the image with id "background"
+        const backgroundImg = prevTrial.querySelector("#background");
+        if (backgroundImg) {
+          backgroundImg.style.display = "none";
+        }
+        // Show the image with id "background-talking"
+        const backgroundTalkingImg = prevTrial.querySelector("#background-talking");
+        if (backgroundTalkingImg) {
+          backgroundTalkingImg.style.display = "block";
+        }
+
+        await new Promise((resolve) => {
+          prevResponseAudio.onended = () => {
+            // Show the image with id "background"
+            if (backgroundImg) {
+              backgroundImg.style.display = "block";
+            }
+            // Hide the image with id "background-talking"
+            if (backgroundTalkingImg) {
+              backgroundTalkingImg.style.display = "none";
+            }
+            resolve();
+          };
+          prevResponseAudio.play();
+        });
+      }
+    }
+
     if (devmode) {
       console.log("trialNr", trialNr);
       console.log(allAudios[trialNr]);
@@ -223,8 +258,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // end of trials
     if (trialNr === trialDivs.length) {
-      console.log("Hola");
-      debugger;
       await downloadData(responseLog.data, responseLog.meta.subjID);
       await pause(3000);
       await downloadVideo(
@@ -234,9 +267,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         mrec
       );
       await pause(5000);
-      debugger;
       await uploadData(responseLog.data, responseLog.meta.subjID);
-      debugger;
       // await pause(2000);
       
       // debugger;
@@ -261,7 +292,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       let currentIndex = 0;
       const imgElement = document.getElementById("background-start");
-      const ContinueStar = document.getElementById("continue-star");
 
       function showNextImage() {
         const currentImage = images[currentIndex];
@@ -378,12 +408,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       allAudios[trialNr - 1].currentTime = 0;
       const lastTrial = document.getElementById(`trial${trialNr - 1}`);
       lastTrial.style.display = "none";
-      imgElTalk.style.display = "block";
-
+      
       // betweenTrials.style.display = "flex";
       // betweenTrialsBackground.style.opacity = 1;
 
       const trialAudio = currentTrial.querySelector("audio");
+
+      if (!trialAudio.src.includes("Mmh")) {
+        imgElTalk.style.display = "block";
+      }
 
       // const TalkingImg = document.getElementById(
       // `background-talking`,
@@ -426,14 +459,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       betweenTrials.style.display = "none";
 
-      const backgroundImg = currentTrial.querySelector("#background");
-      if (backgroundImg) {
-        backgroundImg.style.display = "none";
-      }
-      // Hide the image with id "background-talking"
-      const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-      if (backgroundTalkingImg) {
-        backgroundTalkingImg.style.display = "block";
+      if (!trialAudio.src.includes("Mmh")) {
+        const backgroundImg = currentTrial.querySelector("#background");
+        if (backgroundImg) {
+          backgroundImg.style.display = "none";
+        }
+        // Hide the image with id "background-talking"
+        const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
+        if (backgroundTalkingImg) {
+          backgroundTalkingImg.style.display = "block";
+        }
       }
 
       //document.body.style.backgroundImage = "url('images/backgrounds/background01.png')";
@@ -469,6 +504,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       };
     }
     console.log(trialNr);
+    skipAdvance = false; // consume the flag so future continues behave normally
     trialNr++;
   };
 
@@ -486,7 +522,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   //   allAudios[trialNr].play(); 
   // };
 
-  let skipAdvance = false;
+  //let skipAdvance = false;
 
   const handleSpeakerClick = async (event) => {
     event.preventDefault();
@@ -495,7 +531,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (!currentTrial) return;
     
     if (currentTrial.classList.contains("Informativeness")) {
-      trialNr = trialNr - 3;             // point to the trial you want
+      trialNr = trialNr - 4;             // point to the trial you want
       skipAdvance = true;                 // don’t auto ++ on this pass
 
       const button = document.getElementById("prabat-button");
@@ -560,6 +596,19 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
       return;
     } else if (currentTrial.classList.contains("ListenerConversationalPerspectiveTaking")) {
+      trialNr = trialNr - 2;             // point to the trial you want
+      skipAdvance = true;                 // don’t auto ++ on this pass
+
+      const button = document.getElementById("prabat-button");
+      if (button) {
+        // reattach the listener because it was added with { once: true }
+        button.removeEventListener("click", handleContinueClick);
+        button.addEventListener("click", handleContinueClick, { capture: false, once: true });
+        button.click();
+        currentTrial.style.display = "none";
+      }
+      return;
+    } else if (currentTrial.classList.contains("IndirectRequest")) {
       trialNr = trialNr - 2;             // point to the trial you want
       skipAdvance = true;                 // don’t auto ++ on this pass
 

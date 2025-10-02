@@ -13,7 +13,7 @@
 "headingfullscreen": "Take as much time as you like.\n\nIf your child becomes restless or bored, you can take a short break at any time. \n\n If your child asks you for advice or is unsure, please say 'Show me what you think'. Everything your child answers is great. Please do not help your child with the tasks - after all, we want to learn something about children! \n\nPlease click on 'CONTINUE' now to activate full screen mode at.",
 "enterPseudo": "Please enter a pseudonym here:",
 "noiseQuestion": "Did you just hear a short tinkling sound? \n\nGreat! If you didn't hear it, please click on the speaker icon to test your sound. \n\n Please click on 'NEXT' now to start the game.",
-
+"goodbyeMessage": "The study has been completed successfully. The download of the data will start (please check pop-up).",
 "introImages": [
     "images/ger/backgrounds/start_1_waving.svg",
     "images/ger/backgrounds/start_1.svg",

@@ -2,6 +2,14 @@ import "./css/landingpages.css";
 import { loadLanguage } from "./js/loadLanguage.js";
 import { setButtonState } from "./js/setButtonState.js";
 
+const storedChoices = localStorage.getItem("storedChoices");
+let studyChoices;
+if (storedChoices) {
+  studyChoices = JSON.parse(storedChoices);
+} else {
+  console.error("No data found in local storage");
+}
+
 const button = document.getElementById("custom-button");
 const textField = document.getElementById("participant-id");
 const idCounter = document.getElementById("id-counter");
@@ -44,18 +52,16 @@ button.addEventListener("click", (event) => {
   }
 
   const webcam = getWebcamValue();
-  const params = new URLSearchParams(window.location.search);
-  const lang = params.get("lang");
+  const lang  = studyChoices?.lang || "ger";
 
-  localStorage.setItem("storedChoices", JSON.stringify({ ID: subjID, webcam }));
-  window.location.href = `./instructions.html?lang=${lang}&ID=${subjID}&webcam=${webcam}`;
+  localStorage.setItem("storedChoices", JSON.stringify({ ID: subjID, webcam: webcam, lang: lang }));
+  window.location.href = `./instructions.html`;
 });
 
 // Init
 (async () => {
+  const lang = studyChoices?.lang || "ger";
   setButtonState(button, false);     // start disabled
-  const params = new URLSearchParams(window.location.search);
-  const lang = params.get("lang") || "en";
 
   await loadLanguage(lang);          // localization may re-render the form
   wireUpWebcamHandlers();            // attach after DOM is ready
