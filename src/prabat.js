@@ -413,39 +413,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       // betweenTrialsBackground.style.opacity = 1;
 
       const trialAudio = currentTrial.querySelector("audio");
-
-      if (!trialAudio.src.includes("Mmh")) {
-        imgElTalk.style.display = "block";
-      }
-
-      // const TalkingImg = document.getElementById(
-      // `background-talking`,
-      // )
-      // const BackgroundImg = document.getElementById(
-      //     `background`,
-      // )
-      // await gsap
-      //     .timeline()
-      //     .to(BackgroundImg, {
-      //      onStart: () => {
-      //        trialAudio.play();
-      //        }  }
-      //     )
-      //     .to(BackgroundImg, {
-      //       duration: 0.5,
-      //       autoAlpha: 0,})
-      //     .to(TalkingImg, {
-      //       duration: 0.5,
-      //       autoAlpha: 1,}, '<')
-      //     .to(BackgroundImg, {
-      //       delay: 1,
-      //       duration: 0.5,
-      //       autoAlpha: 0,})
-      //     .to(TalkingImg, {
-      //       duration: 0.5,
-      //       autoAlpha: 1,}, '<')
-
-      //await pause(150);
+      const audioSrc =
+        (trialAudio && (trialAudio.currentSrc || trialAudio.src)) || "";
 
       // play audio of current trial
       // Play the audio element contained in currentTrial
@@ -459,7 +428,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       betweenTrials.style.display = "none";
 
-      if (!trialAudio.src.includes("Mmh")) {
+      if (!audioSrc.includes("Mmh")) {
         const backgroundImg = currentTrial.querySelector("#background");
         if (backgroundImg) {
           backgroundImg.style.display = "none";
