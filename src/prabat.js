@@ -221,6 +221,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           };
           prevResponseAudio.play();
         });
+        await pause(1000);
       }
     }
 
@@ -307,8 +308,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         } else if (currentImage.includes("start_3_parents")) {
           setTimeout(showNextImage, 4000);
         } else if (currentImage.includes("start_3_friends")) {
-         setTimeout(showNextImage, 12000);
-        } else if (currentImage.includes("start_4")) {
         }
 
         currentIndex++;
@@ -409,18 +408,17 @@ document.addEventListener("DOMContentLoaded", async function () {
       const lastTrial = document.getElementById(`trial${trialNr - 1}`);
       lastTrial.style.display = "none";
       
-      // betweenTrials.style.display = "flex";
-      // betweenTrialsBackground.style.opacity = 1;
 
-      const trialAudio = currentTrial.querySelector("audio");
-      const audioSrc =
-        (trialAudio && (trialAudio.currentSrc || trialAudio.src)) || "";
+      const trialAudio = currentTrial.querySelector("audio.prompt");
+      const audioSrc = (trialAudio.src);
 
       // play audio of current trial
       // Play the audio element contained in currentTrial
       
       if (trialAudio) {
         trialAudio.play();
+        console.log("This is:", trialAudio);
+        console.log("This is:", audioSrc);
       }
 
       // save response time start point
@@ -449,12 +447,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       currentTrial.style.display = "block";
 
-      const currentImages = Array.from(
-        currentTrial.getElementsByTagName("img")
-      );
+      const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
+      console.log(currentImages);
 
       trialAudio.onended = () => {
         // Show the image with id "background"
+        
         const backgroundImg = currentTrial.querySelector("#background");
         if (backgroundImg) {
           backgroundImg.style.display = "block";
@@ -464,10 +462,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (backgroundTalkingImg) {
           backgroundTalkingImg.style.display = "none";
         }
+        console.log("before adding event listener")
         currentImages.forEach((img) => {
+          console.log("event listener added")
           img.addEventListener("click", handleResponseClick, {
-        capture: false,
-        once: false,
+          capture: false,
+          once: false,
           });
         });
       };

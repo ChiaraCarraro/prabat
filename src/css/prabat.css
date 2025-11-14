@@ -201,6 +201,7 @@ body {
   z-index: -1;
   border: none;
   display: block;
+  pointer-events: none;
 }
 
 #background-start {
@@ -217,6 +218,7 @@ body {
   z-index: -1;
   border: none;
   display: block;
+  pointer-events: none;
 }
 
 
@@ -250,6 +252,7 @@ body {
   z-index: -1;
   border: none;
   display: block;
+  pointer-events: none;
 }
 
 #speaker:disabled {
@@ -266,18 +269,3 @@ body {
   margin-bottom: 1em;          /* optional spacing from edge */
 }
 
-#background-talking-preResponse { 
-  position: absolute;
-  margin: 0;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
-  object-position: center;
-  z-index: -1;
-  border: none;
-  display: block;
-}

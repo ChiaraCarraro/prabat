@@ -58,7 +58,7 @@
 
           <!-- START -->
           <div class="flex-sheet trials" style="display: none; height: 100%"> <!-- sistemare!!-->
-            <audio data-audio="intro.mp3"></audio>
+            <audio data-audio="intro.mp3" class="prompt"></audio>
             <img
                 id="background-start"
                 src=""
@@ -133,7 +133,7 @@
           <!-- Familiarization trial 2-->
 
           <div class="flex-sheet trials mutex-noun" style="display: none; height: 100%"> 
-            <audio class="prompt" data-audio="lemon.mp3"></audio>
+            <audio class="prompt" data-audio="Fam2.mp3"></audio>
             <audio class="preResponse" data-audio="Mmh1.mp3"></audio>
             <audio class="response" data-audio="ThankYou1.mp3"></audio>
             <img
@@ -157,14 +157,14 @@
                 <img
                   class="object"
                   data-word-category="target"
-                  src="images/objects/lemon.svg"
+                  data-img="objects/Fam2.svg"
                 />
               </div>
               <div id="center">
                 <img
                   class="object"
                   data-word-category="dist1"
-                  src="images/objects/car.svg"
+                  data-img="objects/Fam3.svg"
                 />
               </div>
               <div id="right">
@@ -249,7 +249,7 @@
               <div id="left">
                 <img
                   class="object"
-                  data-word-category="dist2"
+                  data-word-category="dist1"
                   src="images/objects/white_dog.svg"
                   style="height: auto; width: 50%; margin-bottom: 50px;"
                 />
@@ -257,7 +257,7 @@
               <div id="center">
                 <img
                   class="object"
-                  data-word-category="dist1"
+                  data-word-category="dist2"
                   src="images/objects/brown_dog.svg"
                   style="height: auto; width: 50%; margin-bottom: 50px;"
                 />
@@ -320,7 +320,7 @@
             </div>
           </div>
 
-          <!-- Scalar implicature A lot trial 6-->
+          <!-- Scalar implicature SOME trial 6-->
 
           <div class="flex-sheet trials scalimp-sing" style="display: none; height: 100%"> 
             <audio class="prompt" data-audio="SomeAnanas.mp3"></audio>
@@ -940,7 +940,7 @@
           </div>
 
           
-          <!-- Mutex verbs trial 15 -->
+          <!-- MUTEX verbs trial 15 -->
 
           <div class="flex-sheet trials adhocimp-ball" style="display: none; height: 100%"> 
             <audio class="prompt" data-audio="warbellingfriend.mp3"></audio>
@@ -1263,7 +1263,7 @@
                 <img
                   class="object"
                   data-word-category="dist1"
-                  src="images/objects/snake.svg"
+                  data-img="objects/DiscCont6.svg"
                   style="height: auto; width: 40%; margin-bottom: 50px;"
                 />
               </div>
@@ -2154,7 +2154,7 @@
               <div id="center">
                 <img
                   class="object"
-                  data-word-category="dist3"
+                  data-word-category="dist1"
                   src="images/objects/novel_H.svg"
                   style="height: auto; width: 70%;"
                 />
@@ -2162,7 +2162,7 @@
               <div id="right">
                 <img
                   class="object"
-                  data-word-category="dist1"
+                  data-word-category="dist2"
                   src="images/objects/novel_I.svg"
                   style="height: auto; width: 50%;"
                 />
@@ -2183,7 +2183,7 @@
                 data-img="backgrounds/background_task_talking.svg"
             />
           </div>
-
+ 
           <!-- GESTURE 1 - trial 23 -->
 
           <!-- transition slide - ella looks at brother -->
@@ -2712,8 +2712,6 @@
             </div>
           </div>
 
-
-
           <!-- GESTURE 2 - trial 28 -->
 
           <!-- transition slide - ella looks at brother -->
@@ -2826,7 +2824,7 @@
                 <img
                   class="object transition"
                   data-word-category="target"
-                  data-img="objects/boy_C_back_walking.svg"
+                  data-img="objects/boy_C_brokenFoot.svg"
                   style="height: auto; width: 40%; margin-bottom: 30vh; transform: scaleX(-1);"
                 />
               </div>
@@ -2868,7 +2866,7 @@
                 <img
                   class="object"
                   data-word-category="target"
-                  data-img="objects/boy_C_back_walking.svg"
+                  data-img="objects/boy_C_brokenFoot.svg"
                   style="height: auto; width: 40%; margin-bottom: 30vh; transform: scaleX(-1);"
                 />
               </div>
@@ -2924,7 +2922,7 @@
           <!-- gesture 3 CRITICAL -->
 
           <div class="flex-sheet trials Gesture" style="display: none; height: 100%"> 
-            <audio class="prompt" data-audio="WhatShouldIDo.mp3" ></audio>
+            <audio class="prompt" data-audio="WhatShouldIDoClickOnPic.mp3" ></audio>
             <audio class="preResponse" data-audio="Aha.mp3"></audio>
             <audio class="response" data-audio="ThankYou4Tip.mp3"></audio>
             <img
@@ -2947,7 +2945,7 @@
               <div id="left">
                 <img
                   class="object"
-                  data-word-category="target"
+                  data-word-category="dist1"
                   data-img="objects/Gesture_item3_option2.svg"
                   style="height: auto; width: 80%; margin-top: 11vh; opacity: 1;"
                 />
@@ -2955,7 +2953,7 @@
               <div id="center">
                 <img
                   class="object"
-                  data-word-category="dist1"
+                  data-word-category="dist2"
                   data-img="objects/Gesture_item3_option3.svg"
                   style="height: auto; width: 80%; margin-top: 11vh; opacity: 1;"
                 />
@@ -2963,14 +2961,13 @@
               <div id="right">
                 <img
                   class="object"
-                  data-word-category="dist2"
+                  data-word-category="target"
                   data-img="objects/Gesture_item3_option1.svg"
                   style="height: auto; width: 80%; margin-top: 11vh; opacity: 1;"
                 />
               </div>
             </div>
           </div>
-
 
           <!-- end of main-flex-sheet -->
         </div>
