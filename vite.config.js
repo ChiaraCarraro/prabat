@@ -4,7 +4,7 @@ import { resolve } from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '', // Use relative paths for assets
+  base: './', // Use relative paths for sub folder
   root: './src', // Set the root directory to 'src'
   publicDir: '../public', // Set the public directory to 'public', use .. so it is not nested within the src folder
   build: {
@@ -66,7 +66,7 @@ export default defineConfig({
 
       injectManifest: {
         globPatterns: ['**/*.{js,json,css,html,svg,png,ico,mp3,gif}'],
-        maximumFileSizeToCacheInBytes: 500000000000,
+        maximumFileSizeToCacheInBytes: 520000000,
       },
 
       devOptions: {
@@ -77,9 +77,9 @@ export default defineConfig({
       },
       // to cache images and pdfs, serve them offline
       workbox: {
-        globPatterns: ['**/*.{js,json,css,html,svg,png,ico,mp3,pdf,gif}'],
+        globPatterns: ['**/*.{js,json,css,html,svg,png,ico,mp3,gif}'],
       },
-      includeAssets: ['**/*.{js,json,css,html,svg,png,ico,mp3,pdf,gif}'],
+      includeAssets: ['**/*.{js,json,css,html,svg,png,ico,mp3,gif}'],
     }),
   ],
   resolve: {

@@ -1,7 +1,5 @@
 import "./css/prabat.css";
-import * as mrec from "@ccp-eva/media-recorder";
 import * as DetectRTC from "detectrtc";
-import { gsap } from "gsap";
 
 import { downloadData } from "./js/downloadData.js";
 import { uploadData } from "./js/uploadData.js";
@@ -15,6 +13,9 @@ import { checkForTouchscreen } from "./js/checkForTouchscreen.js";
 import { loadLanguage } from "./js/loadLanguage.js";
 import { applyLocalizedAudioPaths } from "./js/applyLocalizedAudioPaths.js";
 import { applyLocalizedImagePaths } from "./js/applyLocalizedImagePaths.js";
+import { preloadAudios } from "./js/preloadAudios.js";
+import { preloadImages } from "./js/preloadImages.js";
+import { startRecording, initMedia, isMediaRecorderSupported, stopRecording, downloadLastRecording } from "./js/mediaRecorderServices.js";
 
 const storedChoices = localStorage.getItem("storedChoices");
 let studyChoices;
@@ -26,11 +27,17 @@ if (storedChoices) {
 const lang = studyChoices?.lang || "ger"; // fallback to English
 
 document.addEventListener("DOMContentLoaded", async function () {
-  await loadLanguage(lang);
-  
-  applyLocalizedImagePaths(lang); 
-  applyLocalizedAudioPaths(lang);  
-
+  try{
+    await loadLanguage(lang);
+    applyLocalizedImagePaths(lang); 
+    applyLocalizedAudioPaths(lang);  
+    await preloadAudios(lang);
+    await preloadImages(lang);
+  }
+  catch (err){
+    console.error("Error during initialization:", err);
+    return;
+  }
 
   const devmode = false;
 
@@ -244,7 +251,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       openFullscreen();
       headingFullscreen.style.display = "none";
       headingTestsound.style.display = "inline";
-      speaker.setAttribute("visibility", "visible");
+      speaker.style.display= "block";
       await pause(1000);
       // for safari, first sound needs to happen on user interaction
       allAudios[trialNr].play();
@@ -258,29 +265,23 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     // end of trials
-    if (trialNr === trialDivs.length) {
+    if (trialNr === 3) {
+
+      await stopRecording();
+      await uploadData(responseLog.data, responseLog.meta.subjID);
+      await pause(3000);
       await downloadData(responseLog.data, responseLog.meta.subjID);
       await pause(3000);
       await downloadVideo(
-        responseLog.meta.iOSSafari,
         responseLog.meta.webcam,
         responseLog.meta.subjID,
-        mrec
       );
-      await pause(5000);
-      await uploadData(responseLog.data, responseLog.meta.subjID);
-      // await pause(2000);
-      
-      // debugger;
-      // // await pause(2000);
-      // await uploadVideo(
-      //   responseLog.meta.iOSSafari,
-      //   responseLog.meta.webcam,
-      //   responseLog.meta.subjID,
-      //   mrec
-      // );
-      // debugger;
-      // await pause(3000);
+      await pause(2000);
+      await uploadVideo(
+        responseLog.meta.webcam,
+        responseLog.meta.subjID,
+      );
+      await pause(3000);
       studyChoices.ID = responseLog.meta.subjID;
       window.location.href = `./goodbye.html`;
     }
@@ -694,10 +695,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     await pause(500);
 
     // ---------------------------------------------------------------------------------------------------------------------
-    // FOR DEMO: Conditional Recording based on URL Params (only if not iOS Safari)
+    // FOR DEMO: Conditional Recording (only if not iOS Safari)
     // ---------------------------------------------------------------------------------------------------------------------
-    if (!responseLog.meta.iOSSafari && responseLog.meta.webcam === "true") {
-      mrec.startRecorder({
+    //if (!responseLog.meta.iOSSafari && responseLog.meta.webcam === "true") {
+    if (!isMediaRecorderSupported()) {
+    console.log("MediaRecorder is not supported in this browser.");
+    }
+    else if (responseLog.meta.webcam === "true") {
+      try {
+        console.log("Requesting camera/microphone...");
+        await initMedia();
+        console.log("Camera ready. You can start recording.");
+
+        startRecording({
         audio: true,
         video: {
           frameRate: {
@@ -718,6 +728,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           facingMode: "user",
         },
       });
+      console.log("Recording started.");
+      } catch (error) {
+        console.error("Failed to access camera/microphone:", error);
+      }
     }
 
     await pause(2500);
