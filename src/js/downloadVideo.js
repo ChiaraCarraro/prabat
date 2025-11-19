@@ -1,13 +1,12 @@
-
+import { downloadLastRecording } from "./mediaRecorderServices";
 // ---------------------------------------------------------------------------------------------------------------------
 // FUNCTION FOR DOWNLOADING DATA LOCALLY; WITH BLOB
 // ---------------------------------------------------------------------------------------------------------------------
-export async function downloadVideo(iOSSafari, webcam, subjID, mrec) {
+export async function downloadVideo(webcam, subjID) {
 
   try {
     debugger;
-    if (!iOSSafari && (webcam === "true"))  {
-        mrec.stopRecorder();
+    if (webcam === "true")  {
 
         // give some time to create Video Blob
 
@@ -17,13 +16,13 @@ export async function downloadVideo(iOSSafari, webcam, subjID, mrec) {
 
         // save video locally
         setTimeout(() => {
-          mrec.downloadVideo(
+         downloadLastRecording(
           `prabat-${subjID}-${day}-${time}`,
         );
         }, 2000);
             
       }
     } catch (error) {
-      console.error('Error uploading video:', error);
+      console.error('Error downloading video:', error);
     }
 }

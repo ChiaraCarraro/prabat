@@ -1,0 +1,226 @@
+let mediaStream = null;
+let mediaRecorder = null;
+let recordedChunks = [];
+let lastRecordedBlob = null;
+let stopPromiseResolve = null;
+
+/**
+ * Initialize camera + (optionally) microphone and attach to a <video> element.
+ *
+ * @param {HTMLVideoElement} videoElement - The video element for live preview.
+ * @param {MediaStreamConstraints} [constraints] - Optional getUserMedia constraints.
+ * @returns {Promise<MediaStream>}
+ */
+export async function initMedia(videoElement, constraints = { video: true, audio: true }) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    throw new Error("getUserMedia is not supported in this browser.");
+  }
+
+  // Stop any existing stream tracks
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(track => track.stop());
+    mediaStream = null;
+  }
+
+  mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+  if (videoElement) {
+    videoElement.srcObject = mediaStream;
+    videoElement.playsInline = true; // for iOS
+    await videoElement.play().catch(() => {
+      // autoplay might be blocked, ignore here
+    });
+  }
+
+  return mediaStream;
+}
+
+/**
+ * Start recording the existing mediaStream.
+ *
+ * @param {Object} [options]
+ * @param {string} [options.mimeType] - Preferred MIME type for recording.
+ */
+export function startRecording(options = {}) {
+  if (!mediaStream) {
+    throw new Error("Media stream is not initialized. Call initMedia() first.");
+  }
+
+  // Reset previous recording
+  recordedChunks = [];
+  lastRecordedBlob = null;
+
+  const { mimeType } = options;
+
+  let supportedMimeType = null;
+  if (mimeType && MediaRecorder.isTypeSupported(mimeType)) {
+    supportedMimeType = mimeType;
+  } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")) {
+    supportedMimeType = "video/webm;codecs=vp9,opus";
+  } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")) {
+    supportedMimeType = "video/webm;codecs=vp8,opus";
+  } else if (MediaRecorder.isTypeSupported("video/webm")) {
+    supportedMimeType = "video/webm";
+  } else {
+    // Let the browser decide
+    supportedMimeType = "";
+  }
+
+  try {
+    mediaRecorder = supportedMimeType
+      ? new MediaRecorder(mediaStream, { mimeType: supportedMimeType })
+      : new MediaRecorder(mediaStream);
+  } catch (err) {
+    console.error("Failed to create MediaRecorder:", err);
+    throw err;
+  }
+
+  mediaRecorder.ondataavailable = event => {
+    if (event.data && event.data.size > 0) {
+      recordedChunks.push(event.data);
+    }
+  };
+
+  mediaRecorder.onerror = event => {
+    console.error("MediaRecorder error:", event.error);
+  };
+
+  mediaRecorder.onstop = () => {
+    lastRecordedBlob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || "video/webm" });
+    if (stopPromiseResolve) {
+      stopPromiseResolve(lastRecordedBlob);
+      stopPromiseResolve = null;
+    }
+  };
+
+  mediaRecorder.start(); // You can add timeslice if you want data every X ms
+}
+
+/**
+ * Stop recording and return a Promise that resolves to the recorded Blob.
+ *
+ * @returns {Promise<Blob>}
+ */
+export function stopRecording() {
+  if (!mediaRecorder || mediaRecorder.state !== "recording") {
+    return Promise.reject(new Error("No active recording to stop."));
+  }
+
+  return new Promise(resolve => {
+    stopPromiseResolve = resolve;
+    mediaRecorder.stop();
+  });
+}
+
+/**
+ * Get the last recorded Blob (if any).
+ *
+ * @returns {Blob|null}
+ */
+export function getLastRecordingBlob() {
+  return lastRecordedBlob;
+}
+
+/**
+ * Create an object URL from the last recorded Blob.
+ *
+ * @returns {string|null} - URL for use in <video src>, <a href>, etc.
+ */
+export function getLastRecordingUrl() {
+  if (!lastRecordedBlob) return null;
+  return URL.createObjectURL(lastRecordedBlob);
+}
+
+/**
+ * Download the last recorded video as a file.
+ *
+ * @param {string} [filename="recording.webm"]
+ */
+export function downloadLastRecording(filename = "recording.webm") {
+  if (!lastRecordedBlob) {
+    throw new Error("No recording available to download.");
+  }
+
+  const url = URL.createObjectURL(lastRecordedBlob);
+  const a = document.createElement("a");
+  a.style.display = "none";
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Upload the last recorded video to a server endpoint.
+ *
+ * Compatible with PHP:
+ *   $target_path = "./" . basename($_FILES["vidfile"]["name"] . ".webm");
+ *
+ * @param {string} endpointUrl - Your PHP upload script (e.g. "/upload.php").
+ * @param {Object} [options]
+ * @param {string} [options.fieldName="vidfile"] - FormData field name (matches PHP $_FILES[...] key).
+ * @param {string} [options.filename="recording"] - Base filename WITHOUT extension.
+ * @param {Object} [options.additionalData] - Extra key/value pairs to send.
+ * @param {RequestInit} [options.fetchOptions] - Extra fetch options (headers, etc.).
+ * @returns {Promise<Response>}
+ */
+export async function uploadLastRecording(
+  endpointUrl,
+  {
+    fieldName = "vidfile",     // <-- important for your PHP
+    filename = "recording",    // <-- no ".webm" so PHP adds it once
+    additionalData = {},
+    fetchOptions = {}
+  } = {}
+) {
+    debugger;
+  if (!lastRecordedBlob) {
+    throw new Error("No recording available to upload.");
+  }
+
+  const formData = new FormData();
+
+  // This will appear as $_FILES["vidfile"]
+  // with name = "recording" and type like "video/webm"
+  formData.append(fieldName, lastRecordedBlob, filename);
+
+  // Add extra form fields if needed
+  Object.entries(additionalData).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+
+  const response = await fetch(endpointUrl, {
+    method: "POST",
+    body: formData,
+    ...fetchOptions
+  });
+
+  if (!response.ok) {
+    throw new Error(`Upload failed with status ${response.status}`);
+  }
+
+  return response;
+}
+
+
+/**
+ * Stop the current media stream (camera/mic).
+ * Useful when leaving the page or after user is done.
+ */
+export function stopMediaStream() {
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(track => track.stop());
+    mediaStream = null;
+  }
+}
+
+/**
+ * Check if the browser supports MediaRecorder.
+ *
+ * @returns {boolean}
+ */
+export function isMediaRecorderSupported() {
+  return typeof MediaRecorder !== "undefined";
+}

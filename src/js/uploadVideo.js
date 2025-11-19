@@ -1,28 +1,22 @@
 
+import { uploadLastRecording, isMediaRecorderSupported } from "./mediaRecorderServices";
 // ---------------------------------------------------------------------------------------------------------------------
 // FUNCTION FOR DOWNLOADING DATA LOCALLY; WITH BLOB
 // ---------------------------------------------------------------------------------------------------------------------
-export async function uploadVideo(iOSSafari, webcam, subjID, mrec) {
+export async function uploadVideo(webcam, subjID) {
 
   try {
     debugger;
-    if (!iOSSafari && (webcam === "true")) {
-        mrec.stopRecorder();
-
+   if ((webcam === "true"))  {
         // give some time to create Video Blob
 
         const day = new Date().toISOString().substring(0, 10);
         const time = new Date().toISOString().substring(11, 19);
-        // save video on server
-        
-        setTimeout(() => {
-          mrec.uploadVideo(
-          {
-            fname: `prabat-${subjID}-${day}-${time}`
-          },
-          './data/upload_video.php',
-        );
-        }, 2000);     
+        try {
+          await uploadLastRecording('./data/upload_video.php', { filename: `prabat-${subjID}-${day}-${time}` })
+        } catch (error) {
+          console.log("Error is in upload video");
+        }
       }
       
       

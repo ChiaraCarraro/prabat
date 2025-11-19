@@ -8,7 +8,9 @@
         "fetchdata": "sh src/scripts/fetchdata.sh",
         "dev": "bun vite",
         "build": "bun vite build",
-        "preview": "bun vite preview"
+        "preview": "bun vite preview",
+        "generateImageJSON": "bun run src/scripts/generateImageJSON.js",
+        "generateAudioJSON": "bun run src/scripts/generateAudioJSON.js"
     },
     "keywords": [],
     "author": "",
@@ -17,8 +19,7 @@
         "@ccp-eva/media-recorder": "^2.1.1",
         "@vite-pwa/assets-generator": "^1.0.0",
         "babel": "^6.23.0",
-        "detectrtc": "^1.4.1",
-        "gsap": "^3.13.0"
+        "detectrtc": "^1.4.1"
     },
     "devDependencies": {
         "@babel/core": "^7.26.0",

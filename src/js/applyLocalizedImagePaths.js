@@ -8,6 +8,6 @@ export const applyLocalizedImagePaths = (lang) => {
   const allImgs = document.querySelectorAll("[data-img]");
   allImgs.forEach(img => {
     const relPath = img.getAttribute("data-img");
-    img.src = `images/${folder}/${relPath}`;
+    img.src = new URL(`images/${folder}/${relPath}`, document.baseURI).toString();
   });
 }
