@@ -1,7 +1,7 @@
 {
     "name": "prabat",
     "version": "1.0.0",
-    "description": "",
+    "description": "Link to task (in German): https://devpsy.web.leuphana.de/prabat",
     "main": "src/index.js",
     "scripts": {
         "deploy": "sh src/scripts/deploy.sh",
@@ -19,6 +19,7 @@
         "@ccp-eva/media-recorder": "^2.1.1",
         "@vite-pwa/assets-generator": "^1.0.0",
         "babel": "^6.23.0",
+        "cheerio": "^1.1.2",
         "detectrtc": "^1.4.1"
     },
     "devDependencies": {
@@ -34,5 +35,14 @@
         "vite": "^7.0.5",
         "vite-plugin-pwa": "^1.0.1",
         "webpack-dev-server": "^5.1.0"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ChiaraCarraro/prabat.git"
+    },
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/ChiaraCarraro/prabat/issues"
+    },
+    "homepage": "https://github.com/ChiaraCarraro/prabat#readme"
 }

@@ -15,7 +15,7 @@ import { applyLocalizedAudioPaths } from "./js/applyLocalizedAudioPaths.js";
 import { applyLocalizedImagePaths } from "./js/applyLocalizedImagePaths.js";
 import { preloadAudios } from "./js/preloadAudios.js";
 import { preloadImages } from "./js/preloadImages.js";
-import { startRecording, initMedia, isMediaRecorderSupported, stopRecording, downloadLastRecording } from "./js/mediaRecorderServices.js";
+import { startRecording, initMedia, isMediaRecorderSupported, stopRecording } from "./js/mediaRecorderServices.js";
 
 const storedChoices = localStorage.getItem("storedChoices");
 let studyChoices;
@@ -265,7 +265,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     // end of trials
-    if (trialNr === 3) {
+    if (trialNr === trialDivs.length) {
 
       await stopRecording();
       await uploadData(responseLog.data, responseLog.meta.subjID);

@@ -1,5 +1,5 @@
 
-import { uploadLastRecording, isMediaRecorderSupported } from "./mediaRecorderServices";
+import { uploadLastRecording } from "./mediaRecorderServices";
 // ---------------------------------------------------------------------------------------------------------------------
 // FUNCTION FOR DOWNLOADING DATA LOCALLY; WITH BLOB
 // ---------------------------------------------------------------------------------------------------------------------
