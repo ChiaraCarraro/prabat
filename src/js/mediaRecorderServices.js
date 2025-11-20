@@ -153,56 +153,98 @@ export function downloadLastRecording(filename = "recording.webm") {
 }
 
 /**
- * Upload the last recorded video to a server endpoint.
+ * Upload the last recorded video in chunks to a server endpoint.
  *
- * Compatible with PHP:
- *   $target_path = "./" . basename($_FILES["vidfile"]["name"] . ".webm");
+ * The server receives each chunk as a normal file upload, plus metadata:
+ *   - uploadId       : unique ID for this upload
+ *   - chunkIndex     : index of this chunk (0-based)
+ *   - totalChunks    : total number of chunks
+ *   - originalFilename: final file name (e.g. "recording.webm")
  *
- * @param {string} endpointUrl - Your PHP upload script (e.g. "/upload.php").
+ * @param {string} endpointUrl - Your PHP chunk handler (e.g. "/upload_chunked.php").
  * @param {Object} [options]
  * @param {string} [options.fieldName="vidfile"] - FormData field name (matches PHP $_FILES[...] key).
- * @param {string} [options.filename="recording"] - Base filename WITHOUT extension.
- * @param {Object} [options.additionalData] - Extra key/value pairs to send.
+ * @param {string} [options.filename="recording.webm"] - Final desired file name.
+ * @param {number} [options.chunkSize=1024*1024] - Chunk size in bytes (default 1MB).
+ * @param {Object} [options.additionalData] - Extra key/value pairs to send with every chunk.
  * @param {RequestInit} [options.fetchOptions] - Extra fetch options (headers, etc.).
- * @returns {Promise<Response>}
+ * @param {Function} [options.onProgress] - Callback(progress, info) where progress is 0–1.
+ * @returns {Promise<Response>} - The response of the **last** chunk request.
  */
-export async function uploadLastRecording(
+export async function uploadLastRecordingInChunks(
   endpointUrl,
   {
-    fieldName = "vidfile",     // <-- important for your PHP
-    filename = "recording",    // <-- no ".webm" so PHP adds it once
+    fieldName = "vidfile",
+    filename = "recording.webm",
+    chunkSize = 1024 * 1024 * 5, // 5MB
     additionalData = {},
-    fetchOptions = {}
+    fetchOptions = {},
+    onProgress
   } = {}
 ) {
-    debugger;
   if (!lastRecordedBlob) {
     throw new Error("No recording available to upload.");
   }
 
-  const formData = new FormData();
+  const totalSize = lastRecordedBlob.size;
+  const totalChunks = Math.ceil(totalSize / chunkSize);
 
-  // This will appear as $_FILES["vidfile"]
-  // with name = "recording" and type like "video/webm"
-  formData.append(fieldName, lastRecordedBlob, filename);
+  // Unique ID for this upload (so the server can group chunks)
+  const uploadId =
+    Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
 
-  // Add extra form fields if needed
-  Object.entries(additionalData).forEach(([key, value]) => {
-    formData.append(key, value);
-  });
+  let uploadedBytes = 0;
+  let lastResponse = null;
 
-  const response = await fetch(endpointUrl, {
-    method: "POST",
-    body: formData,
-    ...fetchOptions
-  });
+  for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+    const start = chunkIndex * chunkSize;
+    const end = Math.min(start + chunkSize, totalSize);
+    const chunk = lastRecordedBlob.slice(start, end);
 
-  if (!response.ok) {
-    throw new Error(`Upload failed with status ${response.status}`);
+    const formData = new FormData();
+    formData.append(fieldName, chunk, filename);
+
+    // Chunk metadata
+    formData.append("uploadId", uploadId);
+    formData.append("chunkIndex", chunkIndex.toString());
+    formData.append("totalChunks", totalChunks.toString());
+    formData.append("originalFilename", filename);
+
+    // Any extra fields you want
+    Object.entries(additionalData).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    const response = await fetch(endpointUrl, {
+      method: "POST",
+      body: formData,
+      ...fetchOptions
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Chunk upload failed at index ${chunkIndex} with status ${response.status}`
+      );
+    }
+
+    lastResponse = response;
+
+    uploadedBytes = end;
+    if (typeof onProgress === "function") {
+      const progress = uploadedBytes / totalSize;
+      onProgress(progress, {
+        uploadedBytes,
+        totalBytes: totalSize,
+        chunkIndex,
+        totalChunks,
+        uploadId
+      });
+    }
   }
 
-  return response;
+  return lastResponse;
 }
+
 
 
 /**

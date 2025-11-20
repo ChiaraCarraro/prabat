@@ -266,24 +266,32 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // end of trials
     if (trialNr === trialDivs.length) {
-
-      await stopRecording();
-      await uploadData(responseLog.data, responseLog.meta.subjID);
-      await pause(3000);
-      await downloadData(responseLog.data, responseLog.meta.subjID);
-      await pause(3000);
-      await downloadVideo(
-        responseLog.meta.webcam,
-        responseLog.meta.subjID,
-      );
-      await pause(2000);
-      await uploadVideo(
-        responseLog.meta.webcam,
-        responseLog.meta.subjID,
-      );
-      await pause(3000);
       studyChoices.ID = responseLog.meta.subjID;
+      const overlay = document.querySelector("#uploadOverlay");
+      overlay.classList.remove("hidden");
+      await stopRecording();
+
+      try {
+        // Show fullscreen overlay (spinner)
+
+        await uploadData(responseLog.data, responseLog.meta.subjID);
+        await pause(5000);
+        await uploadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
+        await pause(2000);
+      } catch (err) {
+        console.error("Error during uploading processing:", err);
+      } 
+
+      try {
+        await downloadData(responseLog.data, responseLog.meta.subjID);
+        await pause(5000);
+        await downloadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
+        await pause(2000);
+      } catch (err) {
+        console.error("Error during uploading processing:", err);
+      } 
       window.location.href = `./goodbye.html`;
+       overlay.classList.add("hidden");
     }
 
     // Story
