@@ -1,13 +1,36 @@
 import "./css/landingpages.css";
 import { loadLanguage } from "./js/loadLanguage.js"; // adjust path as needed
 
-let studyChoices;
+// Check if the URL contains any parameters
+const urlParams = new URLSearchParams(window.location.search);
+console.log(urlParams.toString());
+if (urlParams.toString()) {
+  // If there are URL parameters, save them in an object
+  const storedChoices = {};
+  urlParams.forEach((value, key) => {
+    storedChoices[key] = value;
+  });
+
+  // Save the object to localStorage for persistence
+  localStorage.setItem('storedChoices', JSON.stringify(storedChoices));
+
+  // Hide the URL parameter after saving it in local storage
+  window.history.replaceState(null, document.title, window.location.pathname);
+} else {
+  console.log('No URL parameters found.');
+}
+
 const storedChoices = localStorage.getItem("storedChoices");
+let studyChoices;
 if (storedChoices) {
   studyChoices = JSON.parse(storedChoices);
 } else {
   console.error("No data found in local storage");
 }
+
+// get and store parameters. If local storage is empty, set default values
+studyChoices.ID = studyChoices?.ID ?? 'testID';
+studyChoices.webcam = (studyChoices?.webcam=="true").toString();
 
 const button = document.getElementById("instructions-button");
 
