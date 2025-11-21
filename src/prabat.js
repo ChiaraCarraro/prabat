@@ -267,31 +267,39 @@ document.addEventListener("DOMContentLoaded", async function () {
     // end of trials
     if (trialNr === trialDivs.length) {
       studyChoices.ID = responseLog.meta.subjID;
+      // Show fullscreen overlay (spinner
       const overlay = document.querySelector("#uploadOverlay");
       overlay.classList.remove("hidden");
       await stopRecording();
 
       try {
-        // Show fullscreen overlay (spinner)
 
         await uploadData(responseLog.data, responseLog.meta.subjID);
-        await pause(5000);
-        await uploadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
         await pause(2000);
       } catch (err) {
         console.error("Error during uploading processing:", err);
       } 
-
+      try {
+        await uploadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
+        await pause(5000);
+      } catch (err) {
+        console.error("Error during uploading processing:", err);
+      } 
       try {
         await downloadData(responseLog.data, responseLog.meta.subjID);
         await pause(5000);
+      } catch (err) {
+        console.error("Error during uploading processing:", err);
+      } 
+      try {
         await downloadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
         await pause(2000);
       } catch (err) {
         console.error("Error during uploading processing:", err);
       } 
-      window.location.href = `./goodbye.html`;
-       overlay.classList.add("hidden");
+      //window.location.href = `./goodbye.html`;
+      overlay.classList.add("hidden");
+      window.location.href = `https://devpsy.web.leuphana.de/prabat-consent/goodbye.html`;
     }
 
     // Story
