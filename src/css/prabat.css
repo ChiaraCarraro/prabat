@@ -36,6 +36,7 @@ body {
   margin: 0 5vw;
   display: flex;
   align-items: center;
+  background-color: #f5f7fd;
   /*border: 2px solid blue;*/
   /*background-color: #faf5e7;*/
 }

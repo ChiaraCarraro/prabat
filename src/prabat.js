@@ -273,7 +273,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       await stopRecording();
 
       try {
-
         await uploadData(responseLog.data, responseLog.meta.subjID);
         await pause(2000);
       } catch (err) {
@@ -344,7 +343,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     // transition images for trials that need multiple slides
 
     if (currentTrial.classList.contains("transitionSlide")) {
-      console.log(286);
       betweenTrialsBackground.src = "images/backgrounds/background_empty.svg";
       headingTestsound.style.display = "none";
       // pause audio (that might be playing if speaker item was clicked and prompt was repeated)
@@ -413,7 +411,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
 
       const imgElTalk = document.getElementById("background-talking");
-      if (imgEl && window.localizedImages?.background) {
+      if (imgElTalk && window.localizedImages?.background) {
         imgElTalk.src = window.localizedImages.background;
       }
 

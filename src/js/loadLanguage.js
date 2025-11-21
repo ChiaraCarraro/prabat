@@ -28,6 +28,7 @@ export async function loadLanguage(langCode) {
       { id: "webcam-question", key: "webcamquestion" },
       { id: "yes", key: "yes" },
       { id: "no", key: "no" },
+      { id: "dataDisclaimer", key: "dataDisclaimer" },
       { id: "imageDisclaimer", key: "imageDisclaimer" },
       { id: "start-button", key: "startButton" },
       { id: "theGame", key: "theGame" },
