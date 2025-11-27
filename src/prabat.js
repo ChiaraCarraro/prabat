@@ -16,6 +16,7 @@ import { applyLocalizedImagePaths } from "./js/applyLocalizedImagePaths.js";
 import { preloadAudios } from "./js/preloadAudios.js";
 import { preloadImages } from "./js/preloadImages.js";
 import { startRecording, initMedia, isMediaRecorderSupported, stopRecording } from "./js/mediaRecorderServices.js";
+import { playAudio, allAudios } from "./js/playAudios.js";
 
 const storedChoices = localStorage.getItem("storedChoices");
 let studyChoices;
@@ -40,6 +41,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   const devmode = false;
+
+  const domAudios = [...document.querySelectorAll("audio")];
+  allAudios.push(...domAudios);
 
   //------------------------------------------------------------------
   // automatically add running trial numbers as ids to html
@@ -99,7 +103,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   //------------------------------------------------------------------
   // get relevant elements
   //------------------------------------------------------------------
-  const allAudios = document.getElementsByTagName("audio");
   const betweenTrials = document.getElementById("between-trials");
   const betweenTrialsBackground = document.getElementById(
     "between-trials-background"
@@ -138,7 +141,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Disable the button while audio is playing
       button.disabled = true;
       button.style.backgroundColor = "hsl(199, 100%, 21%)";
-      responseAudio.play();
+      //responseAudio.play();
+      playAudio(responseAudio);
       const backgroundImg = currentTrial.querySelector("#background");
       // show the image with id "background-talking"
       const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
@@ -217,6 +221,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           backgroundTalkingImg.style.display = "block";
         }
 
+      
         await new Promise((resolve) => {
           prevResponseAudio.onended = () => {
             // Show the image with id "background"
@@ -229,7 +234,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
             resolve();
           };
-          prevResponseAudio.play();
+          //prevResponseAudio.play();
+          playAudio(prevResponseAudio);
         });
         await pause(1000);
       }
@@ -257,7 +263,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       speaker.style.display= "block";
       await pause(1000);
       // for safari, first sound needs to happen on user interaction
-      allAudios[trialNr].play();
+      //allAudios[trialNr].play();
+      playAudio(allAudios[trialNr]);
 
       await pause(1000);
 
@@ -363,7 +370,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (currentTrial.classList.contains("silent") == false) {
         // play audio of current trial
         if (trialAudio) {
-          trialAudio.play();
+          //trialAudio.play();
+          playAudio(trialAudio);
           console.log(trialAudio);
         }
       }
@@ -423,6 +431,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       // pause audio (that might be playing if speaker item was clicked and prompt was repeated)
       allAudios[trialNr - 1].pause();
       allAudios[trialNr - 1].currentTime = 0;
+
       const lastTrial = document.getElementById(`trial${trialNr - 1}`);
       lastTrial.style.display = "none";
       
@@ -434,9 +443,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Play the audio element contained in currentTrial
       
       if (trialAudio) {
-        trialAudio.play();
+        //trialAudio.play();
+        playAudio(trialAudio);
         console.log("This is:", trialAudio);
         console.log("This is:", audioSrc);
+        // disable speaker during playback
+        speaker.style.pointerEvents = "none";
       }
 
       // save response time start point
@@ -481,6 +493,11 @@ document.addEventListener("DOMContentLoaded", async function () {
           backgroundTalkingImg.style.display = "none";
         }
         console.log("before adding event listener")
+
+        // enable speaker again
+        speaker.style.pointerEvents = "auto";
+        console.log("speaker enabled");
+        
         currentImages.forEach((img) => {
           console.log("event listener added")
           img.addEventListener("click", handleResponseClick, {
@@ -678,7 +695,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     } else if (currentTrial.id === "trial0") {
       const testSoundElement = document.getElementById('testsound');
       if (testSoundElement) {
-        testSoundElement.play();
+        //testSoundElement.play();
+        playAudio(testSoundElement);
       } else {
         console.warn('Element with ID "testsound" not found.');
       }
@@ -706,7 +724,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // (re)start the audio
       trialAudio.currentTime = 0;
-      await trialAudio.play();
+      //await trialAudio.play();
+      await playAudio(trialAudio);
       console.log("played");
       const backgroundImg = currentTrial.querySelector("#background");
       if (backgroundImg) {
