@@ -15,7 +15,7 @@ body {
 
 .heading {
     font-family: "PT Sans Narrow", sans-serif;;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 3.5em;
     letter-spacing: calc(20rem / 1000);
     color: var(--ccp-minerva-green);

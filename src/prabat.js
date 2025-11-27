@@ -163,6 +163,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       };
     }
 
+    button.disabled = false;
+    button.style.backgroundColor = "hsl(199, 100%, 21%)";
+
     // save response
     // trial - 2 since array starts at zero (-1) and continue click already advanced trial count (-1)
     responseLog.data[trialNr - 2] = {
@@ -524,6 +527,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         button.removeEventListener("click", handleContinueClick);
         button.addEventListener("click", handleContinueClick, { capture: false, once: true });
         button.click();
+        const currentImages = Array.from(currentTrial.getElementsByTagName("img"));
+        currentImages.forEach((img) => {
+          img.style.border = "transparent";
+        });
+        button.removeEventListener("click", handleResponseClick);
+        button.disabled = true; // prevent clicking until a new choice is made
         currentTrial.style.display = "none";
       }
       return;
@@ -537,6 +546,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         button.removeEventListener("click", handleContinueClick);
         button.addEventListener("click", handleContinueClick, { capture: false, once: true });
         button.click();
+        const currentImages = Array.from(currentTrial.getElementsByTagName("img"));
+        currentImages.forEach((img) => {
+          img.style.border = "transparent";
+        });
+        button.removeEventListener("click", handleResponseClick);
+        button.disabled = true; // prevent clicking until a new choice is made
         currentTrial.style.display = "none";
       }
       return;
@@ -550,6 +565,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         button.removeEventListener("click", handleContinueClick);
         button.addEventListener("click", handleContinueClick, { capture: false, once: true });
         button.click();
+        const currentImages = Array.from(currentTrial.getElementsByTagName("img"));
+        currentImages.forEach((img) => {
+          img.style.border = "transparent";
+        });
+        button.removeEventListener("click", handleResponseClick);
+        button.disabled = true; // prevent clicking until a new choice is made
         currentTrial.style.display = "none";
       }
       return;
@@ -563,6 +584,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         button.removeEventListener("click", handleContinueClick);
         button.addEventListener("click", handleContinueClick, { capture: false, once: true });
         button.click();
+        const currentImages = Array.from(currentTrial.getElementsByTagName("img"));
+        currentImages.forEach((img) => {
+          img.style.border = "transparent";
+        });
+        button.removeEventListener("click", handleResponseClick);
+        button.disabled = true; // prevent clicking until a new choice is made
         currentTrial.style.display = "none";
       }
       return;
@@ -576,6 +603,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         button.removeEventListener("click", handleContinueClick);
         button.addEventListener("click", handleContinueClick, { capture: false, once: true });
         button.click();
+        const currentImages = Array.from(currentTrial.getElementsByTagName("img"));
+        currentImages.forEach((img) => {
+          img.style.border = "transparent";
+        });
+        button.removeEventListener("click", handleResponseClick);
+        button.disabled = true; // prevent clicking until a new choice is made
         currentTrial.style.display = "none";
       }
       return;
@@ -589,6 +622,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         button.removeEventListener("click", handleContinueClick);
         button.addEventListener("click", handleContinueClick, { capture: false, once: true });
         button.click();
+        const currentImages = Array.from(currentTrial.getElementsByTagName("img"));
+        currentImages.forEach((img) => {
+          img.style.border = "transparent";
+        });
+        button.removeEventListener("click", handleResponseClick);
+        button.disabled = true; // prevent clicking until a new choice is made
         currentTrial.style.display = "none";
       }
       return;
@@ -602,6 +641,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         button.removeEventListener("click", handleContinueClick);
         button.addEventListener("click", handleContinueClick, { capture: false, once: true });
         button.click();
+        const currentImages = Array.from(currentTrial.getElementsByTagName("img"));
+        currentImages.forEach((img) => {
+          img.style.border = "transparent";
+        });
+        button.removeEventListener("click", handleResponseClick);
+        button.disabled = true; // prevent clicking until a new choice is made
         currentTrial.style.display = "none";
       }
       return;
@@ -615,6 +660,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         button.removeEventListener("click", handleContinueClick);
         button.addEventListener("click", handleContinueClick, { capture: false, once: true });
         button.click();
+        const currentImages = Array.from(currentTrial.getElementsByTagName("img"));
+        currentImages.forEach((img) => {
+          img.style.border = "transparent";
+        });
+        button.removeEventListener("click", handleResponseClick);
+        button.disabled = true; // prevent clicking until a new choice is made
         currentTrial.style.display = "none";
       }
       return;
@@ -639,11 +690,19 @@ document.addEventListener("DOMContentLoaded", async function () {
       const trialAudio = currentTrial.querySelector(`audio#${trialId}`);
       if (!trialAudio) return;
 
-      // // stop any currently playing audio (if you're using global lastPlayed)
-      // if (!trialAudio.paused) {
-      //   trialAudio.pause();
-      //   trialAudio.currentTime = 0;
-      // }
+      const currentImages = Array.from(currentTrial.getElementsByTagName("img"));
+      currentImages.forEach((img) => {
+        img.style.border = "transparent";
+      });
+      
+      // -----------------------------------
+      // DISABLE OR REMOVE CONTINUE BUTTON CLICK
+      // -----------------------------------
+      const button = document.getElementById("prabat-button");
+      if (button) {
+        button.removeEventListener("click", handleResponseClick);
+        button.disabled = true; // prevent clicking until a new choice is made
+      }
 
       // (re)start the audio
       trialAudio.currentTime = 0;
@@ -673,18 +732,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       };
 
 
-
-      // trialAudio.onended = () => {
-      //     // Show the image with id "background"
-      //     const backgroundImg = currentTrial.querySelector("#background");
-      //     if (backgroundImg) {
-      //       backgroundImg.style.display = "block";
-      //     }
-      //     // Hide the image with id "background-talking"
-      //     if (backgroundTalkingImg) {
-      //       backgroundTalkingImg.style.display = "none";
-      //     }
-      //   };
     }
   };
 

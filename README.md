@@ -2,7 +2,7 @@
 
 ### Usage
 
-Link to task (in German): https://devpsy.web.leuphana.de/prabat
+Link to task (in German, Swahili, Kikuyu): https://devpsy.web.leuphana.de/prabat
 
 ### Structure
 
@@ -42,5 +42,7 @@ Development requires [Node.js](https://nodejs.org/en/)
 
 1. `git clone git@github.com:ChiaraCarraro/prabat.git`
 1. `npm install`
+1. `bun run generateImageJSON (language)`
+1. `bun run generateAudioJSON (language)`
 1. `npm run build`
 1. Upload the contents within the `dist` folder to your web hoster.
