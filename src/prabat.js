@@ -236,6 +236,13 @@ document.addEventListener("DOMContentLoaded", async function () {
           };
           //prevResponseAudio.play();
           playAudio(prevResponseAudio);
+          // the following does not work:
+          // const currentTrial = document.getElementById(`trial${trialNr}`);
+          // const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
+          // currentImages.forEach((img) => {
+          //   img.style.pointerEvents = "none";
+          //   console.log("object images disabled");
+          // });
         });
         await pause(1000);
       }
@@ -246,13 +253,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       console.log(allAudios[trialNr]);
       console.log(responseLog);
     }
-
-    // console.log(skipAdvance);
-    // if (skipAdvance) {
-    //   skipAdvance = false; // consume the flag so future continues behave normally
-    // } else {
-    //   trialNr++;
-    // }
 
     // enable fullscreen and have short break, before first trial starts
     if (trialNr === 0) {
@@ -367,20 +367,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       const trialAudio = currentTrial.querySelector("audio.prompt");
 
-      if (currentTrial.classList.contains("silent") == false) {
-        // play audio of current trial
-        if (trialAudio) {
-          //trialAudio.play();
-          playAudio(trialAudio);
-          console.log(trialAudio);
-        }
-      }
-
-      //await pause(0);
-
-      // save response time start point
-      //t0 = new Date().getTime();
-
       betweenTrials.style.display = "none";
 
       //document.body.style.backgroundImage = "url('images/backgrounds/background01.png')";
@@ -393,6 +379,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       currentTrial.style.display = "block";
       console.log(currentTrial);
 
+      // Let Safari paint at least one frame
+      await pause(50);
+
+      if (!currentTrial.classList.contains("silent") && trialAudio) {
+        playAudio(trialAudio);
+        console.log(trialAudio);
+      }
+
+      
       if (currentTrial.classList.contains("silent")) {
         // Wait for the animation to end, then continue
         currentTrial.addEventListener(
@@ -403,7 +398,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
           { once: true }
         );
-      } else {
+      } else if (trialAudio) {
         trialAudio.onended = async () => {
           await pause(100);
           handleContinueClick(new Event("click"));
@@ -429,8 +424,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       const currentTrial = document.getElementById(`trial${trialNr}`);
       headingTestsound.style.display = "none";
       // pause audio (that might be playing if speaker item was clicked and prompt was repeated)
-      allAudios[trialNr - 1].pause();
-      allAudios[trialNr - 1].currentTime = 0;
+      // allAudios[trialNr - 1].pause();
+      // allAudios[trialNr - 1].currentTime = 0;
 
       const lastTrial = document.getElementById(`trial${trialNr - 1}`);
       lastTrial.style.display = "none";
@@ -442,14 +437,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       // play audio of current trial
       // Play the audio element contained in currentTrial
       
-      if (trialAudio) {
-        //trialAudio.play();
-        playAudio(trialAudio);
-        console.log("This is:", trialAudio);
-        console.log("This is:", audioSrc);
-        // disable speaker during playback
-        speaker.style.pointerEvents = "none";
-      }
 
       // save response time start point
       t0 = new Date().getTime();
@@ -468,20 +455,41 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
       }
 
-      //document.body.style.backgroundImage = "url('images/backgrounds/background01.png')";
-      //document.body.style.backgroundSize = "cover";
-      //document.body.style.backgroundPosition = "center";
       const flexWrapper = document.getElementById("flex-wrapper");
       flexWrapper.style.backgroundColor = "transparent";
       //betweenTrials.style.display = 'none';
 
       currentTrial.style.display = "block";
 
+      // Let Safari paint at least one frame
+      await pause(50);   
+      
+      // play audio of current trial
+      if (trialAudio) {
+        // disable speaker during playback
+        if (speaker) {
+          // disable speaker during playback
+          speaker.style.pointerEvents = "none";
+          console.log("speaker disabled");
+        }
+        playAudio(trialAudio);
+        console.log("This is:", trialAudio);
+        console.log("This is:", audioSrc);
+        
+      }
+
+      // Start RT timing *after* everything appears
+      t0 = new Date().getTime();
+
       const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
       console.log(currentImages);
 
       trialAudio.onended = () => {
         // Show the image with id "background"
+
+        currentImages.forEach((img) => {
+          img.style.pointerEvents = "auto";
+        });
         
         const backgroundImg = currentTrial.querySelector("#background");
         if (backgroundImg) {
