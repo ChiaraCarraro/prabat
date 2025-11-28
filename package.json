@@ -4,7 +4,7 @@
     "description": "Link to task (in German): https://devpsy.web.leuphana.de/prabat",
     "main": "src/index.js",
     "scripts": {
-        "deploy": "bun run build && sh src/scripts/deploy.sh",
+        "deploy": "sh src/scripts/deploy.sh",
         "fetchdata": "sh src/scripts/fetchdata.sh",
         "dev": "bun vite",
         "build": "bun vite build",

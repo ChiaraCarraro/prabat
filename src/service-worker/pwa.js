@@ -16,12 +16,12 @@ export function initPWA(app) {
   /**@type {(reloadPage?: boolean) => Promise<void>}*/
   let refreshSW;
 
-  const refreshCallback = () => refreshSW?.(true);
+  const refreshCallback =  function () { refreshSW?.(true); }
 
   /**@param raf {boolean}*/
   function hidePwaToast(raf) {
     if (raf) {
-      requestAnimationFrame(() => hidePwaToast(false));
+      requestAnimationFrame(function () { hidePwaToast(false)});
       return;
     }
     if (pwaToast.classList.contains('refresh'))
@@ -32,7 +32,7 @@ export function initPWA(app) {
   /**@param offline {boolean}*/
   function showPwaToast(offline) {
     if (!offline) pwaRefreshBtn.addEventListener('click', refreshCallback);
-    requestAnimationFrame(() => {
+    requestAnimationFrame(function (){
       hidePwaToast(false);
       if (!offline) pwaToast.classList.add('refresh');
       pwaToast.classList.add('show');
@@ -43,8 +43,8 @@ export function initPWA(app) {
   // check for updates every hour
   const period = 60 * 60 * 1000;
 
-  window.addEventListener('load', () => {
-    pwaCloseBtn.addEventListener('click', () => hidePwaToast(true));
+  window.addEventListener('load', function () {
+    pwaCloseBtn.addEventListener('click', function () { hidePwaToast(true); });
     refreshSW = registerSW({
       immediate: true,
       onOfflineReady() {
@@ -62,7 +62,7 @@ export function initPWA(app) {
           swActivated = true;
           registerPeriodicSync(period, swUrl, r);
         } else if (r?.installing) {
-          r.installing.addEventListener('statechange', (e) => {
+          r.installing.addEventListener('statechange', function (e) {
             /**@type {ServiceWorker}*/
             const sw = e.target;
             swActivated = sw.state === 'activated';
@@ -84,7 +84,7 @@ export function initPWA(app) {
 function registerPeriodicSync(period, swUrl, r) {
   if (period <= 0) return;
 
-  setInterval(async () => {
+  setInterval(async function () {
     if ('onLine' in navigator && !navigator.onLine) return;
 
     const resp = await fetch(swUrl, {

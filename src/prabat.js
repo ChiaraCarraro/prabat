@@ -111,6 +111,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const speaker = document.getElementById("speaker");
   const headingFullscreen = document.getElementById("heading-fullscreen");
   const headingTestsound = document.getElementById("heading-testsound");
+  const TestSound = document.getElementById("testsound");
   let skipAdvance;
   //------------------------------------------------------------------
   // define response click
@@ -206,6 +207,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const prevTrialIndex = trialNr - 1;
       const prevTrial = document.getElementById(`trial${prevTrialIndex}`);
       let prevResponseAudio = null;
+
       if (prevTrial) {
         prevResponseAudio = prevTrial.querySelector('audio.response');
       }
@@ -221,7 +223,9 @@ document.addEventListener("DOMContentLoaded", async function () {
           backgroundTalkingImg.style.display = "block";
         }
 
-      
+        // Let Safari paint the talking background + disabled state BEFORE audio
+        await pause(50);
+
         await new Promise((resolve) => {
           prevResponseAudio.onended = () => {
             // Show the image with id "background"
@@ -386,6 +390,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         playAudio(trialAudio);
         console.log(trialAudio);
       }
+
 
       
       if (currentTrial.classList.contains("silent")) {
@@ -701,10 +706,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
       return;
     } else if (currentTrial.id === "trial0") {
-      const testSoundElement = document.getElementById('testsound');
-      if (testSoundElement) {
-        //testSoundElement.play();
-        playAudio(testSoundElement);
+      if (TestSound) {
+        //TestSound.play();
+        playAudio(TestSound);
       } else {
         console.warn('Element with ID "testsound" not found.');
       }
