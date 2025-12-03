@@ -266,21 +266,24 @@ document.addEventListener("DOMContentLoaded", async function () {
   const headingTestsound = document.getElementById("heading-testsound");
   const TestSound = document.getElementById("testsound");
   let skipAdvance;
+
   //------------------------------------------------------------------
   // HANDLE RESPONSE CLICK
   //------------------------------------------------------------------
   const handleResponseClick = async (event) => {
     event.preventDefault();
 
+    // Prevent clicks on the img element with id="character" or "transition"
+    if (event.target.id === "character" || event.target.id === "transition") {
+      return;
+    }
+
     const currentTrial = document.getElementById(`trial${trialNr - 1}`);
     console.log("currentTrial:", currentTrial, trialNr - 1);
     const responseAudio = currentTrial.querySelector('audio.preResponse');
     console.log("response audio:", responseAudio);
 
-    // Prevent clicks on the img element with id="character" or "transition"
-    if (event.target.id === "character" || event.target.id === "transition") {
-      return;
-    }
+
 
     t1 = new Date().getTime();
 
@@ -300,46 +303,30 @@ document.addEventListener("DOMContentLoaded", async function () {
     event.target.style.border = "0.3vw solid blue";
 
     if (responseAudio) {
-      const backgroundImg = currentTrial.querySelector("#background");
-      const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
+      const bg = currentTrial.querySelector("#background");
+      const talk = currentTrial.querySelector("#background-talking");
+      const shouldTalk = responseAudio.src.indexOf("Mmh") === -1;
 
-      // Disable the button while audio is playing
-      button.disabled = true;
-      button.style.backgroundColor = "hsl(199, 100%, 21%)";
+      responseAudio.addEventListener("play", () => {
+        if (shouldTalk && bg && talk) {
+          bg.style.display = "none";
+          talk.style.display = "block";
+        }
+        button.disabled = true;
+      });
 
-      // show the image with id "background-talking" (Safari-safe: use indexOf)
-      const shouldShowTalking = responseAudio.src.indexOf("Mmh") === -1;
-      if (shouldShowTalking && backgroundImg && backgroundTalkingImg) {
-        backgroundImg.style.display = "none";
-        backgroundTalkingImg.style.display = "block";
-      }
-
-      // actually play the audio
-      const p = playAudio(responseAudio);
-
-      // Safari may return undefined instead of a promise; guard the catch
-      if (p && typeof p.catch === "function") {
-        p.catch(() => {
-          console.log("This is:", responseAudio, "and it failed to play");
-          showAudioUnlockPrompt(responseAudio);
-        });
-      }
-
-      responseAudio.onended = () => {
-        // Re-enable the button when audio ends
+      responseAudio.addEventListener("ended", () => {
+        if (bg && talk) {
+          bg.style.display = "block";
+          talk.style.display = "none";
+        }
         button.disabled = false;
+      });
 
-        // Show the image with id "background"
-        if (backgroundImg) {
-          backgroundImg.style.display = "block";
-        }
-
-        // Hide the image with id "background-talking"
-        if (backgroundTalkingImg) {
-          backgroundTalkingImg.style.display = "none";
-        }
-      };
+      playAudio(responseAudio);
     }
+
+    button.disabled = false;
 
     // NOTE: removed the immediate button.disabled = false here
 
@@ -375,7 +362,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   //------------------------------------------------------------------
   const handleContinueClick = async (event) => {
     event.preventDefault();
-
+    if (trialNr > 0) {  
+      speaker.classList.add("disabled");
+      button.disabled = true;
+    }
     if (skipAdvance === false && trialNr > 0) {
       const prevTrialIndex = trialNr - 1;
       const prevTrial = document.getElementById(`trial${prevTrialIndex}`);
@@ -444,14 +434,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // playAudio(allAudios[trialNr]);
 
-      if (allAudios[trialNr]) {
-        // allAudios[trialNr - 1].pause();
-        // allAudios[trialNr - 1].currentTime = 0;
-        const p = playAudio(allAudios[trialNr]);
-        if (p) {
-          p.catch(() => showAudioUnlockPrompt(allAudios[trialNr]));
-        }
-      }
+      // if (allAudios[trialNr]) {
+      //   // allAudios[trialNr - 1].pause();
+      //   // allAudios[trialNr - 1].currentTime = 0;
+      //   const p = playAudio(allAudios[trialNr]);
+      //   if (p) {
+      //     p.catch(() => showAudioUnlockPrompt(allAudios[trialNr]));
+      //   }
+      // }
 
       await pause(1000);
 
@@ -572,8 +562,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (p) {
           p.catch(() => showAudioUnlockPrompt(trialAudio));
         }
-        button.disabled = true;
-        speaker.classList.add("disabled");
+        // button.disabled = true;
+        // speaker.classList.add("disabled");
       }
       console.log(trialAudio);
 
@@ -627,9 +617,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       // lastTrial.style.display = "none";
       const lastTrial = document.getElementById(`trial${trialNr - 1}`);
       lastTrial.style.display = "none";
-      button.disabled = true;
+      // button.disabled = true;
 
-      speaker.classList.add("disabled");
+      // speaker.classList.add("disabled");
       
       await runTransitionBlock(BlockName, () => {
         const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
@@ -736,11 +726,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             p.catch(() => showAudioUnlockPrompt(trialAudio));
           }
         }
-        if (speaker) {
-          // disable speaker during playback
-          speaker.classList.add("disabled");
-          console.log("speaker disabled");
-        }
+        // if (speaker) {
+        //   // disable speaker during playback
+        //   // speaker.classList.add("disabled");
+        //   // console.log("speaker disabled");
+        // }
 
         button.disabled = true;
         // playAudio(trialAudio);

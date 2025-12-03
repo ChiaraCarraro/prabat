@@ -1,21 +1,35 @@
 // import { pause } from "./js/pause.js";
 
+// ./js/playAudios.js
 export const allAudios = [];
 
 export function playAudio(audio) {
-  allAudios.forEach(function (a) {
-    a.pause();
-    a.currentTime = 0;
+  // Stop all other audios
+  allAudios.forEach((a) => {
+    if (a && a !== audio) {
+      a.pause();
+      a.currentTime = 0;
+    }
   });
 
-  if (!audio) return;
-  // audio.play();
+  if (!audio) return null;
+
+  audio.muted = false;
 
   try {
-    audio.play();  // try to play the audio
+    const playPromise = audio.play();
+
+    // Modern browsers: play() → Promise
+    if (playPromise && typeof playPromise.then === "function") {
+      return playPromise;
+    }
+
+    // Older Safari: play() returns undefined → simulate a rejection
+    return Promise.reject(
+      new Error("audio.play() did not return a Promise (probably older Safari)")
+    );
   } catch (err) {
-    // ❗ This runs if Safari blocked the play()
-    // showAudioUnlockPrompt(el);  // show your "Tap to enable sound" overlay
-    alert("Please interact with the page to enable audio playback.");
+    // Synchronous failure (rare but possible)
+    return Promise.reject(err);
   }
 }
