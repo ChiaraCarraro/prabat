@@ -53,18 +53,18 @@ export function startRecording(options = {}) {
   const { mimeType } = options;
 
   let supportedMimeType = null;
-  if (mimeType && MediaRecorder.isTypeSupported(mimeType)) {
-    supportedMimeType = mimeType;
-  } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")) {
-    supportedMimeType = "video/webm;codecs=vp9,opus";
-  } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")) {
-    supportedMimeType = "video/webm;codecs=vp8,opus";
-  } else if (MediaRecorder.isTypeSupported("video/webm")) {
+  // if (mimeType && MediaRecorder.isTypeSupported(mimeType)) {
+  //   supportedMimeType = mimeType;
+  // } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")) {
+  //   supportedMimeType = "video/webm;codecs=vp9,opus";
+  // } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")) {
+  //   supportedMimeType = "video/webm;codecs=vp8,opus";
+  // } else if (MediaRecorder.isTypeSupported("video/webm")) {
     supportedMimeType = "video/webm";
-  } else {
-    // Let the browser decide
-    supportedMimeType = "";
-  }
+  // } else {
+  //   // Let the browser decide
+  //   supportedMimeType = "";
+  // }
 
   try {
     mediaRecorder = supportedMimeType

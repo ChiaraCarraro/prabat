@@ -1,21 +1,21 @@
-import { pause } from "./pause.js";
+// import { pause } from "./js/pause.js";
 
 export const allAudios = [];
 
-export async function playAudio(audio) {
+export function playAudio(audio) {
   allAudios.forEach(function (a) {
     a.pause();
     a.currentTime = 0;
   });
 
+  if (!audio) return;
   // audio.play();
-  if (audio) {
-    try {
-      const playPromise = audio.play();
-      if (playPromise) await playPromise;
-    } catch (err) {
-      console.warn("Autoplay blocked:", err);
-    }
+
+  try {
+    audio.play();  // try to play the audio
+  } catch (err) {
+    // ❗ This runs if Safari blocked the play()
+    // showAudioUnlockPrompt(el);  // show your "Tap to enable sound" overlay
+    alert("Please interact with the page to enable audio playback.");
   }
-  await pause(1000);
 }
