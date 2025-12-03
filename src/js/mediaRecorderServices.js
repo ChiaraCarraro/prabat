@@ -7,11 +7,11 @@ let stopPromiseResolve = null;
 /**
  * Initialize camera + (optionally) microphone and attach to a <video> element.
  *
- * @param {HTMLVideoElement} videoElement - The video element for live preview.
  * @param {MediaStreamConstraints} [constraints] - Optional getUserMedia constraints.
  * @returns {Promise<MediaStream>}
  */
-export async function initMedia(videoElement, constraints = { video: true, audio: true }) {
+export async function initMedia(constraints) {
+  debugger;
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     throw new Error("getUserMedia is not supported in this browser.");
   }
@@ -22,26 +22,36 @@ export async function initMedia(videoElement, constraints = { video: true, audio
     mediaStream = null;
   }
 
-  mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+  const defaultConstraints = {
+    audio: true,
+    video: {
+      width: { ideal: 640, max: 640 },   // lower resolution
+      height: { ideal: 480, max: 480 },
+      frameRate: { ideal: 10, max: 15 }, // low-ish fps
+      facingMode: "user",
+    },
+  };
 
-  if (videoElement) {
-    videoElement.srcObject = mediaStream;
-    videoElement.playsInline = true; // for iOS
-    await videoElement.play().catch(() => {
-      // autoplay might be blocked, ignore here
-    });
-  }
+  const finalConstraints = constraints || defaultConstraints;
+
+  mediaStream = await navigator.mediaDevices.getUserMedia(finalConstraints);
+
+  // if (videoElement) {
+  //   videoElement.srcObject = mediaStream;
+  //   videoElement.playsInline = true; // for iOS
+  //   await videoElement.play().catch(() => {
+  //     // autoplay might be blocked, ignore here
+  //   });
+  // }
 
   return mediaStream;
 }
 
 /**
  * Start recording the existing mediaStream.
- *
- * @param {Object} [options]
- * @param {string} [options.mimeType] - Preferred MIME type for recording.
  */
-export function startRecording(options = {}) {
+export function startRecording() {
+  debugger;
   if (!mediaStream) {
     throw new Error("Media stream is not initialized. Call initMedia() first.");
   }
@@ -50,25 +60,16 @@ export function startRecording(options = {}) {
   recordedChunks = [];
   lastRecordedBlob = null;
 
-  const { mimeType } = options;
+  let supportedMimeType = "video/webm";
 
-  let supportedMimeType = null;
-  if (mimeType && MediaRecorder.isTypeSupported(mimeType)) {
-    supportedMimeType = mimeType;
-  } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")) {
-    supportedMimeType = "video/webm;codecs=vp9,opus";
-  } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")) {
-    supportedMimeType = "video/webm;codecs=vp8,opus";
-  } else if (MediaRecorder.isTypeSupported("video/webm")) {
-    supportedMimeType = "video/webm";
-  } else {
-    // Let the browser decide
-    supportedMimeType = "";
-  }
-
+  const recorderOptions = {
+    mimeType: supportedMimeType,
+    videoBitsPerSecond: 300_000, // 300 kbps – quite low quality
+  };
+  
   try {
     mediaRecorder = supportedMimeType
-      ? new MediaRecorder(mediaStream, { mimeType: supportedMimeType })
+      ? new MediaRecorder(mediaStream, recorderOptions)
       : new MediaRecorder(mediaStream);
   } catch (err) {
     console.error("Failed to create MediaRecorder:", err);

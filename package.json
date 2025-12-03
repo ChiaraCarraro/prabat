@@ -4,7 +4,7 @@
     "description": "Link to task (in German): https://devpsy.web.leuphana.de/prabat",
     "main": "src/index.js",
     "scripts": {
-        "deploy": "bun run build && sh src/scripts/deploy.sh",
+        "deploy": "sh src/scripts/deploy.sh",
         "fetchdata": "sh src/scripts/fetchdata.sh",
         "dev": "bun vite",
         "build": "bun vite build",
@@ -18,6 +18,7 @@
     "dependencies": {
         "@ccp-eva/media-recorder": "^2.1.1",
         "@vite-pwa/assets-generator": "^1.0.0",
+        "audiosprite": "^0.7.2",
         "babel": "^6.23.0",
         "cheerio": "^1.1.2",
         "detectrtc": "^1.4.1"

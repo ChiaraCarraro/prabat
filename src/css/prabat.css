@@ -143,9 +143,9 @@ body {
   max-width: 100%; /* Ensures it doesn't exceed the container's width */
 }
 
-.row img:hover {
+/* .row img:hover {
   border: 0.3vw solid var(--ccp-minerva-green);
-}
+} */
 
 .transition:hover {
   border: none !important;
@@ -169,7 +169,13 @@ body {
 }
 
 .custom-button:disabled {
-  background-color: hsl(188, 100%, 36%);
+  opacity: 0.5;
+}
+
+.disabled {
+  opacity: 0.5 !important; /* Make the speaker more opaque */
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 @keyframes slideDown {
