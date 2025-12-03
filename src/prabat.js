@@ -1021,30 +1021,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     else if (responseLog.meta.webcam === "true") {
       try {
         console.log("Requesting camera/microphone...");
-        await initMedia();
+        await initMedia({
+          audio: true,
+          video: {
+            frameRate: { min: 1, ideal: 5, max: 10 },
+            width: { min: 640, ideal: 640, max: 640 },   // keep it small
+            height: { min: 480, ideal: 480, max: 480 },
+            facingMode: "user",
+          },
+        });
         console.log("Camera ready. You can start recording.");
 
-        startRecording({
-        audio: true,
-        video: {
-          frameRate: {
-            min: 1,
-            ideal: 5,
-            max: 10,
-          },
-          width: {
-            min: 640,
-            ideal: 1280,
-            max: 1920,
-          },
-          height: {
-            min: 480,
-            ideal: 720,
-            max: 1080,
-          },
-          facingMode: "user",
-        },
-      });
+        startRecording();
       console.log("Recording started.");
       } catch (error) {
         console.error("Failed to access camera/microphone:", error);
