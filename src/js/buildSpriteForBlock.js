@@ -1,61 +1,94 @@
-// generic helper: given a block name (e.g. "DiscourseNovelty"),
-// build one fused AudioBuffer and a timing map from its transition slides.
-export async function buildSpriteForBlock(blockName) {
-  const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  const ctx = new AudioCtx();
+// js/buildSpriteForBlock.js
+// ----------------------------------------------------------
+// Given a block name (e.g. "DiscourseNovelty"),
+// build one fused AudioBuffer and a timing map from its
+// transition slides (<div class="trials transitionSlide BLOCKNAME">).
+// ----------------------------------------------------------
 
-  // find all transition slides for this block, in DOM order
+import { getSharedAudioContext } from "./sharedAudioContext.js";
+
+
+export async function buildSpriteForBlock(blockName) {
+  const ctx = getSharedAudioContext();
+  if (!ctx) {
+    throw new Error("buildSpriteForBlock: Web Audio API not available.");
+  }
+
+  // 1. Find all transition slides for this block, in DOM order
   const slides = Array.from(
     document.querySelectorAll(`.trials.transitionSlide.${blockName}`)
   );
 
-  if (!slides.length) {
-    throw new Error(`No transitionSlide divs found for block "${blockName}"`);
+  if (slides.length === 0) {
+    throw new Error(
+      `buildSpriteForBlock: no .transitionSlide found for block "${blockName}".`
+    );
   }
 
-  // collect clips: label -> url from <audio class="prompt">
+  // 2. Collect all prompt audio clips (label + url)
+  //    We take the <audio class="prompt"> from each slide.
   const clips = []; // [{ label, url }, ...]
 
   for (const slide of slides) {
     const prompt = slide.querySelector("audio.prompt");
-    if (!prompt) continue;
+    if (!prompt || !prompt.src) continue;
 
     const url = prompt.src;
-    const filename = url.split("/").pop();     // e.g. "DiscNovLook.mp3"
-    const label = filename.replace(/\.[^.]+$/, ""); // "DiscNovLook"
+
+    // Derive a human-readable label from the filename
+    // e.g. "DiscNovLook.mp3" -> "DiscNovLook"
+    const filename = url.split("/").pop() || "";
+    const label = filename.replace(/\.[^.]+$/, "");
 
     clips.push({ label, url });
   }
 
-  if (!clips.length) {
-    throw new Error(`No prompt audios found for block "${blockName}"`);
+  if (clips.length === 0) {
+    throw new Error(
+      `buildSpriteForBlock: no <audio class="prompt"> elements found for block "${blockName}".`
+    );
   }
 
-  // load & decode all clips
-  const decoded = [];
-  for (const { label, url } of clips) {
-    const res = await fetch(url);
-    if (!res.ok) {
-      throw new Error(`Failed to load ${url}: ${res.status} ${res.statusText}`);
+  // 3. Load & decode all clips in parallel
+  const decoded = await Promise.all(
+    clips.map(async ({ label, url }) => {
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(
+          `buildSpriteForBlock: failed to load "${url}" – ${res.status} ${res.statusText}`
+        );
+      }
+      const arrayBuf = await res.arrayBuffer();
+      const buf = await ctx.decodeAudioData(arrayBuf);
+      return { label, buf };
+    })
+  );
+
+  // 4. Basic consistency check: same sample rate & channels
+  const firstBuf = decoded[0].buf;
+  const numChannels = firstBuf.numberOfChannels;
+  const sampleRate = firstBuf.sampleRate;
+
+  for (const { label, buf } of decoded) {
+    if (buf.sampleRate !== sampleRate || buf.numberOfChannels !== numChannels) {
+      console.warn(
+        `buildSpriteForBlock: clip "${label}" has different sampleRate/channels from the first clip. ` +
+          `This can make the fused audio sound odd. (sampleRate=${buf.sampleRate}, channels=${buf.numberOfChannels})`
+      );
     }
-    const arrayBuf = await res.arrayBuffer();
-    const buf = await ctx.decodeAudioData(arrayBuf);
-    decoded.push({ label, buf });
   }
 
-  // create one big buffer
-  const numChannels = decoded[0].buf.numberOfChannels;
-  const sampleRate = decoded[0].buf.sampleRate;
-
+  // 5. Compute total length in samples
   let totalLength = 0;
-  decoded.forEach(({ buf }) => {
+  for (const { buf } of decoded) {
     totalLength += buf.length;
-  });
+  }
 
+  // 6. Create the big buffer (sprite)
   const bigBuffer = ctx.createBuffer(numChannels, totalLength, sampleRate);
 
-  // build timing map and copy audio
-  const timing = {}; // { label: { start, duration } in seconds }
+  // 7. Build timing map (in seconds) & copy audio into bigBuffer
+  const timing = {}; // { label: { start, duration } }
   let offset = 0;
 
   for (const { label, buf } of decoded) {
@@ -78,6 +111,7 @@ export async function buildSpriteForBlock(blockName) {
     offset += length;
   }
 
+  // 8. Return everything the player needs
   return {
     ctx,
     audioBuffer: bigBuffer,

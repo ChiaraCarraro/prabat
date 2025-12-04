@@ -190,8 +190,8 @@ body {
 }
 
 .slide-down{
-  animation: slideDown 5s ease forwards;
-  animation-delay: 1s;
+  animation: slideDown 3s ease forwards;
+  animation-delay: 0s;
 }
 
 #background {

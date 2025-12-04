@@ -54,8 +54,900 @@
                 font-size: 1.5em;
               "
             ><p id="noiseQuestion"></p></h2>
-          </div>          
+          </div>      
 
+          <!-- FAMILIARIZATION TRIALS -->
+          <!-- Familiarization trial 1-->
+
+          <div class="flex-sheet trials mutex-noun" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="cat.mp3"></audio>
+            <audio class="preResponse" data-audio="Aha.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/banana.svg"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/cat.svg"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/helicopter.svg"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Familiarization trial 2-->
+
+          <div class="flex-sheet trials mutex-noun" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="Fam2.mp3"></audio>
+            <audio class="preResponse" data-audio="Mmh1.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  data-img="objects/Fam2.svg"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  data-img="objects/Fam3.svg"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/turtle.svg"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <!-- Familiarization trial 3-->
+
+          <div class="flex-sheet trials mutex-noun" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="plant.mp3"></audio>
+            <audio class="preResponse" data-audio="AhOkay.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/orange.svg"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/hamster.svg"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/plant.svg"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- Noun metaphors trial 4-->
+
+          <div class="flex-sheet trials metaphors" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="DogWithSocks.mp3"></audio>
+            <audio class="preResponse" data-audio="Aha.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/white_dog.svg"
+                  style="height: auto; width: 50%; margin-bottom: 50px;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/brown_dog.svg"
+                  style="height: auto; width: 50%; margin-bottom: 50px;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/dog_brown_shoes.svg"
+                  style="height: auto; width: 50%; margin-bottom: 50px;"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- ad-hoc implicature BLACK ball trial 5-->
+
+          <div class="flex-sheet trials adhocimp-ball" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="BlackBall.mp3"></audio>
+            <audio class="preResponse" data-audio="AhOkay.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div id= "row" class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/black_ball.svg"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/black_yellow_ball.svg"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/coloured_ball_black.svg"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Scalar implicature SOME trial 6-->
+
+          <div class="flex-sheet trials scalimp-sing" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="SomeAnanas.mp3"></audio>
+            <audio class="preResponse" data-audio="Aha2.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div id= "row" class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/plate_all_pineapples.svg"
+                  style="height: auto; width: 85%; margin-bottom: 70px;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/plate_many_pineapples.svg"
+                  style="height: auto; width: 85%; margin-bottom: 70px;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/plate_fruit.svg"
+                  style="height: auto; width: 85%; margin-bottom: 70px;"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- CONVERSATIONAL IMPLICATURE trial 7 -->
+
+          <div class="flex-sheet trials typic-imp" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="fullplate.mp3"></audio>
+            <audio class="preResponse" data-audio="Mmh1.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+                id="character"
+                class="upper-left"
+                src="images/agents/girl.svg"
+                style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/broken_plate.svg"
+                  style="height: auto; width: 50%;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/plate.svg"
+                  style="height: auto; width: 60%;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  data-img="objects/ConvImp_1.svg"
+                  style="height: auto; width: 60%;"
+                /> <!-- plate with cookies EU plate with ugali and sukuma wiki AF -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Verb metaphors trial 8-->
+
+          <div class="flex-sheet trials" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="sleepingumbrella.mp3"></audio>
+            <audio class="preResponse" data-audio="Aha.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+                id="character"
+                class="upper-left"
+                src="images/agents/girl.svg"
+                style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/dancing_umbrella_2.gif"
+                  style="height: auto; width: 80%; margin-bottom: 100px;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/still_umbrella.svg"
+                  style="height: auto; width: 60%; margin-bottom: 40px; "
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/opening_umbrella.gif"
+                  style="height: auto; width: 60%;"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Mutex nouns trial 9 -->
+          <div class="flex-sheet trials adhocimp-ball" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="palvi.mp3"></audio>
+            <audio class="preResponse" data-audio="Aha.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div id= "row" class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/novelMutex.svg"
+                />                
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/fish.svg"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/flower.svg"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- TYPICALITY IMPLICATURE trial 10-->
+
+          <div class="flex-sheet trials typic-imp" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="ballon.mp3"></audio>
+            <audio class="preResponse" data-audio="Aha2.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div id= "row" class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/balloon_square.svg"
+                  style="height: auto; width: 70%; margin-bottom: 50px;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/balloon.svg"
+                  style="height: auto; width: 70%; margin-bottom: 50px;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/balloon_heart.svg"
+                  style="height: auto; width: 70%; margin-bottom: 50px;"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Adjective metaphors trial 11 SICK CAR-->
+
+          <div class="flex-sheet trials typic-imp" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="SickCar.mp3"></audio>
+            <audio class="preResponse" data-audio="Aha2.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+                id="character"
+                class="upper-left"
+                src="images/agents/girl.svg"
+                style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/normal_car.svg"
+                  style="height: auto; width: 50%; margin-bottom: 70px;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/car_sick.svg"
+                  style="height: auto; width: 60%; margin-bottom: 50px;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/convertible.svg"
+                  style="height: auto; width: 50%; margin-bottom: 50px;"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Mutex adjectives trial 12-->
+          <div class="flex-sheet trials adhocimp-ball" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="sherligtshirt.mp3"></audio>
+            <audio class="preResponse" data-audio="AhOkay.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div id= "row" class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/weird_tshirt2.svg"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/blue_tshirt.svg"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/red_tshirt.svg"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Indirect Request trial 13 -->
+
+          <!-- Ind req transition slide -->
+
+          <div class="flex-sheet trials SpriteAudioTrials transitionSlide IndirectRequest" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="waterglass.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div id="rowTransition" class="row transition">
+              <div id="left">
+                <img
+                  class="object transition"
+                  data-word-category="dist1"
+                  src="images/objects/normal_bottle.svg"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object transition"
+                  data-word-category="dist2"
+                  src="images/objects/white-bread.svg"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object transition"
+                  data-word-category="target"
+                  src="images/objects/glass_of_water.svg"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Ind req CRITICAL -->
+
+          <div class="flex-sheet trials SpriteAudioTrials transitionSlide IndirectRequest critical" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="HaEscl.mp3"></audio>
+            <audio class="preResponse" data-audio="ThankYou2.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task_happy_right_indirect_notalking.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_happy_right_indirect.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/normal_bottle.svg"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/white-bread.svg"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/glass_of_water.svg"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- INFORMATIVENESS trial 14 -->
+          <!-- Transition Slide 1 Infrtvnss 1-->
+
+          <div class="flex-sheet trials SpriteAudioTrials transitionSlide InformativenessOne" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="MmhPause.mp3"></audio>
+            <img
+              id="background"
+              data-img="backgrounds/background_task_neutral_left_mmh.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div id= "rowTransition" class="row transition">
+              <div id="left">
+                <img
+                  class="object transition"
+                  data-word-category="dist2"
+                  src="images/objects/bear_A.svg"
+                  style="height: auto; width: 50%;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object transition"
+                  data-word-category="dist3"
+                  src="images/objects/bear_B.svg"
+                  style="height: auto; width: 50%; opacity: 0;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object transition"
+                  data-word-category="dist1"
+                  src="images/objects/bear_ABC.svg"
+                  style="height: auto; width: 50%; opacity: 0;"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Transition Slide 2 -->
+
+          <div class="flex-sheet trials SpriteAudioTrials transitionSlide InformativenessOne" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="MmhPause.mp3"></audio>
+            <img
+              id="background"
+              data-img="backgrounds/background_task_neutral_center_nopoint_mmh.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div id= "rowTransition" class="row transition">
+              <div id="left">
+                <img
+                  class="object transition"
+                  data-word-category="dist2"
+                  src="images/objects/bear_A.svg"
+                  style="height: auto; width: 50%;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object transition"
+                  data-word-category="dist3"
+                  src="images/objects/bear_B.svg"
+                  style="height: auto; width: 50%;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object transition"
+                  data-word-category="dist1"
+                  src="images/objects/bear_ABC.svg"
+                  style="height: auto; width: 50%; opacity: 0;"
+                />
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Transition Slide 3 Infrtvnss 1-->
+
+          <div class="flex-sheet trials SpriteAudioTrials transitionSlide InformativenessOne" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="BearWithSorel.mp3"></audio>
+            <img
+              id="background"
+              data-img="backgrounds/background_task_happy_right_no_talking.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_happy_right.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div id= "rowTransition" class="row transition">
+              <div id="left">
+                <img
+                  class="object transition"
+                  data-word-category="dist2"
+                  src="images/objects/bear_A.svg"
+                  style="height: auto; width: 50%;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object transition"
+                  data-word-category="dist3"
+                  src="images/objects/bear_B.svg"
+                  style="height: auto; width: 50%;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object transition"
+                  data-word-category="dist1"
+                  src="images/objects/bear_ABC.svg"
+                  style="height: auto; width: 50%;"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- CRITICAL trial Infrtvnss 1-->
+
+          <div class="flex-sheet trials SpriteAudioTrials transitionSlide InformativenessOne critical" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="WhichBearSorel.mp3"></audio>
+            <audio class="preResponse" data-audio="Aha.mp3"></audio>
+            <img
+              id="background"
+              data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div id= "row" class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  src="images/objects/bear_A.svg"
+                  style="height: auto; width: 50%;"
+                />               
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  src="images/objects/bear_C.svg"
+                  style="height: auto; width: 50%;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  src="images/objects/bear_B.svg"
+                  style="height: auto; width: 50%;"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- MUTEX verbs trial 15 -->
+
+          <div class="flex-sheet trials adhocimp-ball" style="display: none; height: 100%"> 
+            <audio class="prompt" data-audio="warbellingfriend.mp3"></audio>
+            <audio class="preResponse" data-audio="Mmh1.mp3"></audio>
+            <img
+                id="background"
+                data-img="backgrounds/background_task.svg"
+            />
+            <img
+                id="background-talking"
+                data-img="backgrounds/background_task_talking.svg"
+            />
+            <div class="character" style="position: relative;">
+              <img
+              id="character"
+              class="upper-left"
+              src="images/agents/girl.svg"
+              style="opacity: 0; position: relative; z-index: 1;"
+              />
+            </div>
+            <div id= "row" class="row">
+              <div id="left">
+                <img
+                  class="object"
+                  data-word-category="target"
+                  data-img="objects/boy_A_novel.gif"
+                  style="height: auto; width: 80%; margin-bottom: 10vh;"
+                />
+              </div>
+              <div id="center">
+                <img
+                  class="object"
+                  data-word-category="dist2"
+                  data-img="objects/boy_C_running.gif"
+                  style="height: auto; width: 80%; margin-bottom: 10vh;"
+                />
+              </div>
+              <div id="right">
+                <img
+                  class="object"
+                  data-word-category="dist1"
+                  data-img="objects/boy_B_shouting.gif"
+                  style="height: auto; width: 80%; margin-bottom: 10vh;"
+                />
+              </div>
+            </div>
+          </div>
 
 
           <!-- let's go in my room -->
@@ -71,7 +963,6 @@
                 data-img="backgrounds/background_task_talking.svg"
             />
           </div>
-
 
           <!-- DISCOURSE CONTINUITY  trial 16-->
 
@@ -821,7 +1712,7 @@
 
           <!-- transition slide 5 girl is away-->
           <div class="flex-sheet trials SpriteAudioTrials transitionSlide SpeakersPreference" style="display: none; height: 100%"> 
-            <audio class="prompt" data-audio="MmhPause.mp3" muted></audio> <!-- 4 seconds -->
+            <audio class="prompt" data-audio="silence3s.mp3"></audio> <!-- 4 seconds -->
             <img
               id="background"
               data-img="backgrounds/background_empty.svg"
@@ -1141,7 +2032,7 @@
 
           <!-- silent transition slide -->
           <div class="flex-sheet trials SpriteAudioTrials transitionSlide DiscourseNovelty" style="display: none; height: 100%">
-            <audio class="prompt" data-audio="Mmh0.mp3" muted></audio>
+            <audio class="prompt" data-audio="silence3s.mp3"></audio>
             <img
               id="background"
               data-img="backgrounds/background_empty.svg"
@@ -1324,7 +2215,7 @@
             </div>
           </div>
 
-          <!-- SPEAKER conversational perspective taking trial 24-->
+          <!-- SPEAKER conversational perspective taking trial 24 -->
 
           <div class="flex-sheet trials SpriteAudioTrials transitionSlide ConversationalPerspectiveTakingOne" style="display: none; height: 100%"> 
             <audio class="prompt" data-audio="PencilBorrow.mp3" ></audio>
@@ -1369,7 +2260,7 @@
           </div>
 
           <div class="flex-sheet trials SpriteAudioTrials transitionSlide ConversationalPerspectiveTakingOne" style="display: none; height: 100%"> 
-            <audio class="prompt" data-audio="Mmh0.mp3" muted></audio>
+            <audio class="prompt" data-audio="silence1poin5s.mp3" ></audio>
             <img
               id="background"
               data-img="backgrounds/outside_empty_higher.svg"
@@ -1693,7 +2584,7 @@
           </div>
 
           <div class="flex-sheet trials SpriteAudioTrials transitionSlide ConversationalPerspectiveTakingTwo" style="display: none; height: 100%"> 
-            <audio class="prompt" data-audio="Mmh0.mp3" muted></audio>
+            <audio class="prompt" data-audio="silence1poin5s.mp3"></audio>
             <img
               id="background"
               data-img="backgrounds/outside_empty_back_girl.svg"
@@ -1775,14 +2666,14 @@
             <audio class="prompt" data-audio="MmhPause.mp3" ></audio>
             <img
                 id="background"
-                data-img="backgrounds/Gesture_item2_initial.svg"
+                data-img="backgrounds/Gesture_item2_initial_orange.svg"
                 />
             <div id="rowTransition" class="row transition">
               <div id="left">
                 <img
                   class="object transition"
                   data-word-category="dist1"
-                  data-img="objects/Gesture_item2_option1.svg"
+                  data-img="objects/Gesture_item2_option1_orange.svg"
                   style="height: auto; width: 60%; margin-top: 25vh; opacity: 0;"
                 />
               </div>
@@ -1790,7 +2681,7 @@
                 <img
                   class="object transition"
                   data-word-category="target"
-                  data-img="objects/Gesture_item2_option2.svg"
+                  data-img="objects/Gesture_item2_option2_orange.svg"
                   style="height: auto; width: 60%; margin-top: 15vh; opacity: 0;"
                 />
               </div>
@@ -1798,7 +2689,7 @@
                 <img
                   class="object transition"
                   data-word-category="dist2"
-                  data-img="objects/Gesture_item2_option3.svg"
+                  data-img="objects/Gesture_item2_option3_orange.svg"
                   style="height: auto; width: 60%; margin-top: 25vh; opacity: 0;"
                 />
               </div>
@@ -1812,18 +2703,18 @@
             <audio class="preResponse" data-audio="Aha.mp3"></audio>
             <img
                 id="background"
-                data-img="backgrounds/Gesture_item2_request_notalk.svg"
+                data-img="backgrounds/Gesture_item2_request_notalk_orange.svg"
             />
             <img
                 id="background-talking"
-                data-img="backgrounds/Gesture_item2_request_talk.svg"
+                data-img="backgrounds/Gesture_item2_request_talk_orange.svg"
             />
             <div class="row">
               <div id="left">
                 <img
                   class="object"
                   data-word-category="dist1"
-                  data-img="objects/Gesture_item2_option1.svg"
+                  data-img="objects/Gesture_item2_option1_orange.svg"
                   style="height: auto; width: 75%; margin-top: 25vh;"
                 />
               </div>
@@ -1831,7 +2722,7 @@
                 <img
                   class="object"
                   data-word-category="target"
-                  data-img="objects/Gesture_item2_option2.svg"
+                  data-img="objects/Gesture_item2_option2_orange.svg"
                   style="height: auto; width: 75%; margin-top: 25vh;"
                 />
               </div>
@@ -1839,7 +2730,7 @@
                 <img
                   class="object"
                   data-word-category="dist2"
-                  data-img="objects/Gesture_item2_option3.svg"
+                  data-img="objects/Gesture_item2_option3_orange.svg"
                   style="height: auto; width: 75%; margin-top: 25vh;"
                 />
               </div>
@@ -2025,7 +2916,6 @@
         </div>
         
       
-      
         <div class="button-row-wrapper" style="display: flex; justify-content: center; align-items: center; gap: 2em; margin-top: auto;">
           <svg
           id="speaker"
@@ -2076,7 +2966,7 @@
           </button>
         </div>
 
-          <audio src="test-sound.mp3" class="prompt"></audio>
+          <audio src="audio/testsound.mp3" class="prompt"></audio>
        <!-- end flex-item -->
       </div>
      <!-- end flex-wrapper -->
@@ -2092,7 +2982,7 @@
                 justify-content:center; align-items:center; z-index:9999;">
       <button id="audio-unlock-button"
               style="padding:1em 2em; font-size:1.4em; border-radius:0.6em;">
-        Tap here to enable sound
+        Hier tippen, um den Ton zu aktivieren
       </button>
     </div>
 

@@ -16,8 +16,9 @@ import { applyLocalizedImagePaths } from "./js/applyLocalizedImagePaths.js";
 import { preloadAudios } from "./js/preloadAudios.js";
 import { preloadImages } from "./js/preloadImages.js";
 import { startRecording, initMedia, isMediaRecorderSupported, stopRecording } from "./js/mediaRecorderServices.js";
-import { playAudio, allAudios } from "./js/playAudios.js";
+import { playAudio, showAudioUnlockPrompt, allAudios } from "./js/playAudios.js";
 import { buildSpriteForBlock } from "./js/buildSpriteForBlock.js";
+import { getSharedAudioContext } from "./js/sharedAudioContext.js";
 
 const storedChoices = localStorage.getItem("storedChoices");
 let studyChoices;
@@ -30,23 +31,20 @@ const lang = studyChoices?.lang || "ger"; // fallback to English
 
 // showAudioUnlockPrompt function: to prevent app freezing on Safari when audio play is blocked
 
-function showAudioUnlockPrompt(audioEl) {
+function showBlockRestartPrompt(restartFn) {
   const overlay = document.getElementById("audio-unlock-overlay");
-  if (!overlay) return;
+  const btn = document.getElementById("audio-unlock-button");
+  if (!overlay || !btn) {
+    restartFn();
+    return;
+  }
 
-  overlay.style.display = "flex"; // show overlay
+  overlay.style.display = "flex";
+  btn.textContent = "Nochmal abspielen"; // e.g. “Play again”
 
-  const button = document.getElementById("audio-unlock-button");
-  if (!button) return;
-
-  button.onclick = async () => {
-    try {
-      audioEl.muted = false; // make sure it's not muted
-      await audioEl.play(); // now it's a real user gesture → Safari will allow it ✅
-      overlay.style.display = "none"; // hide overlay after sound worked
-    } catch (err) {
-      console.warn("Audio still blocked:", err);
-    }
+  btn.onclick = () => {
+    overlay.style.display = "none";
+    restartFn();
   };
 }
 
@@ -62,7 +60,15 @@ async function runTransitionBlock(blockName, onFinished) {
 
   const { ctx, audioBuffer, timing } = sprite;
 
-  // find all transition slides for this block (same as before)
+  // Try to resume audio context (helps on Safari/Android after interruptions)
+  if (ctx.state === "suspended") {
+    try {
+      await ctx.resume();
+    } catch (e) {
+      console.warn("Could not resume AudioContext for block", blockName, e);
+    }
+  }
+
   const slides = Array.from(
     document.querySelectorAll(`.trials.transitionSlide.${blockName}`)
   );
@@ -73,7 +79,29 @@ async function runTransitionBlock(blockName, onFinished) {
     return;
   }
 
-  // helper to play one segment
+  let currentIndex = 0;
+  let previousSlide = null;
+
+  // 🔁 Restart the entire block from the beginning
+  function restartBlock() {
+    console.warn("Restarting block:", blockName);
+
+    if (previousSlide) {
+      previousSlide.style.display = "none";
+    }
+
+    currentIndex = 0;
+    previousSlide = null;
+    showSlideAndPlay();
+  }
+
+  // Called when audio is blocked or segment never ends
+  function handleBlocked() {
+    console.warn("Audio in block", blockName, "seems blocked; asking to restart");
+    showBlockRestartPrompt(restartBlock);
+  }
+
+  // helper to play one sprite segment
   function playSegment(label, onEnded) {
     const info = timing[label];
     if (!info) {
@@ -82,23 +110,45 @@ async function runTransitionBlock(blockName, onFinished) {
       return;
     }
 
-    const source = ctx.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(ctx.destination);
-    source.onended = () => {
+    // If the context has been closed or is in a bad state, treat as blocked
+    if (!ctx || ctx.state === "closed") {
+      console.warn("AudioContext is closed for block", blockName);
+      handleBlocked();
+      return;
+    }
+
+    // Just keep in mind: if the shared context is truly “closed”, 
+    // it’s global – restarting the block might not fix it, but that’s a rare edge case.
+
+    let advanced = false;
+    const safeEnd = () => {
+      if (advanced) return;
+      advanced = true;
       if (onEnded) onEnded();
     };
 
+    let source;
     try {
+      source = ctx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(ctx.destination);
+      source.onended = safeEnd;
       source.start(ctx.currentTime, info.start, info.duration);
     } catch (e) {
       console.error("Error starting segment", label, e);
-      if (onEnded) onEnded();
+      handleBlocked();
+      return;
     }
-  }
 
-  let currentIndex = 0;
-  let previousSlide = null;
+    // Safety net: if onended never fires, treat as blocked
+    const fallbackMs = info.duration * 1000 + 500;
+    setTimeout(() => {
+      if (!advanced) {
+        console.warn("Sprite segment did not end, restarting block:", label);
+        handleBlocked();
+      }
+    }, fallbackMs);
+  }
 
   function showSlideAndPlay() {
     const slide = slides[currentIndex];
@@ -117,7 +167,13 @@ async function runTransitionBlock(blockName, onFinished) {
     slide.style.display = "block";
     previousSlide = slide;
 
-    // find which label to play from its audio src
+    // Make objects visible if needed
+    const objects = slide.querySelectorAll("img.object");
+    objects.forEach((img) => {
+      img.style.opacity = "1";
+      img.style.pointerEvents = "none"; // usually no responses in transition slides
+    });
+
     const prompt = slide.querySelector("audio.prompt");
     if (!prompt) {
       currentIndex++;
@@ -125,20 +181,21 @@ async function runTransitionBlock(blockName, onFinished) {
       return;
     }
 
-    const file = prompt.src.split("/").pop();  // "DiscNovLook.mp3"
-    const label = file.replace(/\.[^.]+$/, ""); // "DiscNovLook"
+    const file = prompt.src.split("/").pop();      // "DiscNovLook.mp3"
+    const label = file.replace(/\.[^.]+$/, "");    // "DiscNovLook"
 
-    // If slide has special behavior (e.g. "silent"), you can skip audio:
     if (slide.classList.contains("silent")) {
-      // no audio: just go to next after its animation ends or small timeout
+      const info = timing[label];
+      const waitMs = info ? info.duration * 1000 : 500;
       setTimeout(() => {
         currentIndex++;
         showSlideAndPlay();
-      }, timing[label]?.duration ? timing[label].duration * 1000 : 500);
+      }, waitMs);
       return;
     }
 
-    // play segment, then advance
+    // Normal case: play segment, then advance.
+    // If blocked, playSegment will call handleBlocked() instead.
     playSegment(label, () => {
       currentIndex++;
       showSlideAndPlay();
@@ -148,7 +205,41 @@ async function runTransitionBlock(blockName, onFinished) {
   showSlideAndPlay();
 }
 
+
 const blockSprites = {}; // blockName -> { ctx, audioBuffer, timing }
+
+
+// ------------------------------------------------------------------
+// Global audio unlock helper (for Android / iOS)
+// Uses the shared AudioContext once, instead of one per block.
+// ------------------------------------------------------------------
+function unlockAudio() {
+  try {
+    const ctx = getSharedAudioContext();
+    if (!ctx) {
+      return;
+    }
+
+    // 1. If the context is suspended, resume it
+    if (ctx.state === "suspended") {
+      ctx.resume().catch((err) => {
+        console.warn("Could not resume shared AudioContext:", err);
+      });
+    }
+
+    // 2. Play a 1-frame silent buffer to "touch" the audio device
+    // This is enough to convince mobile browsers that we used audio
+    // in response to a user gesture.
+    const buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    source.start();
+  } catch (e) {
+    console.warn("unlockAudio failed:", e);
+  }
+}
+
 
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -386,8 +477,8 @@ document.addEventListener("DOMContentLoaded", async function () {
           backgroundTalkingImg.style.display = "block";
         }
 
-        // Let Safari paint the talking background + disabled state BEFORE audio
-        await pause(50);
+        // // Let Safari paint the talking background + disabled state BEFORE audio
+        // await pause(50);
 
         await new Promise((resolve) => {
           prevResponseAudio.onended = () => {
@@ -405,14 +496,11 @@ document.addEventListener("DOMContentLoaded", async function () {
           // playAudio(prevResponseAudio);
 
           if (prevResponseAudio) {
-            const p = playAudio(prevResponseAudio);
-            if (p) {
-              p.catch(() => showAudioUnlockPrompt(prevResponseAudio));
-            }
+            playAudio(prevResponseAudio);
           }
 
         });
-        await pause(1000);
+        // await pause(1000);
       }
     }
 
@@ -424,26 +512,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // enable fullscreen and have short break, before first trial starts
     if (trialNr === 0) {
-      if (!devmode & !responseLog.meta.iOSSafari);
-      openFullscreen();
+      // Unlock audio (very important for Android / iOS)
+      unlockAudio();
+
+      if (!devmode && !responseLog.meta.iOSSafari) openFullscreen();
       headingFullscreen.style.display = "none";
       headingTestsound.style.display = "inline";
-      speaker.style.display= "block";
-      await pause(1000);
-      // for safari, first sound needs to happen on user interaction
+      speaker.style.display = "block";
 
-      // playAudio(allAudios[trialNr]);
-
-      // if (allAudios[trialNr]) {
-      //   // allAudios[trialNr - 1].pause();
-      //   // allAudios[trialNr - 1].currentTime = 0;
-      //   const p = playAudio(allAudios[trialNr]);
-      //   if (p) {
-      //     p.catch(() => showAudioUnlockPrompt(allAudios[trialNr]));
-      //   }
-      // }
-
-      await pause(1000);
+      if (allAudios[trialNr]) {
+        playAudio(allAudios[trialNr]);
+      }
 
       button.addEventListener("click", handleContinueClick, {
         capture: false,
@@ -554,14 +633,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       console.log( "transitionEmpty slide:", currentTrial);
 
       // Let Safari paint at least one frame
-      await pause(50);
+      // await pause(50);
 
 
       if (trialAudio) {
-        const p = playAudio(trialAudio);
-        if (p) {
-          p.catch(() => showAudioUnlockPrompt(trialAudio));
-        }
+        playAudio(trialAudio);
         // button.disabled = true;
         // speaker.classList.add("disabled");
       }
@@ -715,16 +791,14 @@ document.addEventListener("DOMContentLoaded", async function () {
       currentTrial.style.display = "block";
 
       // Let Safari paint at least one frame
-      await pause(50);   
+      // await pause(50);   
       
       // play audio of current trial
       if (trialAudio) {
         // disable speaker during playback
         if (trialAudio) {
-          const p = playAudio(trialAudio);
-          if (p) {
-            p.catch(() => showAudioUnlockPrompt(trialAudio));
-          }
+          playAudio(trialAudio);
+
         }
         // if (speaker) {
         //   // disable speaker during playback
