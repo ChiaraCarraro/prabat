@@ -18,6 +18,7 @@ export async function uploadData(safe, ID){
     'correct',
     'timestamp',
     'responseTime',
+    'repeatCount',
   ];
 
   const columnNames = [
@@ -30,6 +31,7 @@ export async function uploadData(safe, ID){
     'correct',
     'timestamp',
     'responsetime_ms',
+    'repeated',
   ];
 
   const refinedData = [];

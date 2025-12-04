@@ -273,7 +273,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       "IndirectRequest",
       "InformativenessOne",
       "InformativenessTwo",
-      "SpeakersPreference"
+      "SpeakersPreference",
+      "intro"
     ];
 
     for (const blockName of blockNames) {
@@ -361,6 +362,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const headingTestsound = document.getElementById("heading-testsound");
   const TestSound = document.getElementById("testsound");
   let skipAdvance;
+  let repeatCount = 0;
 
   //------------------------------------------------------------------
   // HANDLE RESPONSE CLICK
@@ -443,8 +445,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         .replace(".gif", ""),
       chosenCategory: event.target.dataset.wordCategory,
       chosenPosition: event.target.closest("div").id,
+      repeatCount: repeatCount,
     };
 
+    console.log("repeatCount:", repeatCount);
     button.addEventListener("click", handleContinueClick, {
       capture: false,
       once: true,
@@ -457,6 +461,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   //------------------------------------------------------------------
   const handleContinueClick = async (event) => {
     event.preventDefault();
+    repeatCount = 0;
     if (trialNr > 0) {  
       speaker.classList.add("disabled");
       button.disabled = true;
@@ -580,43 +585,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       window.location.href = `https://devpsy.web.leuphana.de/prabat-consent/goodbye.html`;
     }
 
-    // Story
-
-    // if (trialNr === 1) {
-    //   const images = window.localizedIntroImages 
-
-
-    //   let currentIndex = 0;
-    //   const imgElement = document.getElementById("background-start");
-
-    //   function showNextImage() {
-    //     const currentImage = images[currentIndex];
-
-    //     imgElement.src = currentImage;
-
-    //     if (currentImage.includes("start_1_waving")) {
-    //       setTimeout(showNextImage, 3000);
-    //     } else if (currentImage.includes("start_1")) {
-    //       setTimeout(showNextImage, 2000);
-    //     } else if (currentImage.includes("start_2_house")) {
-    //       setTimeout(showNextImage, 4000);
-    //     } else if (currentImage.includes("start_3_parents")) {
-    //       setTimeout(showNextImage, 4000);
-    //     } else if (currentImage.includes("start_3_friends")) {
-    //     }
-
-    //     currentIndex++;
-
-    //   }
-
-    //   showNextImage(); // Start the slideshow
-
-    //   button.addEventListener("click", handleContinueClick, {
-    //     capture: false,
-    //     once: true,
-    //   });
-    // }
-
     const currentTrial = document.getElementById(`trial${trialNr}`);
 
     // transition images for trials that need multiple slides
@@ -693,7 +661,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         "IndirectRequest": 1,
         "EmotionalProsody": 3,
         "InformativenessOne": 3,
-        "InformativenessTwo": 3
+        "InformativenessTwo": 3,
+        "intro": 4
       };
       BlockName = Object.keys(blockSkipAhead).find(name => currentTrial.classList.contains(name)) || "";
       console.log("BlockName:", BlockName);
@@ -711,43 +680,63 @@ document.addEventListener("DOMContentLoaded", async function () {
       // speaker.classList.add("disabled");
       
       await runTransitionBlock(BlockName, () => {
-        const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
-        const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
-        const lastTrial = document.getElementById(`trial${trialNr - 1}`);
-        lastTrial.style.display = "none";
-        currentTrial.style.display = "block";
+        if (!BlockName.includes("intro")) {
+          const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
+          const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
+          const lastTrial = document.getElementById(`trial${trialNr - 1}`);
+          lastTrial.style.display = "none";
+          currentTrial.style.display = "block";
 
-        // Start RT timing *after* everything appears
-        t0 = new Date().getTime();
+          // Start RT timing *after* everything appears
+          t0 = new Date().getTime();
 
-        console.log(currentImages);
-        
-        currentImages.forEach((img) => {
-          img.style.pointerEvents = "auto";
-        });
-        
-        const backgroundImg = currentTrial.querySelector("#background");
-        if (backgroundImg) {
-          backgroundImg.style.display = "block";
-        }
-        // Hide the image with id "background-talking"
-        const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-        if (backgroundTalkingImg) {
-          backgroundTalkingImg.style.display = "none";
-        }
-        console.log("before adding event listener")
-
-        // enable speaker again
-        speaker.classList.remove("disabled");
-        console.log("speaker enabled");
-        
-        currentImages.forEach((img) => {
-          console.log("event listener added")
-          img.addEventListener("click", handleResponseClick, {
-          capture: false,
-          once: false,
+          console.log(currentImages);
+          
+          currentImages.forEach((img) => {
+            img.style.pointerEvents = "auto";
           });
-        });
+          
+          const backgroundImg = currentTrial.querySelector("#background");
+          if (backgroundImg) {
+            backgroundImg.style.display = "block";
+          }
+          // Hide the image with id "background-talking"
+          const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
+          if (backgroundTalkingImg) {
+            backgroundTalkingImg.style.display = "none";
+          }
+          console.log("before adding event listener")
+
+          // enable speaker again
+          speaker.classList.remove("disabled");
+          console.log("speaker enabled");
+          
+          currentImages.forEach((img) => {
+            console.log("event listener added")
+            img.addEventListener("click", handleResponseClick, {
+            capture: false,
+            once: false,
+            });
+          });
+        } else if (BlockName.includes("intro")) {
+          const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
+          const lastTrial = document.getElementById(`trial${trialNr - 1}`);
+          lastTrial.style.display = "none";
+          currentTrial.style.display = "block";
+          console.log("intro block - before adding event listener")
+          // enable speaker again
+          speaker.classList.remove("disabled");
+          console.log("speaker enabled");
+          button.disabled = false;
+          const backgroundImg = currentTrial.querySelector("#background");
+          if (backgroundImg) {
+            backgroundImg.style.display = "block";
+          }
+          button.addEventListener("click", handleContinueClick, {
+            capture: false,
+            once: true,
+          });
+        }
         trialNr = trialNr +  SkipAheadIndex ; // skip ahead past the discourse novelty trials
       });
     }
@@ -875,6 +864,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const handleSpeakerClick = async (event) => {
     event.preventDefault();
+    repeatCount += 1;
     const currentTrial = document.getElementById(`trial${trialNr - 1}`);
     console.log(currentTrial);
     if (!currentTrial) return;
@@ -901,7 +891,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         "IndirectRequest": 1,
         "EmotionalProsody": 3,
         "InformativenessOne": 3,
-        "InformativenessTwo": 3
+        "InformativenessTwo": 3,
+        "intro": 4
       };
       BlockName = Object.keys(blockSkipAhead).find(name => currentTrial.classList.contains(name)) || "";
       console.log("BlockName:", BlockName);
@@ -936,42 +927,62 @@ document.addEventListener("DOMContentLoaded", async function () {
       button.removeEventListener("click", handleResponseClick);
       
       await runTransitionBlock(BlockName, () => {
-        const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
-        const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
-        const lastTrial = document.getElementById(`trial${trialNr - 1}`);
-        lastTrial.style.display = "none";
-        currentTrial.style.display = "block";
+        if (!BlockName.includes("intro")) {
+          const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
+          const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
+          const lastTrial = document.getElementById(`trial${trialNr - 1}`);
+          lastTrial.style.display = "none";
+          currentTrial.style.display = "block";
 
-        // Start RT timing *after* everything appears
-        t0 = new Date().getTime();
+          // Start RT timing *after* everything appears
+          t0 = new Date().getTime();
 
-        console.log(currentImages);
-        
-        const backgroundImg = currentTrial.querySelector("#background");
-        if (backgroundImg) {
-          backgroundImg.style.display = "block";
-        }
-        // Hide the image with id "background-talking"
-        const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-        if (backgroundTalkingImg) {
-          backgroundTalkingImg.style.display = "none";
-        }
-        console.log("before adding event listener")
+          console.log(currentImages);
+          
+          const backgroundImg = currentTrial.querySelector("#background");
+          if (backgroundImg) {
+            backgroundImg.style.display = "block";
+          }
+          // Hide the image with id "background-talking"
+          const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
+          if (backgroundTalkingImg) {
+            backgroundTalkingImg.style.display = "none";
+          }
+          console.log("before adding event listener")
 
-        // enable speaker again
-        speaker.classList.remove("disabled");
-        console.log("speaker enabled");
+          // enable speaker again
+          speaker.classList.remove("disabled");
+          console.log("speaker enabled");
 
-        button.disabled = true;
-        
-        currentImages.forEach((img) => {
-          img.style.pointerEvents = "auto";
-          console.log("event listener added")
-          img.addEventListener("click", handleResponseClick, {
-          capture: false,
-          once: false,
+          button.disabled = true;
+          
+          currentImages.forEach((img) => {
+            img.style.pointerEvents = "auto";
+            console.log("event listener added")
+            img.addEventListener("click", handleResponseClick, {
+            capture: false,
+            once: false,
+            });
           });
-        });
+        } else if (BlockName.includes("intro")) {
+          const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
+          const lastTrial = document.getElementById(`trial${trialNr - 1}`);
+          lastTrial.style.display = "none";
+          currentTrial.style.display = "block";
+          console.log("intro block - before adding event listener")
+          // enable speaker again
+          speaker.classList.remove("disabled");
+          console.log("speaker enabled");
+          button.disabled = false;
+          const backgroundImg = currentTrial.querySelector("#background");
+          if (backgroundImg) {
+            backgroundImg.style.display = "block";
+          }
+          button.addEventListener("click", handleContinueClick, {
+            capture: false,
+            once: true,
+          });
+        }
         trialNr = trialNr +  (SkipAheadIndex + 1) ; // skip ahead past the discourse novelty trials
       });
     } else if (currentTrial.classList.contains("transitionSlide")) {
