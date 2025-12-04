@@ -899,9 +899,16 @@ document.addEventListener("DOMContentLoaded", async function () {
       headingTestsound.style.display = "none";
       // const lastTrial = document.getElementById(`trial${trialNr - 1}`);
       // lastTrial.style.display = "none";
-      const backgroundImg = currentTrial.querySelector("#background");
-      if (backgroundImg) {
-        backgroundImg.style.display = "none";
+      if (!BlockName.includes("intro")) {
+        const backgroundImg = currentTrial.querySelector("#background");
+        if (backgroundImg) {
+          backgroundImg.style.display = "none";
+        }
+      } else {
+        const backgroundImg = currentTrial.querySelector("#background");
+        if (backgroundImg) {
+          backgroundImg.style.display = "block";
+        }
       }
       const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
       if (backgroundTalkingImg) {
