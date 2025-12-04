@@ -60,19 +60,20 @@ async function runTransitionBlock(blockName, onFinished) {
 
   const { ctx, audioBuffer, timing } = sprite;
 
+  // --- IMPORTANT for iOS: resume the shared AudioContext here ---
+  try {
+    if (ctx && ctx.state === "suspended") {
+      await ctx.resume();
+      console.log("[TransitionBlock] Resumed AudioContext for block:", blockName);
+    }
+  } catch (e) {
+    console.warn("[TransitionBlock] Could not resume AudioContext:", e);
+  }
+
   // Use a gain node so we can control volume of transition blocks
   const spriteGain = ctx.createGain();
-  spriteGain.gain.value = 0.6; // 🔊 tweak this (0–1) until it matches other audio
+  spriteGain.gain.value = 0.7; // or 1.0 if loudness is matched offline
   spriteGain.connect(ctx.destination);
-
-  // Try to resume audio context (helps on Safari/Android after interruptions)
-  if (ctx.state === "suspended") {
-    try {
-      await ctx.resume();
-    } catch (e) {
-      console.warn("Could not resume AudioContext for block", blockName, e);
-    }
-  }
 
   const slides = Array.from(
     document.querySelectorAll(`.trials.transitionSlide.${blockName}`)
@@ -115,15 +116,12 @@ async function runTransitionBlock(blockName, onFinished) {
       return;
     }
 
-    // If the context has been closed or is in a bad state, treat as blocked
+    // optional: guard against closed context here
     if (!ctx || ctx.state === "closed") {
       console.warn("AudioContext is closed for block", blockName);
-      handleBlocked();
+      if (onEnded) onEnded();
       return;
     }
-
-    // Just keep in mind: if the shared context is truly “closed”, 
-    // it’s global – restarting the block might not fix it, but that’s a rare edge case.
 
     let advanced = false;
     const safeEnd = () => {
@@ -136,13 +134,12 @@ async function runTransitionBlock(blockName, onFinished) {
     try {
       source = ctx.createBufferSource();
       source.buffer = audioBuffer;
-      source.connect(spriteGain); // 👈 was ctx.destination
+      source.connect(spriteGain);      // 👈 use the ONE gain node we made above
       source.onended = safeEnd;
       source.start(ctx.currentTime, info.start, info.duration);
     } catch (e) {
       console.error("Error starting segment", label, e);
-      handleBlocked();
-      return;
+      if (onEnded) onEnded();
     }
 
     // Safety net: if onended never fires, treat as blocked
@@ -172,10 +169,10 @@ async function runTransitionBlock(blockName, onFinished) {
     slide.style.display = "block";
     previousSlide = slide;
 
-    // Make objects visible if needed
+    // Keep existing opacity (important for Discourse Novelty animations)
     const objects = slide.querySelectorAll("img.object");
     objects.forEach((img) => {
-      // img.style.opacity = "1";
+      // img.style.opacity = "1";  // leave opacity to CSS/HTML
       img.style.pointerEvents = "none"; // usually no responses in transition slides
     });
 
@@ -209,6 +206,8 @@ async function runTransitionBlock(blockName, onFinished) {
 
   showSlideAndPlay();
 }
+
+
 
 
 const blockSprites = {}; // blockName -> { ctx, audioBuffer, timing }

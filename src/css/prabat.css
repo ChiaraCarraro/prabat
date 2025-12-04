@@ -17,7 +17,8 @@ body {
   background-color: var(--ccp-minerva-green);
   margin: 0;
   color: black;
-  overflow: hidden;
+  overflow-x: hidden;   /* no side scroll */
+  overflow-y: auto;     /* allow vertical scroll if needed */
   padding: 0;
   height: 100%;
 }
@@ -32,7 +33,7 @@ body {
 
 #flex-wrapper {
   width: 90vw;
-  height: 100vh;
+  min-height: 100vh;      /* 👈 allow taller than viewport if needed */
   margin: 0 5vw;
   display: flex;
   align-items: center;
@@ -40,6 +41,8 @@ body {
   /*border: 2px solid blue;*/
   /*background-color: #faf5e7;*/
 }
+
+
 
 .flex-item {
   display: block;
@@ -82,8 +85,10 @@ body {
   height: 83%;
   align-items: center;
   justify-content: center;
+  padding-bottom: 0px;  /* 👈 NEW: space for buttons */
   /*border: 2px solid rgb(0, 92, 0);*/
 }
+
 
 .flex-sheet {
   display: block;
@@ -270,11 +275,17 @@ body {
 
 .button-row-wrapper {
   position: absolute;
-  bottom: 0;       /* stick to bottom */
+  bottom: 0;
   left: 50%;
-  transform: translateX(-50%); /* center horizontally */
-  margin-bottom: 1em;          /* optional spacing from edge */
+  transform: translateX(-50%);
+  margin-bottom: 0;
+  display: flex;
+  gap: 2em;
+  align-items: center;
+  justify-content: center;
 }
+
+
 
 /* Fullscreen overlay */
 .overlay {
