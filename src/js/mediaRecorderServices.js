@@ -11,7 +11,6 @@ let stopPromiseResolve = null;
  * @returns {Promise<MediaStream>}
  */
 export async function initMedia(constraints) {
-  debugger;
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     throw new Error("getUserMedia is not supported in this browser.");
   }
@@ -33,17 +32,31 @@ export async function initMedia(constraints) {
   };
 
   const finalConstraints = constraints || defaultConstraints;
+  
+  
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia(finalConstraints);
+    
+  } catch (err) {
 
-  mediaStream = await navigator.mediaDevices.getUserMedia(finalConstraints);
-
-  // if (videoElement) {
-  //   videoElement.srcObject = mediaStream;
-  //   videoElement.playsInline = true; // for iOS
-  //   await videoElement.play().catch(() => {
-  //     // autoplay might be blocked, ignore here
-  //   });
-  // }
-
+    if (String(err).includes("No AVAudioSessionCaptureDevice")) {
+      console.warn("iOS cannot access microphone. Retrying without audio...");
+      
+      // Retry video-only
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 640, max: 640 },   // lower resolution
+          height: { ideal: 480, max: 480 },
+          frameRate: { ideal: 10, max: 15 }, // low-ish fps
+          facingMode: "user",
+        },
+        audio: false
+      });
+    } else {
+      throw err;
+    }
+  }
+  
   return mediaStream;
 }
 
@@ -51,7 +64,6 @@ export async function initMedia(constraints) {
  * Start recording the existing mediaStream.
  */
 export function startRecording() {
-  debugger;
   if (!mediaStream) {
     throw new Error("Media stream is not initialized. Call initMedia() first.");
   }
@@ -64,7 +76,11 @@ export function startRecording() {
 
   const recorderOptions = {
     mimeType: supportedMimeType,
-    videoBitsPerSecond: 300_000, // 300 kbps – quite low quality
+    videoBitsPerSecond: 150_000, // 150 kbps – quite low quality
+  };
+
+  const recorderOptionsWithoutMimeType = {
+    videoBitsPerSecond: 150_000, // 150 kbps – quite low quality
   };
   
   try {
@@ -73,7 +89,8 @@ export function startRecording() {
       : new MediaRecorder(mediaStream);
   } catch (err) {
     console.error("Failed to create MediaRecorder:", err);
-    throw err;
+    mediaRecorder = new MediaRecorder(mediaStream, recorderOptionsWithoutMimeType);
+    //throw err;
   }
 
   mediaRecorder.ondataavailable = event => {
@@ -104,7 +121,9 @@ export function startRecording() {
  */
 export function stopRecording() {
   if (!mediaRecorder || mediaRecorder.state !== "recording") {
-    return Promise.reject(new Error("No active recording to stop."));
+    //return Promise.reject(new Error("No active recording to stop."));
+    console.warn("stopRecording called but there is no active recording.");
+    return Promise.resolve(null);
   }
 
   return new Promise(resolve => {

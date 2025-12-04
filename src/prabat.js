@@ -545,7 +545,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Show fullscreen overlay (spinner
       const overlay = document.querySelector("#uploadOverlay");
       overlay.classList.remove("hidden");
-      await stopRecording();
+      try {
+        await stopRecording();
+      } catch (e) {
+        console.warn("Failed to stop recording, continuing anyway:", e);
+      }
 
       try {
         await uploadData(responseLog.data, responseLog.meta.subjID);
@@ -554,20 +558,25 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Error during uploading processing:", err);
       } 
       try {
+      if (!responseLog.meta.iOSSafari && responseLog.meta.webcam === "true") {
         await uploadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
         await pause(5000);
+        }
       } catch (err) {
         console.error("Error during uploading processing:", err);
       } 
       try {
+        i
         await downloadData(responseLog.data, responseLog.meta.subjID);
         await pause(5000);
       } catch (err) {
         console.error("Error during uploading processing:", err);
       } 
       try {
+      if (!responseLog.meta.iOSSafari && responseLog.meta.webcam === "true") {
         await downloadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
         await pause(2000);
+      }
       } catch (err) {
         console.error("Error during uploading processing:", err);
       } 
@@ -1122,7 +1131,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // ---------------------------------------------------------------------------------------------------------------------
     // FOR DEMO: Conditional Recording (only if not iOS Safari)
     // ---------------------------------------------------------------------------------------------------------------------
-    //if (!responseLog.meta.iOSSafari && responseLog.meta.webcam === "true") {
+    if (!responseLog.meta.iOSSafari && responseLog.meta.webcam === "true") {
     if (!isMediaRecorderSupported()) {
     console.log("MediaRecorder is not supported in this browser.");
     }
@@ -1146,7 +1155,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Failed to access camera/microphone:", error);
       }
     }
-
+  }
     await pause(2500);
 
     button.style.display = "inline";
