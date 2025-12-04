@@ -16,7 +16,7 @@ import { applyLocalizedImagePaths } from "./js/applyLocalizedImagePaths.js";
 import { preloadAudios } from "./js/preloadAudios.js";
 import { preloadImages } from "./js/preloadImages.js";
 import { startRecording, initMedia, isMediaRecorderSupported, stopRecording } from "./js/mediaRecorderServices.js";
-import { playAudio, showAudioUnlockPrompt, allAudios } from "./js/playAudios.js";
+import { playAudio, allAudios } from "./js/playAudios.js";
 import { buildSpriteForBlock } from "./js/buildSpriteForBlock.js";
 import { getSharedAudioContext } from "./js/sharedAudioContext.js";
 
@@ -29,7 +29,7 @@ if (storedChoices) {
 }
 const lang = studyChoices?.lang || "ger"; // fallback to English
 
-// showAudioUnlockPrompt function: to prevent app freezing on Safari when audio play is blocked
+
 
 function showBlockRestartPrompt(restartFn) {
   const overlay = document.getElementById("audio-unlock-overlay");
@@ -59,6 +59,11 @@ async function runTransitionBlock(blockName, onFinished) {
   }
 
   const { ctx, audioBuffer, timing } = sprite;
+
+  // Use a gain node so we can control volume of transition blocks
+  const spriteGain = ctx.createGain();
+  spriteGain.gain.value = 0.6; // 🔊 tweak this (0–1) until it matches other audio
+  spriteGain.connect(ctx.destination);
 
   // Try to resume audio context (helps on Safari/Android after interruptions)
   if (ctx.state === "suspended") {
@@ -131,7 +136,7 @@ async function runTransitionBlock(blockName, onFinished) {
     try {
       source = ctx.createBufferSource();
       source.buffer = audioBuffer;
-      source.connect(ctx.destination);
+      source.connect(spriteGain); // 👈 was ctx.destination
       source.onended = safeEnd;
       source.start(ctx.currentTime, info.start, info.duration);
     } catch (e) {
@@ -170,7 +175,7 @@ async function runTransitionBlock(blockName, onFinished) {
     // Make objects visible if needed
     const objects = slide.querySelectorAll("img.object");
     objects.forEach((img) => {
-      img.style.opacity = "1";
+      // img.style.opacity = "1";
       img.style.pointerEvents = "none"; // usually no responses in transition slides
     });
 
@@ -973,7 +978,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       speaker.classList.add("disabled");
       console.log("speaker disabled");
 
-      trialAudio.currentTime = 0;
+        // --- Guard against missing audio tag ---
+      if (!trialAudio) {
+        console.error("No <audio> found for transitionEmpty slide:", trialId);
+        return;
+      }
+
+      // trialAudio.currentTime = 0;
       await playAudio(trialAudio);
       console.log("played");
       button.disabled = true; // prevent clicking until a new choice is made
@@ -1026,8 +1037,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         button.disabled = true; // prevent clicking until a new choice is made
       }
 
+        // --- Guard against missing audio tag ---
+      if (!trialAudio) {
+        console.error("No <audio> found for transitionEmpty slide:", trialId);
+        return;
+      }
+
       // (re)start the audio
-      trialAudio.currentTime = 0;
+      // trialAudio.currentTime = 0;
       //await trialAudio.play();
       await playAudio(trialAudio);
       console.log("played");

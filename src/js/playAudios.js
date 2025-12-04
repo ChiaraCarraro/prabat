@@ -30,32 +30,46 @@ export function showAudioUnlockPrompt(retryFn) {
   };
 }
 
-// audioEl is a normal <audio> element
+// js/playAudios.js
+// audioEl: a normal <audio> element
 export function playAudio(audioEl) {
   if (!audioEl) return Promise.resolve();
 
-  try {
-    // Start from the beginning
-    audioEl.pause();
-    audioEl.currentTime = 0;
-  } catch (e) {
-    console.warn("Could not reset audio element:", e);
-  }
-
+  // IMPORTANT: do NOT pause()/currentTime=0 here.
+  // Safari can throw AbortError if we keep resetting.
   const playPromise = audioEl.play();
 
-  // Modern browsers return a Promise from audio.play()
   if (playPromise && typeof playPromise.then === "function") {
     return playPromise.catch((err) => {
-      console.warn("audio.play() was blocked or failed:", err);
-      // Show overlay, and when the user taps, try again
-      showAudioUnlockPrompt(() => playAudio(audioEl));
+      console.warn("audio.play() was blocked or failed:", err.name, err.message);
+
+      // 1) Autoplay block (what we really want the overlay for)
+      if (err.name === "NotAllowedError" || err.name === "SecurityError") {
+        // Show overlay ONCE, and on user tap, just try a simple play()
+        showAudioUnlockPrompt(() => {
+          audioEl.play().catch((e) => {
+            console.warn("Retry after unlock still failed:", e.name, e.message);
+          });
+        });
+        return;
+      }
+
+      // 2) AbortError = Safari aborted the previous play (often harmless)
+      //    Do NOT show the overlay again – it just loops.
+      if (err.name === "AbortError") {
+        console.warn("Ignoring AbortError from audio.play()");
+        return;
+      }
+
+      // 3) Anything else: just log
+      console.warn("Unhandled audio.play() error:", err);
     });
-  } else {
-    // Older browsers: nothing to await, just return resolved promise
-    return Promise.resolve();
   }
+
+  // Older browsers: no Promise support
+  return Promise.resolve();
 }
+
 
 
 // // Optional: if you're also using Web Audio sprites,
