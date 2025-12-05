@@ -17,17 +17,8 @@
   <body>
     <div id="flex-wrapper" >
       <div class="flex-item">
-        <h2
-          id="heading-fullscreen"
-          style="
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translateX(-50%) translateY(-50%);
-            text-align: center;
-            font-size: 1.5em;
-          "
-        ><p id="heading-fullscreen"></p></h2>
+
+        <p id="heading-fullscreen" class="fullscreen-message"></p>
 
         
 
@@ -42,18 +33,18 @@
               data-img="backgrounds/background_task.svg"
               style="opacity: 0;"
               />
-            <h2
+            <div
               id="heading-testsound"
               style="
                 position: absolute;
-                top: 40%;
-                left: 50%;
-                transform: translateX(-50%) translateY(-50%);
+                width: 100vw;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
                 text-align: center;
                 display: none;
-                font-size: 1.5em;
               "
-            ><p id="noiseQuestion"></p></h2>
+            ><p id="noiseQuestion" class="fullscreen-message"></p></div>
           </div>      
 
           <!-- intro  -->
@@ -2708,14 +2699,14 @@
             <audio class="prompt" data-audio="MmhPause.mp3" ></audio>
             <img
                 id="background"
-                data-img="backgrounds/Gesture_item2_initial_orange.svg"
+                data-img="backgrounds/Gesture_item2_initial.svg"
                 />
             <div id="rowTransition" class="row transition">
               <div id="left">
                 <img
                   class="object transition"
                   data-word-category="dist1"
-                  data-img="objects/Gesture_item2_option1_orange.svg"
+                  data-img="objects/Gesture_item2_option1.svg"
                   style="height: auto; width: 60%; margin-top: 25vh; opacity: 0;"
                 />
               </div>
@@ -2723,7 +2714,7 @@
                 <img
                   class="object transition"
                   data-word-category="target"
-                  data-img="objects/Gesture_item2_option2_orange.svg"
+                  data-img="objects/Gesture_item2_option2.svg"
                   style="height: auto; width: 60%; margin-top: 15vh; opacity: 0;"
                 />
               </div>
@@ -2731,7 +2722,7 @@
                 <img
                   class="object transition"
                   data-word-category="dist2"
-                  data-img="objects/Gesture_item2_option3_orange.svg"
+                  data-img="objects/Gesture_item2_option3.svg"
                   style="height: auto; width: 60%; margin-top: 25vh; opacity: 0;"
                 />
               </div>
@@ -2745,18 +2736,18 @@
             <audio class="preResponse" data-audio="Aha.mp3"></audio>
             <img
                 id="background"
-                data-img="backgrounds/Gesture_item2_request_notalk_orange.svg"
+                data-img="backgrounds/Gesture_item2_request_notalk.svg"
             />
             <img
                 id="background-talking"
-                data-img="backgrounds/Gesture_item2_request_talk_orange.svg"
+                data-img="backgrounds/Gesture_item2_request_talk.svg"
             />
             <div class="row">
               <div id="left">
                 <img
                   class="object"
                   data-word-category="dist1"
-                  data-img="objects/Gesture_item2_option1_orange.svg"
+                  data-img="objects/Gesture_item2_option1.svg"
                   style="height: auto; width: 75%; margin-top: 25vh;"
                 />
               </div>
@@ -2764,7 +2755,7 @@
                 <img
                   class="object"
                   data-word-category="target"
-                  data-img="objects/Gesture_item2_option2_orange.svg"
+                  data-img="objects/Gesture_item2_option2.svg"
                   style="height: auto; width: 75%; margin-top: 25vh;"
                 />
               </div>
@@ -2772,7 +2763,7 @@
                 <img
                   class="object"
                   data-word-category="dist2"
-                  data-img="objects/Gesture_item2_option3_orange.svg"
+                  data-img="objects/Gesture_item2_option3.svg"
                   style="height: auto; width: 75%; margin-top: 25vh;"
                 />
               </div>

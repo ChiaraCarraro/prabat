@@ -72,7 +72,7 @@ async function runTransitionBlock(blockName, onFinished) {
 
   // Use a gain node so we can control volume of transition blocks
   const spriteGain = ctx.createGain();
-  spriteGain.gain.value = 0.7; // or 1.0 if loudness is matched offline
+  spriteGain.gain.value = 1.0; // or 1.0 if loudness is matched offline
   spriteGain.connect(ctx.destination);
 
   const slides = Array.from(
@@ -1131,31 +1131,32 @@ document.addEventListener("DOMContentLoaded", async function () {
     // ---------------------------------------------------------------------------------------------------------------------
     // FOR DEMO: Conditional Recording (only if not iOS Safari)
     // ---------------------------------------------------------------------------------------------------------------------
-    if (!responseLog.meta.iOSSafari && responseLog.meta.webcam === "true") {
-    if (!isMediaRecorderSupported()) {
-    console.log("MediaRecorder is not supported in this browser.");
-    }
-    else if (responseLog.meta.webcam === "true") {
-      try {
-        console.log("Requesting camera/microphone...");
-        await initMedia({
-          audio: true,
-          video: {
-            frameRate: { min: 1, ideal: 5, max: 10 },
-            width: { min: 640, ideal: 640, max: 640 },   // keep it small
-            height: { min: 480, ideal: 480, max: 480 },
-            facingMode: "user",
-          },
-        });
-        console.log("Camera ready. You can start recording.");
+    if (responseLog.meta.webcam === "true") {
+      // !responseLog.meta.iOSSafari &&
+      if (!isMediaRecorderSupported()) {
+      console.log("MediaRecorder is not supported in this browser.");
+      }
+      else if (responseLog.meta.webcam === "true") {
+        try {
+          console.log("Requesting camera/microphone...");
+          await initMedia({
+            audio: true,
+            video: {
+              frameRate: { min: 1, ideal: 5, max: 10 },
+              width: { min: 640, ideal: 640, max: 640 },   // keep it small
+              height: { min: 480, ideal: 480, max: 480 },
+              facingMode: "user",
+            },
+          });
+          console.log("Camera ready. You can start recording.");
 
-        startRecording();
-      console.log("Recording started.");
-      } catch (error) {
-        console.error("Failed to access camera/microphone:", error);
+          startRecording();
+        console.log("Recording started.");
+        } catch (error) {
+          console.error("Failed to access camera/microphone:", error);
+        }
       }
     }
-  }
     await pause(2500);
 
     button.style.display = "inline";
