@@ -72,7 +72,7 @@ async function runTransitionBlock(blockName, onFinished) {
 
   // Use a gain node so we can control volume of transition blocks
   const spriteGain = ctx.createGain();
-  spriteGain.gain.value = 1.0; // or 1.0 if loudness is matched offline
+  spriteGain.gain.value = 0.7;   // ≈ -3 dB
   spriteGain.connect(ctx.destination);
 
   const slides = Array.from(
@@ -558,7 +558,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Error during uploading processing:", err);
       } 
       try {
-      if (!responseLog.meta.iOSSafari && responseLog.meta.webcam === "true") {
+      if (responseLog.meta.webcam === "true") {
+        // !responseLog.meta.iOSSafari && 
         await uploadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
         await pause(5000);
         }
@@ -573,7 +574,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Error during uploading processing:", err);
       } 
       try {
-      if (!responseLog.meta.iOSSafari && responseLog.meta.webcam === "true") {
+      if (responseLog.meta.webcam === "true") {
+        // !responseLog.meta.iOSSafari &&
         await downloadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
         await pause(2000);
       }

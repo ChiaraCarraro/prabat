@@ -3,7 +3,8 @@
 src/scripts
 src/participant_data
 src/scripts
-dist/
+# dist/
+Matched4Loudness/
 
 # data (hide all json files)
 data/*.json

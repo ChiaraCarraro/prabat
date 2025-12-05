@@ -324,3 +324,99 @@ body {
 }
 
 
+.fullscreen-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  
+  max-width: 90vw;
+  max-height: 70vh;
+  box-sizing: border-box;
+
+  text-align: center;
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-y: scroll;                /* ⬅️ forces scroll bar to appear */
+  -webkit-overflow-scrolling: touch;
+
+  font-size: clamp(0.85rem, 2vw, 1.6rem);
+}
+
+/* ---- Scrollbar styling: visible, thin, and cross-browser ---- */
+
+/* Chrome, Safari, Edge */
+.fullscreen-message::-webkit-scrollbar {
+  width: 10px;                       /* width of vertical scrollbar */
+}
+
+.fullscreen-message::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.1);       /* light background */
+  border-radius: 5px;
+}
+
+.fullscreen-message::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.4);       /* darker handle */
+  border-radius: 5px;
+}
+
+.fullscreen-message::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.6);       /* darker when touched */
+}
+
+/* Firefox */
+.fullscreen-message {
+  scrollbar-width: thin;             /* "auto" | "thin" | "none" */
+  scrollbar-color: rgba(0,0,0,0.4) rgba(0,0,0,0.1); /* thumb | track */
+}
+
+#speaker {
+  width: 60px;
+  height: 60px;
+  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;
+}
+
+#prabat-button {
+  font-size: 1.2rem;
+  padding: 0.7rem 1.2rem;
+  transition: transform 0.2s ease, font-size 0.2s ease, padding 0.2s ease;
+}
+
+/* ---------------------------------------- */
+/* SMALL SCREEN BUTTON REDUCTION (STRONG)   */
+/* ---------------------------------------- */
+
+@media (max-height: 600px) {
+  #prabat-button {
+    font-size: 1rem !important;
+    padding: 0.4rem 0.8rem !important;   /* smaller padding */
+  }
+  #speaker {
+    width: 48px !important;
+    height: 48px !important;
+  }
+}
+
+@media (max-height: 500px) {
+  #prabat-button {
+    font-size: 0.9rem !important;
+    padding: 0.3rem 0.6rem !important;   /* even smaller padding */
+  }
+  #speaker {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
+@media (max-height: 430px) {
+  #prabat-button {
+    font-size: 0.8rem !important;
+    padding: 0.25rem 0.5rem !important;  /* tiny padding */
+  }
+  #speaker {
+    width: 34px !important;
+    height: 34px !important;
+  }
+}
+
