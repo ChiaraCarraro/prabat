@@ -88,9 +88,39 @@ async function runTransitionBlock(blockName, onFinished) {
   let currentIndex = 0;
   let previousSlide = null;
 
+  // Track current Web Audio playback & timeout so we can stop them cleanly
+  let currentSource = null;
+  let currentTimeout = null;
+  let blockFinished = false;
+
+  function stopCurrentPlayback() {
+    // Stop any currently playing sprite segment
+    if (currentSource) {
+      try {
+        currentSource.onended = null;   // avoid calling callbacks after stop()
+        currentSource.stop();
+      } catch (e) {
+        console.warn("Error stopping currentSource:", e);
+      }
+      currentSource = null;
+    }
+
+    // Clear the watchdog timeout
+    if (currentTimeout) {
+      clearTimeout(currentTimeout);
+      currentTimeout = null;
+    }
+  }
+
   // 🔁 Restart the entire block from the beginning
   function restartBlock() {
     console.warn("Restarting block:", blockName);
+
+    // We are explicitly restarting → this block is "active" again
+    blockFinished = false;
+
+    // Stop anything that might still be playing from before
+    stopCurrentPlayback();
 
     if (previousSlide) {
       previousSlide.style.display = "none";
@@ -101,11 +131,24 @@ async function runTransitionBlock(blockName, onFinished) {
     showSlideAndPlay();
   }
 
+
   // Called when audio is blocked or segment never ends
   function handleBlocked() {
+    // If the block already finished and we moved on,
+    // ignore late "blocked" events (e.g. user left the app)
+    if (blockFinished) {
+      console.warn("Blocked event after block finished, ignoring:", blockName);
+      return;
+    }
+
     console.warn("Audio in block", blockName, "seems blocked; asking to restart");
+
+    // Stop any stray playback before we show the restart overlay
+    stopCurrentPlayback();
+
     showBlockRestartPrompt(restartBlock);
   }
+
 
   // helper to play one sprite segment
   function playSegment(label, onEnded) {
@@ -123,44 +166,66 @@ async function runTransitionBlock(blockName, onFinished) {
       return;
     }
 
+    // Before starting a new segment, stop any old one + clear its timer
+    stopCurrentPlayback();
+
     let advanced = false;
     const safeEnd = () => {
       if (advanced) return;
       advanced = true;
+
+      // This segment finished normally → no need for the fallback timeout
+      if (currentTimeout) {
+        clearTimeout(currentTimeout);
+        currentTimeout = null;
+      }
+
+      currentSource = null;
+
       if (onEnded) onEnded();
     };
 
-    let source;
     try {
-      source = ctx.createBufferSource();
+      const source = ctx.createBufferSource();
       source.buffer = audioBuffer;
       source.connect(spriteGain);      // 👈 use the ONE gain node we made above
       source.onended = safeEnd;
       source.start(ctx.currentTime, info.start, info.duration);
+
+      currentSource = source;
     } catch (e) {
       console.error("Error starting segment", label, e);
-      if (onEnded) onEnded();
+      // We failed to start → treat like a block
+      handleBlocked();
+      return;
     }
 
     // Safety net: if onended never fires, treat as blocked
     const fallbackMs = info.duration * 1000 + 500;
-    setTimeout(() => {
-      if (!advanced) {
+    currentTimeout = setTimeout(() => {
+      if (!advanced && !blockFinished) {
         console.warn("Sprite segment did not end, restarting block:", label);
         handleBlocked();
       }
     }, fallbackMs);
   }
 
+
   function showSlideAndPlay() {
     const slide = slides[currentIndex];
 
     if (!slide) {
       // end of block
+      blockFinished = true;
+
+      // Clean up any active audio / timeouts
+      stopCurrentPlayback();
+
       if (previousSlide) previousSlide.style.display = "none";
       if (onFinished) onFinished();
       return;
     }
+
 
     if (previousSlide) {
       previousSlide.style.display = "none";
@@ -446,6 +511,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       chosenCategory: event.target.dataset.wordCategory,
       chosenPosition: event.target.closest("div").id,
       repeatCount: repeatCount,
+      browser: DetectRTC.browser.name,
+      OS: DetectRTC.osName,
     };
 
     console.log("repeatCount:", repeatCount);

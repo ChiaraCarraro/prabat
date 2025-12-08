@@ -19,6 +19,8 @@ export async function downloadData(safe, ID){
     'timestamp',
     'responseTime',
     'repeatCount',
+    'browser',
+    'OS',
   ];
 
   const columnNames = [
@@ -32,6 +34,8 @@ export async function downloadData(safe, ID){
     'timestamp',
     'responsetime_ms',
     'repeated',
+    'browser',
+    'OS',
   ];
 
   const refinedData = [];
