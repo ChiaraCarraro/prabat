@@ -633,22 +633,22 @@ document.addEventListener("DOMContentLoaded", async function () {
       } catch (err) {
         console.error("Error during uploading processing:", err);
       } 
-      try {
-        i
-        await downloadData(responseLog.data, responseLog.meta.subjID);
-        await pause(5000);
-      } catch (err) {
-        console.error("Error during uploading processing:", err);
-      } 
-      try {
-      if (responseLog.meta.webcam === "true") {
-        // !responseLog.meta.iOSSafari &&
-        await downloadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
-        await pause(2000);
-      }
-      } catch (err) {
-        console.error("Error during uploading processing:", err);
-      } 
+     // try {
+     //  i
+     //  await downloadData(responseLog.data, responseLog.meta.subjID);
+     //   await pause(5000);
+     // } catch (err) {
+     //  console.error("Error during uploading processing:", err);
+     // } 
+     // try {
+     // if (responseLog.meta.webcam === "true") {
+     //   // !responseLog.meta.iOSSafari &&
+     //   await downloadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
+     //   await pause(2000);
+     // }
+     // } catch (err) {
+     //   console.error("Error during uploading processing:", err);
+     // } 
       //window.location.href = `./goodbye.html`;
       overlay.classList.add("hidden");
       window.location.href = `https://devpsy.web.leuphana.de/prabat-consent/goodbye.html`;
