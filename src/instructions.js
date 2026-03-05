@@ -35,7 +35,7 @@ studyChoices.webcam = (studyChoices?.webcam=="true").toString();
 const button = document.getElementById("instructions-button");
 
 // Get language from URL
-const lang = studyChoices?.lang || "ger";
+const lang = studyChoices?.lang ?? "ger";
   
 // Load localized text/images
 (async () => {

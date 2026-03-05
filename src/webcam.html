@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#006c66" />
+    <!-- <link rel="manifest" href="/manifest.webmanifest" /> -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
+    <title>LueneLuetten-Kinderstudie</title>
+  </head>
+  <body>
+    <div class="flex-wrapper">
+      <div class="flex-item">
+        <h1 class="heading">Einrichtung der Webcam</h1>
+        <p>
+          Um Antworten besser zuzuordnen und verstehen zu können, 
+          möchten wir Sie und Ihr Kind mit der Webcam aufzeichnen. 
+          Sollte es bei der Webcam-Vorschau Probleme geben, dann 
+          versuchen Sie es gerne noch einmal mit einem anderen Browser 
+          (z.B. Chrome, Firefox, Edge). 
+        </p>
+
+        <p>
+
+            Wenn Sie auf <strong>Webcam-Vorschau</strong> klicken, werden Sie um die 
+            <strong>Video-Erlaubnis</strong> gebeten, möglicherweise wird bei Beginn des 
+            Spieles ein zweites Mal danach gefragt. Stimmen Sie bitte in 
+            beiden Fällen zu. Ebenso öffnet sich ein Fenster mit dem 
+            Webcam-Bild. <strong>Bitte richten Sie die Kamera so aus, dass Ihr 
+            Kind gut zusehen ist.</strong> Dann kann das Fenster geschlossen werden 
+            es und es geht weiter mit dem Button „Zur Studie". 
+        </p>
+
+        <div class="button-center-wrapper">
+          <button
+            type="button"
+            class="custom-button"
+            id="button-webcam-item"
+            onclick="mrec.startStream({
+            audio: true,
+            video: {
+              frameRate: {
+                min: 3,
+                ideal: 5,
+                max: 30,
+              },
+              width: {
+                min: 160,
+                ideal: 320,
+                max: 640,
+              },
+              height: {
+                min: 120,
+                ideal: 240,
+                max: 480,
+              },
+              facingMode: 'user',
+            },
+          }); mrec.openVideoPreview()"
+          >
+            <span><strong>Webcam-Vorschau</strong></span>
+          </button>
+        </div>
+
+        <div class="button-center-wrapper">
+          <button type="button" class="custom-button" id="continue-button">
+            <span><strong>ZUR STUDIE</strong></span>
+          </button>
+        </div>
+
+        <hr style="width: 100%; text-align: left; margin-left: 0" />
+
+        <div class="columns">
+          <div class="col">
+            <img id="logo-ccp" src="./logos/lueneluetten_logo.png"  style="max-width: 30%; height: auto;" />
+          </div>
+          <div class="col">
+            <img id="logo-leuphana" src="./logos/leuphana.svg" />
+          </div>
+        </div>
+
+        <p class="imprint">
+          <a href="https://lueneluetten.web.leuphana.de/wordpress/impressum/" target="_blank">Impressum</a>
+          /
+          <a
+            href="https://lueneluetten.web.leuphana.de/wordpress/wp-content/uploads/Datenschutzhinweise_LueneLuetten_06.2025-1.pdf"
+            target="_blank"
+            id="dataProtection"
+          >
+            Data Protection</a
+          >
+        </p>
+      </div>
+    </div>
+    <script src="webcam.js" type="module" defer></script>
+    <script src="https://unpkg.com/@ccp-eva/media-recorder"></script>
+  </body>
+</html>
