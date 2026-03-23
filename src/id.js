@@ -55,7 +55,7 @@ button.addEventListener("click", (event) => {
   const lang  = studyChoices?.lang || "ger";
 
   localStorage.setItem("storedChoices", JSON.stringify({ ID: subjID, webcam: webcam, lang: lang }));
-  window.location.href = `./webcam.html`;
+  window.location.href = `./instructions.html`;
 });
 
 // Init

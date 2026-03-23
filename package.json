@@ -1,7 +1,7 @@
 {
     "name": "prabat",
     "version": "1.0.0",
-    "description": "Link to task (in German): https://devpsy.web.leuphana.de/prabat",
+    "description": "Link to task (in German): https://devpsy.web.leuphana.de/prabat-demo-all/",
     "main": "src/index.js",
     "scripts": {
         "deploy": "sh src/scripts/deploy.sh",
