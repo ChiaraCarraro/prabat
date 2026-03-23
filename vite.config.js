@@ -13,7 +13,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: './src/index.html',
-        webcam: './src/webcam.html',
         instructions: './src/instructions.html',
         id: './src/id.html',
         prabat: './src/prabat.html',
