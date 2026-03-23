@@ -2,8 +2,10 @@ export const applyLocalizedImagePaths = (lang) => {
   let folder;
   if (lang === "ki" || lang === "sw") {
     folder = "ki";
-  } else if (lang === "ger" || lang === "en" || lang === "tr") {
+  } if (lang === "ger" || lang === "en") {
     folder = "ger";
+  } else if (lang === "tr") {
+    folder = "tr";
   }
   const allImgs = document.querySelectorAll("[data-img]");
   allImgs.forEach(img => {
