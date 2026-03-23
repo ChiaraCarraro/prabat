@@ -622,7 +622,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         await uploadData(responseLog.data, responseLog.meta.subjID);
         await pause(2000);
       } catch (err) {
-        console.error("Error during uploading processing:", err);
+        console.error("Error during data uploading processing:", err);
       } 
       try {
         if (responseLog.meta.webcam === "true") {
@@ -631,40 +631,24 @@ document.addEventListener("DOMContentLoaded", async function () {
           await pause(5000);
         }
       } catch (err) {
-        console.error("Error during uploading processing:", err);
+        console.error("Error during video uploading processing:", err);
+      }
+      try {
+        await downloadData(responseLog.data, responseLog.meta.subjID);
+        await pause(2000);
+      } catch (err) {
+        console.error("Error during data downloading processing:", err);
       } 
-     // try {
-     //  i
-     //  await downloadData(responseLog.data, responseLog.meta.subjID);
-     //   await pause(5000);
-     // } catch (err) {
-     //  console.error("Error during uploading processing:", err);
-     // } 
-     // try {
-     // if (responseLog.meta.webcam === "true") {
-     //   // !responseLog.meta.iOSSafari &&
-     //   await downloadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
-     //   await pause(2000);
-     // }
-     // } catch (err) {
-     //   console.error("Error during uploading processing:", err);
-     // } 
-      // try {
-      //   await downloadData(responseLog.data, responseLog.meta.subjID);
-      //   await pause(5000);
-      // } catch (err) {
-      //   console.error("Error during uploading processing:", err);
-      // } 
-      // try {
-      //   if (responseLog.meta.webcam === "true") {
-      //     // !responseLog.meta.iOSSafari &&
-      //     await downloadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
-      //     await pause(2000);
-      //   }
-      // } catch (err) {
-      //   console.error("Error during uploading processing:", err);
-      // } 
-      //window.location.href = `./goodbye.html`;
+      try {
+        if (responseLog.meta.webcam === "true") {
+          // !responseLog.meta.iOSSafari &&
+          await downloadVideo(responseLog.meta.webcam, responseLog.meta.subjID);
+          await pause(5000);
+        }
+      } catch (err) {
+        console.error("Error during video downloading processing:", err);
+      } 
+      window.location.href = `./goodbye.html`;
       overlay.classList.add("hidden");
       window.location.href = `https://devpsy.web.leuphana.de/prabat-consent/goodbye.html`;
     }
