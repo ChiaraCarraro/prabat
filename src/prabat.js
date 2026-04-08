@@ -650,7 +650,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       } 
       window.location.href = `./goodbye.html`;
       overlay.classList.add("hidden");
-      window.location.href = `https://devpsy.web.leuphana.de/prabat-consent/goodbye.html`;
+      // window.location.href = `https://devpsy.web.leuphana.de/prabat-consent/goodbye.html`;
     }
 
     const currentTrial = document.getElementById(`trial${trialNr}`);
