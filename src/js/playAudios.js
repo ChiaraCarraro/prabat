@@ -29,7 +29,7 @@ export function showAudioUnlockPrompt(retryFn) {
 
 // js/playAudios.js
 // audioEl: a normal <audio> element
-export function playAudioWebAudio(trialAudio);(audioEl) {
+export function playAudio(audioEl) {
   if (!audioEl) return Promise.resolve();
 
   // IMPORTANT: do NOT pause()/currentTime=0 here.
@@ -66,20 +66,3 @@ export function playAudioWebAudio(trialAudio);(audioEl) {
   // Older browsers: no Promise support
   return Promise.resolve();
 }
-
-
-
-// // Optional: if you're also using Web Audio sprites,
-// // install this unlock as well:
-// export function unlockAudioContext(audioCtx) {
-//   if (audioCtx.state !== "suspended") return;
-//   const b = document.body;
-//   const events = ["touchstart","touchend","mousedown","keydown"];
-//   const unlock = () => audioCtx.resume().catch(()=>{}).finally(clean);
-//   const clean = () => events.forEach(ev => b.removeEventListener(ev, unlock));
-//   events.forEach(ev => b.addEventListener(ev, unlock, false));
-// }
-
-// export function getAudioUnlocked() {
-//   return audioUnlocked;
-// }
