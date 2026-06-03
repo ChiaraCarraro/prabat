@@ -16,9 +16,10 @@ import { applyLocalizedImagePaths } from "./js/applyLocalizedImagePaths.js";
 import { preloadAudios } from "./js/preloadAudios.js";
 import { preloadImages } from "./js/preloadImages.js";
 import { startRecording, initMedia, isMediaRecorderSupported, stopRecording } from "./js/mediaRecorderServices.js";
-import { playAudio, allAudios } from "./js/playAudios.js";
+import { playAudioWebAudio(trialAudio);, allAudios } from "./js/playAudios.js";
 import { buildSpriteForBlock } from "./js/buildSpriteForBlock.js";
 import { getSharedAudioContext } from "./js/sharedAudioContext.js";
+import { playAudioWebAudio } from "./js/playAudioWebAudio.js";
 
 const storedChoices = localStorage.getItem("storedChoices");
 let studyChoices;
@@ -72,7 +73,7 @@ async function runTransitionBlock(blockName, onFinished) {
 
   // Use a gain node so we can control volume of transition blocks
   const spriteGain = ctx.createGain();
-  spriteGain.gain.value = 0.7;   // ≈ -3 dB
+  spriteGain.gain.value = 1;
   spriteGain.connect(ctx.destination);
 
   const slides = Array.from(
@@ -485,7 +486,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         button.disabled = false;
       });
 
-      playAudio(responseAudio);
+      playAudioWebAudio(trialAudio);(responseAudio);
     }
 
     button.disabled = false;
@@ -569,10 +570,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             resolve();
           };
 
-          // playAudio(prevResponseAudio);
+          // playAudioWebAudio(trialAudio);(prevResponseAudio);
 
           if (prevResponseAudio) {
-            playAudio(prevResponseAudio);
+            playAudioWebAudio(trialAudio);(prevResponseAudio);
           }
 
         });
@@ -597,7 +598,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       speaker.style.display = "block";
 
       if (allAudios[trialNr]) {
-        playAudio(allAudios[trialNr]);
+        playAudioWebAudio(trialAudio);(allAudios[trialNr]);
       }
 
       button.addEventListener("click", handleContinueClick, {
@@ -686,7 +687,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
       if (trialAudio) {
-        playAudio(trialAudio);
+        playAudioWebAudio(trialAudio);(trialAudio);
         // button.disabled = true;
         // speaker.classList.add("disabled");
       }
@@ -867,7 +868,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (trialAudio) {
         // disable speaker during playback
         if (trialAudio) {
-          playAudio(trialAudio);
+          playAudioWebAudio(trialAudio);(trialAudio);
 
         }
         // if (speaker) {
@@ -877,7 +878,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         // }
 
         button.disabled = true;
-        // playAudio(trialAudio);
+        // playAudioWebAudio(trialAudio);(trialAudio);
 
         console.log("This is:", trialAudio);
         console.log("This is:", audioSrc);
@@ -1079,7 +1080,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
 
       // trialAudio.currentTime = 0;
-      await playAudio(trialAudio);
+      await playAudioWebAudio(trialAudio);(trialAudio);
       console.log("played");
       button.disabled = true; // prevent clicking until a new choice is made
 
@@ -1110,7 +1111,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     } else if (currentTrial.id === "trial0") {
       if (TestSound) {
         //TestSound.play();
-        playAudio(TestSound);
+        playAudioWebAudio(trialAudio);(TestSound);
       } else {
         console.warn('Element with ID "testsound" not found.');
       }
@@ -1140,7 +1141,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       // (re)start the audio
       // trialAudio.currentTime = 0;
       //await trialAudio.play();
-      await playAudio(trialAudio);
+      await playAudioWebAudio(trialAudio);(trialAudio);
       console.log("played");
       const backgroundImg = currentTrial.querySelector("#background");
       if (backgroundImg) {

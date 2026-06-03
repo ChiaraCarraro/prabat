@@ -29,7 +29,7 @@ export function showAudioUnlockPrompt(retryFn) {
 
 // js/playAudios.js
 // audioEl: a normal <audio> element
-export function playAudio(audioEl) {
+export function playAudioWebAudio(trialAudio);(audioEl) {
   if (!audioEl) return Promise.resolve();
 
   // IMPORTANT: do NOT pause()/currentTime=0 here.
