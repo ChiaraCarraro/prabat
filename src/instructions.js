@@ -46,7 +46,7 @@ function applyLocalizedImagePaths(lang) {
   let folder;
   if (lang === "ki" || lang === "sw") {
     folder = "ki";
-  } else if (lang === "ger" || lang === "en" || lang === "tr") {
+  } else if (lang === "ger" || lang === "en" || lang === "tr" || lang === "ch") {
     folder = "ger";
   } else {
     folder = lang;

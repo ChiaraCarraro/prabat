@@ -7,7 +7,8 @@ import path from 'path'
  * @param {string} lang - Language folder (e.g., 'ger', 'eng')
  * @returns {string[]} List of image paths
  */
-export function getImageList(lang = "ger") {
+// lang = ger was in the function
+export function getImageList(lang) {
   try {
     const folder = path.join("images", lang);
     const files = fs.readdirSync(folder);

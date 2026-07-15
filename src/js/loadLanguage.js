@@ -8,8 +8,9 @@ import sw  from '../../public/lang/sw.json';
 import ki  from '../../public/lang/ki.json';
 import en  from '../../public/lang/en.json';
 import tr  from '../../public/lang/tr.json';
+import ch  from '../../public/lang/ch.json';
 
-const DICT = { ger, sw, ki, en, tr };
+const DICT = { ger, sw, ki, en, tr, ch };
 
 export async function loadLanguage(langCode) {
   const translations = DICT[langCode];
@@ -39,7 +40,12 @@ export async function loadLanguage(langCode) {
       { id: "heading-fullscreen", key: "headingfullscreen" },
       { id: "enterPseudo", key: "enterPseudo" },
       { id: "noiseQuestion", key: "noiseQuestion" },
-      { id: "goodbye-message", key: "goodbyeMessage" }
+      { id: "goodbye-message", key: "goodbye-message" },
+      { id: "hopeFunGoodbye", key: "hopeFunGoodbye" },
+      { id: "questionEmail", key: "questionEmail" },
+      { id: "SeeYou", key: "SeeYou" },
+      { id: "closingRemarks", key: "closingRemarks" },
+      { id: "upload-message", key: "upload-message" }
     ];
 
     textElements.forEach(({ id, key }) => {

@@ -14,12 +14,17 @@
 "headingfullscreen": "Take as much time as you like.\n\nIf your child becomes restless or bored, you can take a short break at any time. \n\n If your child asks you for advice or is unsure, please say 'Show me what you think'. Everything your child answers is great. Please do not help your child with the tasks - after all, we want to learn something about children! \n\nPlease click on 'CONTINUE' now to activate full screen mode at.",
 "enterPseudo": "Please enter a pseudonym here:",
 "noiseQuestion": "Did you just hear a short tinkling sound? \n\nGreat! If you didn't hear it, please click on the speaker icon to test your sound. \n\n Please click on 'NEXT' now to start the game.",
-"goodbyeMessage": "The study has been completed successfully. The download of the data will start (please check pop-up).",
+"goodbye-message": "The study has been completed successfully. The download of the data will start (please check pop-up).",
 "introImages": [
     "images/ger/backgrounds/start_1_waving.svg",
     "images/ger/backgrounds/start_1.svg",
     "images/ger/backgrounds/start_2.svg",
     "images/ger/backgrounds/start_3.svg",
     "images/ger/backgrounds/start_4.svg"
-  ]
+  ],
+  "hopeFunGoodbye": "We hope you had fun... Here is a short farewell video from Ella:",
+  "questionEmail": "If you have any questions or comments, please contact this email address:",
+  "SeeYou": "We look forward to seeing you again!",
+  "closingRemarks": "Best regards and see you soon, \n\n Your research team from Lüneburg and Leuphana University",
+  "upload-message": "Your data is being uploaded. This may take a few minutes. Please do not close this page..."
 }

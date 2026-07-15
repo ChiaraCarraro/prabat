@@ -1,21 +1,28 @@
 import "./css/landingpages.css";
-// import { loadLanguage } from "./js/loadLanguage.js"; // adjust path as needed
+import { loadLanguage } from "./js/loadLanguage.js";
 
-// // Get language from URL
-// const params = new URLSearchParams(window.location.search);
-// const lang = params.get("lang") || "en";
+// Read stored choices from localStorage
+const storedChoices = localStorage.getItem("storedChoices");
 
+let studyChoices = {};
 
-// const webcam =
-//   new URL(document.location.href).searchParams.get('webcam') || false;
+if (storedChoices) {
+  studyChoices = JSON.parse(storedChoices);
+} else {
+  console.error("No data found in localStorage");
+}
 
-// const subjID =
-// new URL(document.location.href).searchParams.get('ID') || 'testID';
-  
-// // Load localized text/images
-// (async () => {
-//   await loadLanguage(lang);
-// })();
+// Read language from localStorage
+// fallback should probably be "ger", because that is your default elsewhere
+const lang = studyChoices?.lang ?? "ger";
+
+const webcam = studyChoices?.webcam ?? false;
+const subjID = studyChoices?.ID ?? "testID";
+
+// Load localized text
+(async () => {
+  await loadLanguage(lang);
+})();
 
 // -------------------------------------------------------------------------------------
 

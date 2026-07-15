@@ -7,7 +7,7 @@ export async function preloadImages(lang) {
       let imageJsonName;
       if (lang === "ki" || lang === "sw") {
         imageJsonName = "images-ki.json"
-      } else if (lang === "ger" || lang === "en" || lang === "tr") {
+      } else if (lang === "ger" || lang === "en" || lang === "tr" || lang === "ch") {
         imageJsonName = "images-ger.json"
       }
   

@@ -2,25 +2,29 @@
   "webcamquestion": "Je, ungependa kuanza kurekodi video?",
   "yes": "Ndiyo",
   "no": "Hapana",
-  "dataDisclaimer": "Baada ya kumaliza utafiti, data itahifadhiwa kwenye kifaa chako kama faili ya .json (na, ikiwa imechaguliwa, video kama faili ya .webm) kwenye folda ya downloads. Hakuna nakala nyinginezo zilizohifadhiwa mahali pengine.",
-  "imageDisclaimer": "Picha na vitu vya muundo kwenye tovuti hii vinajumuisha rasilimali za SVGRepo, Flaticon na Freepik, ambazo zinatumiwa chini ya leseni ya bure na utoaji wa jina muhimu. Baadhi ya habari huenda ikawa imebadilishwa au kurekebishwa.",
-  "startButton": "KUANZA",
+  "dataDisclaimer": "Baada ya kukamilisha utafiti, data itahifadhiwa kwenye kifaa chako katika folda ya Vipakuliwa kama faili la .json (na ikiwa umechagua kurekodi video, video itahifadhiwa kama faili la .webm). Nakala ya data pia itatumwa kwenye seva yetu kwa ajili ya uchambuzi zaidi.",
+  "imageDisclaimer": "Michoro na vipengele vya muundo kwenye tovuti hii vina nyenzo kutoka SVGRepo, Flaticon na Freepik, ambazo zinatumiwa chini ya leseni ya bure inayohitaji kutaja chanzo. Baadhi ya nyenzo zinaweza kuwa zimehaririwa au kubadilishwa.",
+  "startButton": "ANZA",
   "continue": "ENDELEA",
-  "theGame": "Mchezo",
-  "descriptionGame": "Katika mchezo ufuatao, utaona msichana na vitu vitatu kila wakati. Kwa kila picha, msichana anauliza mtoto achague moja ya picha hizo kwa njia ya sentensi.",
-  "instructionsGame": "Unaweza kurudia kusikiliza sauti kwa kubofya alama ya spika. Mara mtoto anapochagua picha, bofya 'ENDELEA' ili kuendelea na mchezo. Tafadhali bofya 'NEXT' sasa ili kwenda kwenye maelekezo.",
-  "letsgo": "Hebu twende!",
-  "headingfullscreen": "Chukua muda mwingi kama unavyotaka.\n\nIkiwa mtoto wako atakuwa na wasiwasi au kuchoka, unaweza kuchukua mapumziko mafupi wakati wowote. \n\n Ikiwa mtoto wako atakuuliza ushauri au atakuwa na mashaka, tafadhali sema 'Nionyeshe unachofikiri'. Kila kitu ambacho mtoto wako atajibu ni kizuri. Tafadhali usimsaidie mtoto wako katika majukumu - hatimaye, tunataka kujifunza kitu kuhusu watoto! \n\nTafadhali bofya 'ENDELEA' sasa ili kuwezesha hali ya skrini nzima.",
-  "enterPseudo": "Tafadhali ingiza jina la utani hapa:",
-  "noiseQuestion": "Je, umesikia sauti fupi ya kunguruma? \n\nNdiyo! Ikiwa hujasikia, bofya alama ya spika ili kujaribu sauti yako. \n\n Bofya 'NEXT' sasa ili kuendelea.",
-
+  "theGame": "Maelekezo",
+  "descriptionGame": "Baada ya Ella kujitambulisha mwanzoni, utafiti wenyewe utaanza na mtoto wako atamwona Ella pamoja na picha nyingine tatu kila mara. Kila wakati, Ella atamwomba mtoto wako achague mojawapo ya picha hizo. Ikiwa unatumia tableti, tafadhali mwache mtoto wako abonyeze mwenyewe picha anayotaka kuchagua. Ikiwa unatumia kompyuta, tafadhali mwache mtoto wako aonyeshe picha kwenye skrini, kisha wewe ubonyeze picha aliyoionyesha. Picha huwa imechaguliwa wakati fremu ya bluu inapotokea. Ikihitajika, unaweza kubonyeza alama ya spika ili kusikiliza tena sehemu ya sauti. Mara baada ya mtoto wako kuchagua picha, bonyeza „ENDELEA“ ili kuendelea.",
+  "instructionsGame": "Ikiwa mtoto wako hana uhakika au anakuomba msaada, unaweza kumtia moyo kwa kusema, kwa mfano, „Chagua tu kile unachofikiri“ au „Mimi pia sina uhakika, wewe unafikiri nini?“ Tafadhali usimwambie jibu sahihi. Ikiwa mtoto wako ataanza kuhangaika au kuchoka, mnaweza kupumzika kwa muda mfupi wakati wowote. Chukueni muda wote mnaohitaji! Ikiwa ungependa kusitisha utafiti, funga tu dirisha hili. Data yako haitahifadhiwa safari hii.",
+  "letsgo": "Tuanze!",
+  "headingfullscreen": "Sasa tunaanza kurekodi. \n\n Ikiwa dirisha jingine ibukizi litatokea likiomba ruhusa ya kutumia kamera, tafadhali bonyeza tena 'Ruhusu'. \n\n Tafadhali bonyeza sasa 'ENDELEA' ili kuwasha hali ya skrini nzima.",
+  "enterPseudo": "Tafadhali andika jina bandia hapa:",
+  "noiseQuestion": "Je, umesikia sauti fupi ya mlio? \n\nNdiyo? Vizuri sana! Tafadhali rekebisha kiwango cha sauti ili mtoto wako aweze kuusikia mlio huo vizuri. \n\n Hapana? Tafadhali bonyeza alama ya spika ili kujaribu sauti tena. \n\nSasa tunaweza kuanza! Tafadhali bonyeza 'ENDELEA' ili kuanza mchezo.",
+  "goodbye-message": "Utafiti umekamilika kwa mafanikio. Upakuaji wa data utaanza moja kwa moja (tafadhali angalia dirisha ibukizi). \nAsante sana kwa kushiriki katika utafiti wetu!",
   "introImages": [
-    "images/ki/backgrounds/start_1_waving.svg",
-    "images/ki/backgrounds/start_1.svg",
-    "images/ki/backgrounds/start_2_house.svg",
-    "images/ki/backgrounds/start_3_parents.svg",
-    "images/ki/backgrounds/start_3_friends.svg",
-    "images/ki/backgrounds/start_4.svg"
-  ]
-
+  "images/ger/backgrounds/start_1_waving.svg",
+  "images/ger/backgrounds/start_1.svg",
+  "images/ger/backgrounds/start_2_house.svg",
+  "images/ger/backgrounds/start_3_parents.svg",
+  "images/ger/backgrounds/start_3_friends.svg",
+  "images/ger/backgrounds/start_4.svg"
+  ],
+  "hopeFunGoodbye": "Tunatumaini mmefurahia... Hapa mnaweza kutazama video fupi ya Ella ya kuwaaga:",
+  "questionEmail": "Ikiwa una maswali au maoni, tafadhali wasiliana nasi kupitia anwani hii ya barua pepe:",
+  "SeeYou": "Tunatarajia kukuona tena!",
+  "closingRemarks": "Salamu za dhati na tutaonana hivi karibuni, \n\n Timu yako ya utafiti ya LüneLütten na Chuo Kikuu cha Leuphana Lüneburg",
+  "upload-message": "Data yako inapakiwa sasa. Hii inaweza kuchukua dakika chache. Tafadhali usifunge ukurasa huu..."
 }

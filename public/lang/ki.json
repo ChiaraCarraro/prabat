@@ -1,25 +1,30 @@
 {
-
-"webcamquestion": "No wende kwambĩrĩria gũthondeka video?",
-"yes": "Ĩĩ",
-"no": "Aca",
-"dataDisclaimer": "Thutha wa gũthondeka ũhoro ũcio nĩ ũigagwo thĩinĩ wa foldari ya maũndũ marĩa mekũrutwo ta .json (na, angĩkorũo nĩ ũthuurĩte, video ta .webm) thĩinĩ wa gũtirĩ maũndũ. Gũtirĩ mbica ĩngĩ ĩigagwo handũ hangĩ kũrĩa mũno ũcio.",
-"imageDisclaimer": "Mĩhianano na indo cia gũthondeka thĩinĩ wa website ĩno nĩ hamwe na indo cia SVGRepo, Flaticon na Freepik, iria ihũthagĩrwo rungu rwa marũa ma ũtuĩria na kũheana marĩĩtwa. Maũndũ mamwe no makorũo macenjetio",
-"startButton": "KWAMBĨRĨRIA",
-"continue": "Gũthiĩ na mbere",
-"theGame": "Mũtambo",
-"descriptionsGame": "Gĩcunjĩ-inĩ kĩrĩa kĩrũmĩrĩire, hĩndĩ ciothe nĩ ũkoona mũirĩtu na indo ithatũ. Nĩ ũndũ wa mbica o ĩmwe, kairĩtu kau nĩ gatũmaga gakũũrie kamwana kau kahũthĩre ciugo gũthuura ĩmwe ya mbica icio",
-"instructionsGame": "No ũhihinye mũgambo rĩngĩ na njĩra ya kũhihinyanĩria kĩmenyithia kĩa thiomi. Mwana waku angĩthuura mbica ĩmwe, hũra 'CONTINUE' nĩguo ũthiĩ na mbere na mũbira ũcio. Rĩu hũra 'NEXT' nĩguo wone ũrĩa ũngĩka",
-"letsgo": "Rekei tũthiĩ!",
-"headingfullscreen": "Thondeka ũhoro mũno nĩguo wakuhe. \n\nNĩ ũndũ wa mbica mwana waku akĩrĩa mũno kana akĩgũcooka, no ũgĩkorea ũhoro mũno ũcio. FINISH INSTRUCTIONS",
-"noiseQuestion": "No wĩrĩa ũgĩcokia ũhoro mũno wa gũtũma? \n\nĨĩ! Nĩ ũtacokia, hũra kĩmenyithia kĩa thiomi kũhihinyanĩria thimũ yaku. \n\n Rĩu hũra 'NEXT' nĩguo wone mũbira ũcio.", 
-
-"introImages": [
-    "images/ki/backgrounds/start_1_waving.svg",
-    "images/ki/backgrounds/start_1.svg",
-    "images/ki/backgrounds/start_2_house.svg",
-    "images/ki/backgrounds/start_3_parents.svg",
-    "images/ki/backgrounds/start_3_friends.svg",
-    "images/ki/backgrounds/start_4.svg"
-  ]
+  "webcamquestion": "Wĩenda kwambĩrĩria kũrekodi vidio?",
+  "yes": "Ĩĩ",
+  "no": "Aca",
+  "dataDisclaimer": "Rĩrĩa ũthuthuria ũyũ ũgathira, data nĩĩkũigwo thĩinĩ wa kĩndũ gĩaku, folda-inĩ ya Downloads, ta faili ya .json (na, korwo nĩwathuurire vidio, ta faili ya vidio ya .webm). Kopi ya data ĩyo nĩĩgatũmwo o na kũrĩ seva iitũ nĩguo ĩthuthurwo makĩria.",
+  "imageDisclaimer": "Mĩcoro na indo cia mũbango irĩ thĩinĩ wa website ĩno irĩ na indo kuuma SVGRepo, Flaticon na Freepik, iria itũmĩtwo na leseni ya mahinda maingĩ ĩrĩa ĩrendaga mwene wacio atajwo. Indo ingĩ no ikorwo nĩihindĩtwo kana ikagĩrĩrwo.",
+  "startButton": "AMBĨRĨRIA",
+  "continue": "THIĨ NA MBERE",
+  "theGame": "Maũtaaro",
+  "descriptionGame": "Thuutha wa Ella kwĩtaarĩria mwambĩrĩrio-inĩ, ũthuthuria nĩũgambĩrĩria, na mwana waku arĩone Ella hamwe na mĩcoro ĩngĩ ĩtatũ hĩndĩ ciothe. O hĩndĩ, Ella nĩakamũũria athuure mũcoro ũmwe. Korwo ũrathondeka na tablet, reka mwana waku aminye we mwene mũcoro ũrĩa arenda gũthuura. Korwo ũrathondeka na kompyuta, reka mwana waku onanie mũcoro ũrĩa arenda thĩinĩ wa screen, na wee ũminye mũcoro ũcio. Mũcoro nĩũkũmenyeka atĩ nĩũthuurĩtwo rĩrĩa mũhari wa bururu ũkuoneka ũthiũrũrũkĩte. Korwo nĩbata, no ũminye kĩmenyero kĩa speaker nĩguo ũigue mũgambo rĩngĩ. Rĩrĩa mwana waku athuura mũcoro, minya “THIĨ NA MBERE” nĩguo mũthiĩ na mbere.",
+  "instructionsGame": "Korwo mwana waku ndarĩ na ma atĩ nĩkĩ arĩa athuure kana akũũrie ũmũteithie, mũũmĩrĩrie na ciugo ta “Thuura kĩrĩa ũreona nĩkĩo” kana “O na niĩ ndi na ma, wee ũreona atĩ nĩkĩ?” Ndũkamũhe macokio marĩa magĩrĩire. Korwo mwana waku akĩambĩrĩria kwĩrĩgĩrĩra kana gũthĩĩna, no mũhurũke hanini hĩndĩ o yothe. Oyai ihinda rĩrĩa mũrenda! Korwo ũrenda gũtigana na ũthuthuria, hinga dirisha rĩĩrĩ. Data yaku ndĩgũkũigwo hĩndĩ ĩyo.",
+  "letsgo": "Nĩtũambĩrĩrie!",
+  "headingfullscreen": "Rĩu tũrambĩrĩria kũrekodi. \n\n Korwo dirisha rĩngĩ rĩa pop-up rĩkoneka rĩgũũria rũtha rwa gũtũmĩra kamera, minya ‘Ruhusu’ rĩngĩ. \n\n Rĩu minya ‘THIĨ NA MBERE’ nĩguo ũhingũre fullscreen.",
+  "enterPseudo": "Andĩka rĩĩtwa rĩa kũhitha haha:",
+  "noiseQuestion": "Nĩwaiguire mũgambo mũkuhĩ wa kĩng’ora? \n\nĨĩ? Nĩ wega mũno! Gĩrĩrĩria hinya wa mũgambo nĩguo mwana waku aigue kĩng’ora kĩu wega. \n\n Aca? Minya kĩmenyero kĩa speaker nĩguo ũgerie mũgambo rĩngĩ. \n\nRĩu nĩtũhota kwambĩrĩria! Minya ‘THIĨ NA MBERE’ nĩguo ũambĩrĩrie mũthako.",
+  "goodbye-message": "Ũthuthuria ũyũ nĩũthirĩire wega. Kũdownload data nĩgũkũambĩrĩria kwene (rora dirisha rĩa pop-up). \nNĩgũcokia ngaatho mũno nĩ ũndũ wa gũĩka hamwe na ithuĩ thĩinĩ wa ũthuthuria ũyũ!",
+  "introImages": [
+  "images/ger/backgrounds/start_1_waving.svg",
+  "images/ger/backgrounds/start_1.svg",
+  "images/ger/backgrounds/start_2_house.svg",
+  "images/ger/backgrounds/start_3_parents.svg",
+  "images/ger/backgrounds/start_3_friends.svg",
+  "images/ger/backgrounds/start_4.svg"
+  ],
+  "hopeFunGoodbye": "Tũrĩ na wĩtĩkio atĩ nĩmũkenete... Haha nĩho mũngĩona vidio nguhĩ ya Ella ya kũmũthaga:",
+  "questionEmail": "Korwo ũrĩ na ciũria kana maoni, tũmanĩra na ithuĩ na anwani ĩno ya email:",
+  "SeeYou": "Tũrĩ na gĩkeno gĩa kũmũona rĩngĩ!",
+  "closingRemarks": "Mũkĩrĩrwo na thayũ, na tũgaonana rĩngĩ o narua, \n\n Thiritũ yanyu ya ũthuthuria ya LüneLütten na Leuphana University Lüneburg",
+  "upload-message": "Data yaku nĩĩratũmwo rĩu. Ũndũ ũyũ no ũoe ndakĩka nini. Ndũkahinge page ĩno..."
 }
