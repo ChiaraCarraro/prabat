@@ -2,14 +2,6 @@ import "./css/landingpages.css";
 import { loadLanguage } from "./js/loadLanguage.js";
 import { setButtonState } from "./js/setButtonState.js";
 
-const storedChoices = localStorage.getItem("storedChoices");
-let studyChoices;
-if (storedChoices) {
-  studyChoices = JSON.parse(storedChoices);
-} else {
-  console.error("No data found in local storage");
-}
-
 const button = document.getElementById("custom-button");
 const textField = document.getElementById("participant-id");
 const idCounter = document.getElementById("id-counter");
@@ -52,7 +44,7 @@ button.addEventListener("click", (event) => {
   }
 
   const webcam = getWebcamValue();
-  const lang  = studyChoices?.lang || "ger";
+  const lang  = "ger"; // German-only branch
 
   localStorage.setItem("storedChoices", JSON.stringify({ ID: subjID, webcam: webcam, lang: lang }));
   window.location.href = `./instructions.html`;
@@ -60,7 +52,7 @@ button.addEventListener("click", (event) => {
 
 // Init
 (async () => {
-  const lang = studyChoices?.lang || "ger";
+  const lang = "ger"; // German-only branch
   setButtonState(button, false);     // start disabled
 
   await loadLanguage(lang);          // localization may re-render the form
