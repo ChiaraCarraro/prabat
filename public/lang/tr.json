@@ -11,10 +11,10 @@
   "theGame": "Uyarılar",
   "descriptionGame": "Ella başlangıçta kendisini bir kez tanıttıktan sonra, asıl araştırma başlar. Bundan sonra çocuğunuz her seferinde ekranda Ella’yı ve üç farklı resmi görecektir. Ella her seferinde çocuğunuzdan bu resimlerden birini seçmesini isteyecektir. Tablet kullanıyorsanız, lütfen çocuğunuzun seçmek istediği resme kendisinin dokunmasına izin verin. Bilgisayar kullanıyorsanız, lütfen çocuğunuzun ekranda seçmek istediği resmi işaret etmesini sağlayın ve siz çocuğunuzun işaret ettiği resme tıklayın. Bir resim seçildiğinde etrafında mavi bir çerçeve belirecektir. Gerekirse, hoparlör simgesine tıklayarak sesli yönergeyi tekrar dinleyebilirsiniz. Çocuğunuz bir resim seçtikten sonra, devam etmek için „İLERİ“ düğmesine tıklayın.",
   "instructionsGame": "Çocuğunuz kararsız kalırsa veya sizden yardım isterse, onu „Sen ne düşünüyorsan onu seç.“ ya da „Ben de emin değilim, sen ne düşünüyorsun?“ gibi ifadelerle cesaretlendirin ve doğru cevabı söylemeyin. Çocuğunuz huzursuzlanırsa veya sıkılırsa, istediğiniz zaman kısa bir ara verebilirsiniz. Kendinize istediğiniz kadar zaman tanıyın! Çalışmayı sonlandırmak isterseniz, pencereyi kapatmanız yeterlidir. Bu durumda verileriniz kaydedilmeyecektir.",
-  "letsgo": "Hadi başlayalım!!",
-  "headingfullscreen": "İŞimdi kayda başlıyoruz. \n\nKamera erişimi için izin isteyen bir açılır pencere tekrar görünürse, lütfen yeniden „İzin Ver“ (pop-up) seçeneğine tıklayın.  \n\n Tam ekran modunu etkinleştirmek için lütfen şimdi „İLERİ“ düğmesine tıklayın.",
+  "letsgo": "Hadi başlayalım!",
+  "headingfullscreen": "Şimdi kayda başlıyoruz. \n\nKamera erişimi için izin isteyen bir açılır pencere tekrar görünürse, lütfen yeniden „İzin Ver“ (pop-up) seçeneğine tıklayın.  \n\n Tam ekran modunu etkinleştirmek için lütfen şimdi „İLERİ“ düğmesine tıklayın.",
   "enterPseudo": "Lütfen buraya bir takma ad girin:",
-  "noiseQuestion": "KHaben Sie gerade ein kurzes Klimper-Geräusch gehört? \n\nJa? Super! Passen Sie gerne die Lautstärke so an, dass Ihr Kind das Klimpern gut hört. \n\n Nein! Klicken Sie bitte auf das Lautsprecher-Symbol, um Ihren Ton erneut zu testen. \n\nNun kann es endlich losgehen! Bitte klicken Sie jetzt auf 'WEITER', um mit dem Spiel zu beginnen. ",
+  "noiseQuestion": "Az önce kısa bir çınlama sesi duydunuz mu? \n\n Evet mi? Harika! Lütfen ses seviyesini, çocuğunuzun bu sesi net bir şekilde duyabileceği şekilde ayarlayın. \n\n  Hayır mı? Sesi tekrar test etmek için lütfen hoparlör simgesine tıklayın.",
 
 
   "introImages": [
