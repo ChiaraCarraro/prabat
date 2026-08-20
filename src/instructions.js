@@ -35,7 +35,7 @@ studyChoices.webcam = (studyChoices?.webcam=="true").toString();
 const button = document.getElementById("instructions-button");
 
 // Get language from URL
-const lang = studyChoices?.lang ?? "ger";
+const lang = studyChoices?.lang ?? "tr";
   
 // Load localized text/images
 (async () => {
@@ -63,7 +63,7 @@ applyLocalizedImagePaths(lang);
 
 studyChoices.ID = studyChoices?.ID ?? "testID";
 studyChoices.webcam = studyChoices?.webcam ?? false;
-studyChoices.lang = studyChoices?.lang ?? "ger";
+studyChoices.lang = studyChoices?.lang ?? "tr";
 
 // On continue, forward to prabat.html with language in URL
 const handleContinueClick = (event) => {

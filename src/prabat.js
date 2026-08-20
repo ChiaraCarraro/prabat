@@ -27,7 +27,7 @@ if (storedChoices) {
 } else {
   console.error("No data found in local storage");
 }
-const lang = studyChoices?.lang || "ger"; // fallback to English
+const lang = studyChoices?.lang || "tr"; // fallback to English
 
 
 
