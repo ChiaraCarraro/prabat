@@ -55,9 +55,9 @@ body {
 
 /* mail encryption */
 
-.cryptedmail:after {
+/* .cryptedmail:after {
   content: attr(data-name) '@' attr(data-domain) '.' attr(data-tld);
-}
+} */
 
 .ccp-button {
   background-color: var(--ccp-minerva-green) !important;
