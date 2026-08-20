@@ -44,7 +44,7 @@ button.addEventListener("click", (event) => {
   }
 
   const webcam = getWebcamValue();
-  const lang  = "ger"; // German-only branch
+  const lang  = "tr"; // Turkish-only branch
 
   localStorage.setItem("storedChoices", JSON.stringify({ ID: subjID, webcam: webcam, lang: lang }));
   window.location.href = `./instructions.html`;
@@ -52,7 +52,7 @@ button.addEventListener("click", (event) => {
 
 // Init
 (async () => {
-  const lang = "ger"; // German-only branch
+  const lang = "tr"; // Turkish-only branch
   setButtonState(button, false);     // start disabled
 
   await loadLanguage(lang);          // localization may re-render the form
