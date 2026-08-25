@@ -63,6 +63,6 @@ export async function downloadData(safe, ID){
   const objUrl = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', objUrl);
-  link.setAttribute('download', `prabat-${ID}-${day}-${time}.csv`);
+  link.setAttribute('download', `gdp-prabat-${ID}-${day}-${time}.csv`);
   link.click();
 }

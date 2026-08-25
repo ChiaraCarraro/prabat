@@ -1,6 +1,8 @@
 // import { pause } from "./js/pause.js";
 
 // ./js/playAudios.js
+import { routeElementToMix } from "./recordingAudioMix.js";
+
 export const allAudios = [];
 
 // // Global state + helpers used by Safari/Android fallback:
@@ -31,6 +33,11 @@ export function showAudioUnlockPrompt(retryFn) {
 // audioEl: a normal <audio> element
 export function playAudio(audioEl) {
   if (!audioEl) return Promise.resolve();
+
+  // Route this element's output into the shared recording mix
+  // (in addition to its normal speaker output), so the webcam
+  // recording captures the stimulus audio clearly too.
+  routeElementToMix(audioEl);
 
   // IMPORTANT: do NOT pause()/currentTime=0 here.
   // Safari can throw AbortError if we keep resetting.

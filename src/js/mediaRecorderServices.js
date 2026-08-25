@@ -1,4 +1,7 @@
+import { getMixDestination, routeMicIntoMix } from "./recordingAudioMix.js";
+
 let mediaStream = null;
+let rawUserMediaStream = null; // the untouched getUserMedia stream, so we can stop its tracks later
 let mediaRecorder = null;
 let recordedChunks = [];
 let lastRecordedBlob = null;
@@ -15,11 +18,13 @@ export async function initMedia(constraints) {
     throw new Error("getUserMedia is not supported in this browser.");
   }
 
-  // Stop any existing stream tracks
-  if (mediaStream) {
-    mediaStream.getTracks().forEach(track => track.stop());
-    mediaStream = null;
+  // Stop any existing raw camera/mic tracks (but NOT the shared mix
+  // destination's audio track, which stays alive across recordings).
+  if (rawUserMediaStream) {
+    rawUserMediaStream.getTracks().forEach(track => track.stop());
+    rawUserMediaStream = null;
   }
+  mediaStream = null;
 
   const defaultConstraints = {
     audio: true,
@@ -32,18 +37,18 @@ export async function initMedia(constraints) {
   };
 
   const finalConstraints = constraints || defaultConstraints;
-  
-  
+
+
   try {
-    mediaStream = await navigator.mediaDevices.getUserMedia(finalConstraints);
-    
+    rawUserMediaStream = await navigator.mediaDevices.getUserMedia(finalConstraints);
+
   } catch (err) {
 
     if (String(err).includes("No AVAudioSessionCaptureDevice")) {
       console.warn("iOS cannot access microphone. Retrying without audio...");
-      
+
       // Retry video-only
-      mediaStream = await navigator.mediaDevices.getUserMedia({
+      rawUserMediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: 640, max: 640 },   // lower resolution
           height: { ideal: 480, max: 480 },
@@ -56,7 +61,25 @@ export async function initMedia(constraints) {
       throw err;
     }
   }
-  
+
+  // If we have a microphone track, route it into the shared recording
+  // mix (alongside the app's own stimulus-audio playback) and record
+  // that merged track instead of the raw mic track. Video stays as-is.
+  const micTrack = rawUserMediaStream.getAudioTracks()[0];
+  if (micTrack) {
+    routeMicIntoMix(rawUserMediaStream);
+    const mixDestination = getMixDestination();
+    const mixedAudioTrack = mixDestination ? mixDestination.stream.getAudioTracks()[0] : null;
+
+    mediaStream = new MediaStream([
+      ...rawUserMediaStream.getVideoTracks(),
+      ...(mixedAudioTrack ? [mixedAudioTrack] : [micTrack]),
+    ]);
+  } else {
+    // No microphone (e.g. iOS fallback) - nothing to merge.
+    mediaStream = rawUserMediaStream;
+  }
+
   return mediaStream;
 }
 
@@ -76,11 +99,13 @@ export function startRecording() {
 
   const recorderOptions = {
     mimeType: supportedMimeType,
-    videoBitsPerSecond: 150_000, // 150 kbps – quite low quality
+    videoBitsPerSecond: 150_000, // 150 kbps – quite low quality, video isn't the priority
+    audioBitsPerSecond: 128_000, // keep speech (stimulus prompts + mic) clear
   };
 
   const recorderOptionsWithoutMimeType = {
-    videoBitsPerSecond: 150_000, // 150 kbps – quite low quality
+    videoBitsPerSecond: 150_000, // 150 kbps – quite low quality, video isn't the priority
+    audioBitsPerSecond: 128_000, // keep speech (stimulus prompts + mic) clear
   };
   
   try {
@@ -270,12 +295,17 @@ export async function uploadLastRecordingInChunks(
 /**
  * Stop the current media stream (camera/mic).
  * Useful when leaving the page or after user is done.
+ *
+ * Only stops the raw camera/mic tracks - the shared recording-mix
+ * audio destination track (used to merge stimulus audio + mic) is
+ * left running so it can keep serving future recordings.
  */
 export function stopMediaStream() {
-  if (mediaStream) {
-    mediaStream.getTracks().forEach(track => track.stop());
-    mediaStream = null;
+  if (rawUserMediaStream) {
+    rawUserMediaStream.getTracks().forEach(track => track.stop());
+    rawUserMediaStream = null;
   }
+  mediaStream = null;
 }
 
 /**
