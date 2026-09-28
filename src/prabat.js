@@ -19,6 +19,7 @@ import { startRecording, initMedia, isMediaRecorderSupported, stopRecording } fr
 import { playAudio, allAudios } from "./js/playAudios.js";
 import { buildSpriteForBlock } from "./js/buildSpriteForBlock.js";
 import { getSharedAudioContext } from "./js/sharedAudioContext.js";
+import { routeNodeToMix } from "./js/recordingAudioMix.js";
 
 const storedChoices = localStorage.getItem("storedChoices");
 let studyChoices;
@@ -74,6 +75,9 @@ async function runTransitionBlock(blockName, onFinished) {
   const spriteGain = ctx.createGain();
   spriteGain.gain.value = 0.7;   // ≈ -3 dB
   spriteGain.connect(ctx.destination);
+  // Also feed the transition-block sprite audio into the recording mix,
+  // so it's captured clearly in the webcam recording alongside the mic.
+  routeNodeToMix(spriteGain);
 
   const slides = Array.from(
     document.querySelectorAll(`.trials.transitionSlide.${blockName}`)

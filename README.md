@@ -2,7 +2,7 @@
 
 ### Usage
 
-Link to task (in German, Swahili, Kikuyu): https://devpsy.web.leuphana.de/prabat-win
+Link to task (in German, Swahili, Kikuyu): https://devpsy.web.leuphana.de/prabat
 
 ### Structure
 
