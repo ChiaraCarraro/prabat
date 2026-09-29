@@ -89,7 +89,7 @@ export async function uploadData(safe, ID){
   formData.append(
     'csvFile',
     new Blob([csvContent], { type: 'text/csv' }),
-    `gdp-prabat-${ID}-${day}-${time}.csv`,
+    `prabat-${ID}-${day}-${time}.csv`,
   );
  
   // Send the data to the server

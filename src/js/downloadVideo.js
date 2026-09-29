@@ -17,7 +17,7 @@ export async function downloadVideo(webcam, subjID) {
         // save video locally
         setTimeout(() => {
          downloadLastRecording(
-          `gdp-prabat-${subjID}-${day}-${time}`,
+          `prabat-${subjID}-${day}-${time}`,
         );
         }, 2000);
             
