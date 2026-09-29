@@ -13,6 +13,8 @@ export async function preloadAudios(lang) {
         audioJsonName = "audio-ger.json"
       } else if ( lang === "tr") {
         audioJsonName = "audio-tr.json"
+      } else if ( lang === "ch") {
+        audioJsonName = "audio-ch.json"
       }
   
     // Build URL relative to current document so it works under subpaths

@@ -14,7 +14,11 @@
 "headingfullscreen": "Wir beginnen nun mit der Aufnahme. \n\n Falls erneut ein Pop-Up Fenster mit der Erlaubnis für die Kameranutzung auftaucht, klicken Sie bitte erneut auf 'Zulassen'. \n\n Bitte klicken Sie jetzt auf 'WEITER', um den Vollbildmodus zu aktivieren. ",
 "enterPseudo": "Bitte geben Sie hier ein Pseudonym ein:",
 "noiseQuestion": "Haben Sie gerade ein kurzes Klimper-Geräusch gehört? \n\nJa? Super! Passen Sie gerne die Lautstärke so an, dass Ihr Kind das Klimpern gut hört. \n\n Nein! Klicken Sie bitte auf das Lautsprecher-Symbol, um Ihren Ton erneut zu testen. \n\nNun kann es endlich losgehen! Bitte klicken Sie jetzt auf 'WEITER', um mit dem Spiel zu beginnen. ",
-"goodbyeMessage": "Die Studie wurde erfolgreich beendet. Der Download der Daten wird gestartet (Pop-up beachten).",
+"goodbyeMessage": "Die Studie wurde erfolgreich abgeschlossen. Der Daten-Download startet automatisch (bitte Pop-up überprüfen).<br>Vielen Dank für Ihre Teilnahme an unserer Studie!",
+"goodbyeVideoText": "Wir hoffen, es hat Spaß gemacht... Hier finden Sie ein kurzes Abschiedsvideo von Ella:",
+"goodbyeContact": "Falls Sie Fragen oder Anmerkungen haben, wenden Sie sich bitte an diese E-Mail-Adresse:",
+"goodbyeSeeYou": "Wir freuen uns auf ein Wiedersehen!",
+"goodbyeSignature": "Herzliche Grüße und bis bald,<br>Ihr Forschungsteam der LüneLütten und der Leuphana Universität Lüneburg",
 "introImages": [
     "images/ger/backgrounds/start_1_waving.svg",
     "images/ger/backgrounds/start_1.svg",

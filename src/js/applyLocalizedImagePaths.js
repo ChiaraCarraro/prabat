@@ -2,7 +2,7 @@ export const applyLocalizedImagePaths = (lang) => {
   let folder;
   if (lang === "ki" || lang === "sw") {
     folder = "ki";
-  } if (lang === "ger" || lang === "en") {
+  } if (lang === "ger" || lang === "en" || lang === "ch") {
     folder = "ger";
   } else if (lang === "tr") {
     folder = "tr";

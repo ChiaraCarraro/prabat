@@ -15,6 +15,11 @@
   "headingfullscreen": "Şimdi kayda başlıyoruz. \n\nKamera erişimi için izin isteyen bir açılır pencere tekrar görünürse, lütfen yeniden „İzin Ver“ (pop-up) seçeneğine tıklayın.  \n\n Tam ekran modunu etkinleştirmek için lütfen şimdi „İLERİ“ düğmesine tıklayın.",
   "enterPseudo": "Lütfen buraya bir takma ad girin:",
   "noiseQuestion": "Az önce kısa bir çınlama sesi duydunuz mu? \n\n Evet mi? Harika! Lütfen ses seviyesini, çocuğunuzun bu sesi net bir şekilde duyabileceği şekilde ayarlayın. \n\n  Hayır mı? Sesi tekrar test etmek için lütfen hoparlör simgesine tıklayın.",
+  "goodbyeMessage": "Çalışma başarıyla tamamlandı. Veri indirme işlemi otomatik olarak başlayacaktır (lütfen açılır pencerenizi kontrol edin).<br>Çalışmamıza katıldığınız için çok teşekkür ederiz!",
+  "goodbyeVideoText": "Umarız çalışmaya katılmaktan keyif almışsınızdır... Aşağıda Ella’nın kısa bir veda videosunu bulabilirsiniz:",
+  "goodbyeContact": "Sorularınız veya görüşleriniz varsa, lütfen aşağıdaki e-posta adresi üzerinden bizimle iletişime geçin:",
+  "goodbyeSeeYou": "Tekrar görüşmek üzere!",
+  "goodbyeSignature": "Sevgi ve saygılarımızla,<br><br>LüneLütten Araştırma Ekibi ve Leuphana Üniversitesi Lüneburg",
 
 
   "introImages": [
