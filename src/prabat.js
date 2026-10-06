@@ -16,10 +16,11 @@ import { applyLocalizedImagePaths } from "./js/applyLocalizedImagePaths.js";
 import { preloadAudios } from "./js/preloadAudios.js";
 import { preloadImages } from "./js/preloadImages.js";
 import { startRecording, initMedia, isMediaRecorderSupported, stopRecording } from "./js/mediaRecorderServices.js";
-import { playAudio, allAudios } from "./js/playAudios.js";
+import { allAudios } from "./js/playAudios.js";
 import { buildSpriteForBlock } from "./js/buildSpriteForBlock.js";
 import { getSharedAudioContext } from "./js/sharedAudioContext.js";
 import { routeNodeToMix } from "./js/recordingAudioMix.js";
+import { playAudioWebAudio } from "./js/playAudioWebAudio.js";
 
 const storedChoices = localStorage.getItem("storedChoices");
 let studyChoices;
@@ -73,7 +74,7 @@ async function runTransitionBlock(blockName, onFinished) {
 
   // Use a gain node so we can control volume of transition blocks
   const spriteGain = ctx.createGain();
-  spriteGain.gain.value = 0.7;   // ≈ -3 dB
+  spriteGain.gain.value = 1; 
   spriteGain.connect(ctx.destination);
   // Also feed the transition-block sprite audio into the recording mix,
   // so it's captured clearly in the webcam recording alongside the mic.
@@ -473,23 +474,21 @@ document.addEventListener("DOMContentLoaded", async function () {
       const talk = currentTrial.querySelector("#background-talking");
       const shouldTalk = responseAudio.src.indexOf("Mmh") === -1;
 
-      responseAudio.addEventListener("play", () => {
-        if (shouldTalk && bg && talk) {
-          bg.style.display = "none";
-          talk.style.display = "block";
-        }
-        button.disabled = true;
-      });
+      if (shouldTalk && bg && talk) {
+        bg.style.display = "none";
+        talk.style.display = "block";
+      }
 
-      responseAudio.addEventListener("ended", () => {
-        if (bg && talk) {
-          bg.style.display = "block";
-          talk.style.display = "none";
-        }
-        button.disabled = false;
-      });
+      button.disabled = true;
 
-      playAudio(responseAudio);
+      await playAudioWebAudio(responseAudio);
+
+      if (bg && talk) {
+        bg.style.display = "block";
+        talk.style.display = "none";
+      }
+
+      button.disabled = false;
     }
 
     button.disabled = false;
@@ -560,26 +559,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         // // Let Safari paint the talking background + disabled state BEFORE audio
         // await pause(50);
 
-        await new Promise((resolve) => {
-          prevResponseAudio.onended = () => {
-            // Show the image with id "background"
-            if (backgroundImg) {
-              backgroundImg.style.display = "block";
-            }
-            // Hide the image with id "background-talking"
-            if (backgroundTalkingImg) {
-              backgroundTalkingImg.style.display = "none";
-            }
-            resolve();
-          };
+        if (prevResponseAudio) {
+          await playAudioWebAudio(prevResponseAudio);
 
-          // playAudio(prevResponseAudio);
-
-          if (prevResponseAudio) {
-            playAudio(prevResponseAudio);
+          if (backgroundImg) {
+            backgroundImg.style.display = "block";
           }
 
-        });
+          if (backgroundTalkingImg) {
+            backgroundTalkingImg.style.display = "none";
+          }
+        }
         // await pause(1000);
       }
     }
@@ -601,7 +591,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       speaker.style.display = "block";
 
       if (allAudios[trialNr]) {
-        playAudio(allAudios[trialNr]);
+        playAudioWebAudio(allAudios[trialNr]);
       }
 
       button.addEventListener("click", handleContinueClick, {
@@ -691,29 +681,33 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
       if (trialAudio) {
-        playAudio(trialAudio);
-        // button.disabled = true;
-        // speaker.classList.add("disabled");
-      }
-      console.log(trialAudio);
+        button.disabled = true;
+        speaker.classList.add("disabled");
 
-      trialAudio.onended = () => {
+        await playAudioWebAudio(trialAudio);
+
+        console.log(trialAudio);
+
         speaker.classList.remove("disabled");
+
         const backgroundImg = currentTrial.querySelector("#background");
         if (backgroundImg) {
           backgroundImg.style.display = "block";
         }
-        // Hide the image with id "background-talking"
+
         const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
         if (backgroundTalkingImg) {
           backgroundTalkingImg.style.display = "none";
         }
+
         button.addEventListener("click", handleContinueClick, {
           capture: false,
           once: true,
         });
+
         button.disabled = false;
       }
+
 
     }
 
@@ -871,18 +865,16 @@ document.addEventListener("DOMContentLoaded", async function () {
       // play audio of current trial
       if (trialAudio) {
         // disable speaker during playback
-        if (trialAudio) {
-          playAudio(trialAudio);
+        button.disabled = true;
+        await playAudioWebAudio(trialAudio);
 
-        }
         // if (speaker) {
         //   // disable speaker during playback
         //   // speaker.classList.add("disabled");
         //   // console.log("speaker disabled");
         // }
 
-        button.disabled = true;
-        // playAudio(trialAudio);
+        // playAudioWebAudio(trialAudio);
 
         console.log("This is:", trialAudio);
         console.log("This is:", audioSrc);
@@ -895,36 +887,35 @@ document.addEventListener("DOMContentLoaded", async function () {
       const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
       console.log(currentImages);
 
-      trialAudio.onended = () => {
+
         // Show the image with id "background"
 
-        currentImages.forEach((img) => {
-          img.style.pointerEvents = "auto";
-        });
-        
-        const backgroundImg = currentTrial.querySelector("#background");
-        if (backgroundImg) {
-          backgroundImg.style.display = "block";
-        }
-        // Hide the image with id "background-talking"
-        const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-        if (backgroundTalkingImg) {
-          backgroundTalkingImg.style.display = "none";
-        }
-        console.log("before adding event listener")
+      currentImages.forEach((img) => {
+        img.style.pointerEvents = "auto";
+      });
+      
+      const backgroundImg = currentTrial.querySelector("#background");
+      if (backgroundImg) {
+        backgroundImg.style.display = "block";
+      }
+      // Hide the image with id "background-talking"
+      const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
+      if (backgroundTalkingImg) {
+        backgroundTalkingImg.style.display = "none";
+      }
+      console.log("before adding event listener")
 
-        // enable speaker again
-        speaker.classList.remove("disabled");
-        console.log("speaker enabled");
-        
-        currentImages.forEach((img) => {
-          console.log("event listener added")
-          img.addEventListener("click", handleResponseClick, {
-          capture: false,
-          once: false,
-          });
+      // enable speaker again
+      speaker.classList.remove("disabled");
+      console.log("speaker enabled");
+      
+      currentImages.forEach((img) => {
+        console.log("event listener added")
+        img.addEventListener("click", handleResponseClick, {
+        capture: false,
+        once: false,
         });
-      };
+      });
     }
     console.log(trialNr);
     skipAdvance = false; // consume the flag so future continues behave normally
@@ -1072,50 +1063,47 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
       return;
     } else if (currentTrial.classList.contains("transitionEmpty")) {
-      const trialId = currentTrial.id; // e.g. "trial0", "trial1"
+      const trialId = currentTrial.id;
       const trialAudio = currentTrial.querySelector(`audio#${trialId}`);
+
       speaker.classList.add("disabled");
       console.log("speaker disabled");
 
-        // --- Guard against missing audio tag ---
       if (!trialAudio) {
         console.error("No <audio> found for transitionEmpty slide:", trialId);
         return;
       }
 
-      // trialAudio.currentTime = 0;
-      await playAudio(trialAudio);
-      console.log("played");
-      button.disabled = true; // prevent clicking until a new choice is made
+      button.disabled = true;
 
       const backgroundImg = currentTrial.querySelector("#background");
       if (backgroundImg) {
         backgroundImg.style.display = "none";
       }
-      // Hide the image with id "background-talking"
+
       const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
       if (backgroundTalkingImg) {
         backgroundTalkingImg.style.display = "block";
       }
 
-      trialAudio.onended = () => {
-        speaker.classList.remove("disabled");
-        console.log("speaker enabled");
-        button.disabled = false;
-        const backgroundImg = currentTrial.querySelector("#background");
-        if (backgroundImg) {
-          backgroundImg.style.display = "block";
-        }
-        // Hide the image with id "background-talking"
-        const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-        if (backgroundTalkingImg) {
-          backgroundTalkingImg.style.display = "none";
-        }
-      };
+      await playAudioWebAudio(trialAudio);
+
+      speaker.classList.remove("disabled");
+      console.log("speaker enabled");
+      button.disabled = false;
+
+      if (backgroundImg) {
+        backgroundImg.style.display = "block";
+      }
+
+      if (backgroundTalkingImg) {
+        backgroundTalkingImg.style.display = "none";
+      }
+
     } else if (currentTrial.id === "trial0") {
       if (TestSound) {
         //TestSound.play();
-        playAudio(TestSound);
+        playAudioWebAudio(TestSound);
       } else {
         console.warn('Element with ID "testsound" not found.');
       }
@@ -1145,7 +1133,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       // (re)start the audio
       // trialAudio.currentTime = 0;
       //await trialAudio.play();
-      await playAudio(trialAudio);
       console.log("played");
       const backgroundImg = currentTrial.querySelector("#background");
       if (backgroundImg) {
@@ -1160,24 +1147,22 @@ document.addEventListener("DOMContentLoaded", async function () {
       speaker.classList.add("disabled");
       console.log("speaker disabled");
 
-      trialAudio.onended = () => {
-        speaker.classList.remove("disabled");
-        console.log("speaker enabled");
+      await playAudioWebAudio(trialAudio);
 
-        currentImages.forEach((img) => {
-          img.style.pointerEvents = "auto";
-        });
-        // Show the image with id "background"
-        const backgroundImg = currentTrial.querySelector("#background");
-        if (backgroundImg) {
-          backgroundImg.style.display = "block";
-        }
-        // Hide the image with id "background-talking"
-        const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-        if (backgroundTalkingImg) {
-          backgroundTalkingImg.style.display = "none";
-        }
-      };
+      speaker.classList.remove("disabled");
+      console.log("speaker enabled");
+
+      currentImages.forEach((img) => {
+        img.style.pointerEvents = "auto";
+      });
+      // Show the image with id "background"
+      if (backgroundImg) {
+        backgroundImg.style.display = "block";
+      }
+      // Hide the image with id "background-talking"
+      if (backgroundTalkingImg) {
+        backgroundTalkingImg.style.display = "none";
+      }
     }
   };
 
