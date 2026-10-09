@@ -64,16 +64,17 @@ export async function buildSpriteForBlock(blockName) {
     })
   );
 
-  // 4. Basic consistency check: same sample rate & channels
+  // 4. Basic consistency check: same sample rate.
+  // Mixing mono and stereo to reduce error
   const firstBuf = decoded[0].buf;
-  const numChannels = firstBuf.numberOfChannels;
+  const numChannels = Math.max(...decoded.map(({ buf }) => buf.numberOfChannels));
   const sampleRate = firstBuf.sampleRate;
 
   for (const { label, buf } of decoded) {
-    if (buf.sampleRate !== sampleRate || buf.numberOfChannels !== numChannels) {
+    if (buf.sampleRate !== sampleRate) {
       console.warn(
-        `buildSpriteForBlock: clip "${label}" has different sampleRate/channels from the first clip. ` +
-          `This can make the fused audio sound odd. (sampleRate=${buf.sampleRate}, channels=${buf.numberOfChannels})`
+        `buildSpriteForBlock: clip "${label}" has a different sampleRate from the first clip. ` +
+          `This can make the fused audio sound odd. (sampleRate=${buf.sampleRate})`
       );
     }
   }
@@ -96,7 +97,8 @@ export async function buildSpriteForBlock(blockName) {
 
     for (let ch = 0; ch < numChannels; ch++) {
       const dst = bigBuffer.getChannelData(ch);
-      const src = buf.getChannelData(ch);
+      // A mono clip has only channel 0: reuse it for the other channels
+      const src = buf.getChannelData(Math.min(ch, buf.numberOfChannels - 1));
       dst.set(src, offset);
     }
 
