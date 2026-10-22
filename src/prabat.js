@@ -1,3 +1,13 @@
+// ---------------------------------------------------------------------------------------------------------------------
+// THE STUDY ITSELF (prabat.html)
+//
+// prabat.html contains every trial as a <div class="trials ...">, all hidden. This file shows them
+// one after the other, plays their audio, records the child's choice and, at the end, saves the
+// responses (CSV) and the optional webcam video. See the comment at the top of prabat.html for
+// the meaning of the trial classes.
+//
+// Flow: start button -> sound test (trial 0) -> trials -> download data -> goodbye.html
+// ---------------------------------------------------------------------------------------------------------------------
 import "./css/prabat.css";
 import * as DetectRTC from "detectrtc";
 
@@ -32,25 +42,75 @@ import { getStudyChoices } from "./js/studyChoices.js";
 const studyChoices = getStudyChoices();
 const lang = studyChoices.lang || "ger"; // fallback: German
 
-function showBlockRestartPrompt(restartFn) {
+// ---------------------------------------------------------------------------------------------------------------------
+// TRANSITION BLOCKS
+// A block is a short story told over several slides (<div class="trials SpriteAudioTrials
+// transitionSlide BLOCKNAME">), ending with a "critical" slide where the child chooses.
+// The audio of all slides of a block is joined into one "sprite" (see buildSpriteForBlock.js)
+// and played slide by slide without gaps.
+// ---------------------------------------------------------------------------------------------------------------------
+
+// Blocks whose audio sprite is built before the study starts
+const BLOCK_NAMES = [
+  "EmotionalProsody",
+  "DiscourseNovelty",
+  "GestureOne",
+  "GestureTwo",
+  "ConversationalPerspectiveTakingOne",
+  "IndirectRequest",
+  "InformativenessTwo",
+  // DISABLED blocks (their trials are commented out in prabat.html):
+  // "GestureThree", "ConversationalPerspectiveTakingTwo",
+  // "ConversationalPerspectiveTakingThree", "InformativenessOne",
+  "SpeakersPreference",
+  "intro",
+];
+
+// After a block has played, the trial counter jumps over the block's remaining slides.
+// Value = number of slides in the block minus 1.
+const SLIDES_TO_SKIP = {
+  DiscourseNovelty: 5,
+  SpeakersPreference: 5,
+  GestureOne: 1,
+  GestureTwo: 1,
+  ConversationalPerspectiveTakingOne: 2,
+  IndirectRequest: 1,
+  EmotionalProsody: 3,
+  InformativenessTwo: 3,
+  intro: 4,
+  // DISABLED blocks: GestureThree: 1, ConversationalPerspectiveTakingTwo: 2,
+  // ConversationalPerspectiveTakingThree: 1, InformativenessOne: 3
+};
+
+const blockSprites = {}; // blockName -> { ctx, audioBuffer, timing }
+
+/** Name of the block a trial belongs to (one of its classes), or "" if none. */
+function findBlockName(trial) {
+  return Object.keys(SLIDES_TO_SKIP).find((name) => trial.classList.contains(name)) || "";
+}
+
+// If the audio of a block got stuck, ask the participant to play it again
+function showBlockRestartPrompt(restartBlock) {
   const overlay = document.getElementById("audio-unlock-overlay");
-  const btn = document.getElementById("audio-unlock-button");
-  if (!overlay || !btn) {
-    restartFn();
+  const overlayButton = document.getElementById("audio-unlock-button");
+  if (!overlay || !overlayButton) {
+    restartBlock();
     return;
   }
 
   overlay.style.display = "flex";
-  btn.textContent = "Nochmal abspielen"; // e.g. “Play again”
+  overlayButton.textContent = "Nochmal abspielen"; // "Play again"
 
-  btn.onclick = () => {
+  overlayButton.onclick = () => {
     overlay.style.display = "none";
-    restartFn();
+    restartBlock();
   };
 }
 
-// runTransitionBlock function
-
+/**
+ * Play all slides of a transition block, one after the other, then call onFinished.
+ * Slides with class "silent" are shown for the length of their audio without playing it.
+ */
 async function runTransitionBlock(blockName, onFinished) {
   const sprite = blockSprites[blockName];
   if (!sprite) {
@@ -61,7 +121,7 @@ async function runTransitionBlock(blockName, onFinished) {
 
   const { ctx, audioBuffer, timing } = sprite;
 
-  // --- IMPORTANT for iOS: resume the shared AudioContext here ---
+  // IMPORTANT for iOS: resume the shared AudioContext here
   try {
     if (ctx && ctx.state === "suspended") {
       await ctx.resume();
@@ -70,12 +130,11 @@ async function runTransitionBlock(blockName, onFinished) {
     console.warn("[TransitionBlock] Could not resume AudioContext:", e);
   }
 
-  // Use a gain node so we can control volume of transition blocks
+  // One gain node (volume) for the whole block; it also feeds the webcam recording,
+  // so the block's audio is captured clearly alongside the microphone.
   const spriteGain = ctx.createGain();
   spriteGain.gain.value = 1;
   spriteGain.connect(ctx.destination);
-  // Also feed the transition-block sprite audio into the recording mix,
-  // so it's captured clearly in the webcam recording alongside the mic.
   routeNodeToMix(spriteGain);
 
   const slides = Array.from(document.querySelectorAll(`.trials.transitionSlide.${blockName}`));
@@ -86,16 +145,15 @@ async function runTransitionBlock(blockName, onFinished) {
     return;
   }
 
-  let currentIndex = 0;
+  let slideIndex = 0;
   let previousSlide = null;
 
-  // Track current Web Audio playback & timeout so we can stop them cleanly
+  // Current Web Audio playback & safety timeout, so we can stop them cleanly
   let currentSource = null;
   let currentTimeout = null;
   let blockFinished = false;
 
   function stopCurrentPlayback() {
-    // Stop any currently playing sprite segment
     if (currentSource) {
       try {
         currentSource.onended = null; // avoid calling callbacks after stop()
@@ -106,74 +164,63 @@ async function runTransitionBlock(blockName, onFinished) {
       currentSource = null;
     }
 
-    // Clear the watchdog timeout
     if (currentTimeout) {
       clearTimeout(currentTimeout);
       currentTimeout = null;
     }
   }
 
-  // 🔁 Restart the entire block from the beginning
+  // Restart the entire block from its first slide
   function restartBlock() {
     console.warn("Restarting block:", blockName);
-
-    // We are explicitly restarting → this block is "active" again
     blockFinished = false;
-
-    // Stop anything that might still be playing from before
     stopCurrentPlayback();
 
     if (previousSlide) {
       previousSlide.style.display = "none";
     }
 
-    currentIndex = 0;
+    slideIndex = 0;
     previousSlide = null;
     showSlideAndPlay();
   }
 
-  // Called when audio is blocked or segment never ends
+  // Called when audio is blocked or a segment never ends
   function handleBlocked() {
-    // If the block already finished and we moved on,
-    // ignore late "blocked" events (e.g. user left the app)
+    // Ignore late "blocked" events after the block already finished (e.g. user left the app)
     if (blockFinished) {
       console.warn("Blocked event after block finished, ignoring:", blockName);
       return;
     }
 
     console.warn("Audio in block", blockName, "seems blocked; asking to restart");
-
-    // Stop any stray playback before we show the restart overlay
     stopCurrentPlayback();
-
     showBlockRestartPrompt(restartBlock);
   }
 
-  // helper to play one sprite segment
+  // Play the part of the sprite that belongs to one slide
   function playSegment(label, onEnded) {
-    const info = timing[label];
-    if (!info) {
+    const segment = timing[label];
+    if (!segment) {
       console.warn("No timing info for label:", label);
       if (onEnded) onEnded();
       return;
     }
 
-    // optional: guard against closed context here
     if (!ctx || ctx.state === "closed") {
       console.warn("AudioContext is closed for block", blockName);
       if (onEnded) onEnded();
       return;
     }
 
-    // Before starting a new segment, stop any old one + clear its timer
     stopCurrentPlayback();
 
-    let advanced = false;
-    const safeEnd = () => {
-      if (advanced) return;
-      advanced = true;
+    let ended = false;
+    const endOnce = () => {
+      if (ended) return;
+      ended = true;
 
-      // This segment finished normally → no need for the fallback timeout
+      // The segment finished normally, so the safety timeout is not needed
       if (currentTimeout) {
         clearTimeout(currentTimeout);
         currentTimeout = null;
@@ -187,36 +234,33 @@ async function runTransitionBlock(blockName, onFinished) {
     try {
       const source = ctx.createBufferSource();
       source.buffer = audioBuffer;
-      source.connect(spriteGain); // 👈 use the ONE gain node we made above
-      source.onended = safeEnd;
-      source.start(ctx.currentTime, info.start, info.duration);
+      source.connect(spriteGain);
+      source.onended = endOnce;
+      source.start(ctx.currentTime, segment.start, segment.duration);
 
       currentSource = source;
     } catch (e) {
       console.error("Error starting segment", label, e);
-      // We failed to start → treat like a block
       handleBlocked();
       return;
     }
 
-    // Safety net: if onended never fires, treat as blocked
-    const fallbackMs = info.duration * 1000 + 500;
+    // Safety net: if the segment never reports its end, treat the audio as blocked
+    const timeoutMs = segment.duration * 1000 + 500;
     currentTimeout = setTimeout(() => {
-      if (!advanced && !blockFinished) {
+      if (!ended && !blockFinished) {
         console.warn("Sprite segment did not end, restarting block:", label);
         handleBlocked();
       }
-    }, fallbackMs);
+    }, timeoutMs);
   }
 
   function showSlideAndPlay() {
-    const slide = slides[currentIndex];
+    const slide = slides[slideIndex];
 
     if (!slide) {
       // end of block
       blockFinished = true;
-
-      // Clean up any active audio / timeouts
       stopCurrentPlayback();
 
       if (previousSlide) previousSlide.style.display = "none";
@@ -233,35 +277,35 @@ async function runTransitionBlock(blockName, onFinished) {
 
     // Objects can't be clicked during transition slides. Their opacity is left to the
     // HTML/CSS (important for the Discourse Novelty animations).
-    const objects = slide.querySelectorAll("img.object");
-    objects.forEach((img) => {
+    slide.querySelectorAll("img.object").forEach((img) => {
       img.style.pointerEvents = "none";
     });
 
     const prompt = slide.querySelector("audio.prompt");
     if (!prompt) {
-      currentIndex++;
+      slideIndex++;
       showSlideAndPlay();
       return;
     }
 
-    const file = prompt.src.split("/").pop(); // "DiscNovLook.mp3"
-    const label = file.replace(/\.[^.]+$/, ""); // "DiscNovLook"
+    // The sprite segment is named after the audio file, e.g. "DiscNovLook.mp3" -> "DiscNovLook"
+    const fileName = prompt.src.split("/").pop();
+    const label = fileName.replace(/\.[^.]+$/, "");
 
     if (slide.classList.contains("silent")) {
-      const info = timing[label];
-      const waitMs = info ? info.duration * 1000 : 500;
+      const segment = timing[label];
+      const waitMs = segment ? segment.duration * 1000 : 500;
       setTimeout(() => {
-        currentIndex++;
+        slideIndex++;
         showSlideAndPlay();
       }, waitMs);
       return;
     }
 
-    // Normal case: play segment, then advance.
-    // If blocked, playSegment will call handleBlocked() instead.
+    // Normal case: play the segment, then go to the next slide.
+    // If the audio is blocked, playSegment calls handleBlocked() instead.
     playSegment(label, () => {
-      currentIndex++;
+      slideIndex++;
       showSlideAndPlay();
     });
   }
@@ -269,12 +313,14 @@ async function runTransitionBlock(blockName, onFinished) {
   showSlideAndPlay();
 }
 
-const blockSprites = {}; // blockName -> { ctx, audioBuffer, timing }
+// ---------------------------------------------------------------------------------------------------------------------
+// SMALL HELPERS
+// ---------------------------------------------------------------------------------------------------------------------
 
-// ------------------------------------------------------------------
-// Global audio unlock helper (for Android / iOS)
-// Uses the shared AudioContext once, instead of one per block.
-// ------------------------------------------------------------------
+/**
+ * Mobile browsers only allow sound after a user gesture. Call this inside a click handler:
+ * it resumes the shared AudioContext and plays a 1-frame silent sound to "unlock" audio.
+ */
 function unlockAudio() {
   try {
     const ctx = getSharedAudioContext();
@@ -282,16 +328,12 @@ function unlockAudio() {
       return;
     }
 
-    // 1. If the context is suspended, resume it
     if (ctx.state === "suspended") {
       ctx.resume().catch((err) => {
         console.warn("Could not resume shared AudioContext:", err);
       });
     }
 
-    // 2. Play a 1-frame silent buffer to "touch" the audio device
-    // This is enough to convince mobile browsers that we used audio
-    // in response to a user gesture.
     const buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
     const source = ctx.createBufferSource();
     source.buffer = buffer;
@@ -302,6 +344,35 @@ function unlockAudio() {
   }
 }
 
+/**
+ * Each trial has a normal background (#background) and one where Ella is talking
+ * (#background-talking). Show the talking one while she speaks, the normal one otherwise.
+ */
+function setTalkingBackground(trial, isTalking) {
+  const background = trial.querySelector("#background");
+  const talkingBackground = trial.querySelector("#background-talking");
+  if (background) background.style.display = isTalking ? "none" : "block";
+  if (talkingBackground) talkingBackground.style.display = isTalking ? "block" : "none";
+}
+
+/** Make the stage background transparent, so the trial's own background picture is visible. */
+function showTrialBackgrounds() {
+  document.getElementById("flex-wrapper").style.backgroundColor = "transparent";
+}
+
+/** Hide the trial with the given number (trials get the ids trial0, trial1, ... on start). */
+function hideTrial(trialIndex) {
+  document.getElementById(`trial${trialIndex}`).style.display = "none";
+}
+
+/** Object name from a picture's file name, e.g. ".../objects/cat.svg" -> "cat". */
+function objectNameFromSrc(src) {
+  return src.split("/").pop().replace(".svg", "").replace(".gif", "");
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// SETUP (runs once the page is loaded)
+// ---------------------------------------------------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", async function () {
   try {
     await loadLanguage(lang);
@@ -314,24 +385,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     return;
   }
 
-  // LOAD SPRITES FOR ALL BLOCKS
+  // Build the audio sprites of all transition blocks
   try {
-    const blockNames = [
-      "EmotionalProsody",
-      "DiscourseNovelty",
-      "GestureOne",
-      "GestureTwo",
-      "ConversationalPerspectiveTakingOne",
-      "IndirectRequest",
-      "InformativenessTwo",
-      // DISABLED blocks (their trials are commented out in prabat.html):
-      // "GestureThree", "ConversationalPerspectiveTakingTwo",
-      // "ConversationalPerspectiveTakingThree", "InformativenessOne",
-      "SpeakersPreference",
-      "intro",
-    ];
-
-    for (const blockName of blockNames) {
+    for (const blockName of BLOCK_NAMES) {
       try {
         blockSprites[blockName] = await buildSpriteForBlock(blockName);
       } catch (err) {
@@ -348,28 +404,21 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Every <audio> element of the page, in page order (index 0 is the sound test).
   const allAudios = [...document.querySelectorAll("audio")];
 
-  //------------------------------------------------------------------
-  // automatically add running trial numbers as ids to html
-  //------------------------------------------------------------------
-  const trialDivs = document.querySelectorAll(".trials");
-
-  // Iterate over trial divs and set their IDs
-  trialDivs.forEach((div, index) => {
+  // Number the trials in page order: ids trial0, trial1, ... The prompt audio of each trial
+  // gets the same id, so the speaker button can find it.
+  const trials = document.querySelectorAll(".trials");
+  trials.forEach((trial, index) => {
     const trialId = `trial${index}`;
-    div.id = trialId;
+    trial.id = trialId;
 
-    // find the prompt audio inside this div
-    const promptAudio = div.querySelector("audio.prompt");
+    const promptAudio = trial.querySelector("audio.prompt");
     if (promptAudio) {
-      promptAudio.id = trialId; // set same id as the trial container
+      promptAudio.id = trialId;
     }
   });
 
-  //------------------------------------------------------------------
-  // create object to save data
-  //------------------------------------------------------------------
+  // Everything that is saved: meta information and one entry per response
   const responseLog = {
-    // get ID out of URL parameter
     meta: {
       subjID: studyChoices.ID || "testID",
       order: window.location.pathname.split("/").pop().replace(".html", ""),
@@ -379,9 +428,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     data: [],
   };
 
-  //------------------------------------------------------------------
-  // log user testing setup
-  //------------------------------------------------------------------
+  // Log the participant's device and browser
   DetectRTC.load(() => {
     responseLog.meta.os = DetectRTC.osName;
     responseLog.meta.browser = DetectRTC.browser.name;
@@ -392,33 +439,48 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (devmode) console.log(responseLog.meta);
   });
 
-  //------------------------------------------------------------------
-  // study variables
-  //------------------------------------------------------------------
-  let trialNr = 0;
-  let t0 = 0;
-  let t1 = 0;
+  // Study state
+  let trialNr = 0; // number of the next trial to show
+  let responseTimerStart = 0; // when the choice became possible (ms)
+  let clickTime = 0; // when the child chose a picture (ms)
+  let repeatCount = 0; // how often the speaker was pressed in the current trial
+  let skipResponseAudio; // true after a block was replayed with the speaker button
 
-  //------------------------------------------------------------------
-  // get relevant elements
-  //------------------------------------------------------------------
+  // Page elements
   const betweenTrials = document.getElementById("between-trials");
   const betweenTrialsBackground = document.getElementById("between-trials-background");
-  const button = document.getElementById("prabat-button");
-  const speaker = document.getElementById("speaker");
+  const continueButton = document.getElementById("prabat-button");
+  const speakerButton = document.getElementById("speaker");
   const headingFullscreen = document.getElementById("heading-fullscreen");
   const headingTestsound = document.getElementById("heading-testsound");
-  const TestSound = document.getElementById("testsound");
-  let skipAdvance;
-  let repeatCount = 0;
+  const testSound = document.getElementById("testsound");
 
-  //------------------------------------------------------------------
-  // HANDLE RESPONSE CLICK
-  //------------------------------------------------------------------
+  // The continue button reacts to one click; it is armed again for the next trial
+  const waitForContinueClick = () => {
+    continueButton.addEventListener("click", handleContinueClick, {
+      capture: false,
+      once: true,
+    });
+  };
+
+  // Let the child choose one of the given pictures
+  const waitForChoice = (objectImages) => {
+    objectImages.forEach((img) => {
+      img.style.pointerEvents = "auto";
+      img.addEventListener("click", handleResponseClick, {
+        capture: false,
+        once: false,
+      });
+    });
+  };
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // RESPONSE CLICK: the child chose a picture
+  // -------------------------------------------------------------------------------------------------------------------
   const handleResponseClick = async (event) => {
     event.preventDefault();
 
-    // Prevent clicks on the img element with id="character" or "transition"
+    // Ella and transition pictures are not answers
     if (event.target.id === "character" || event.target.id === "transition") {
       return;
     }
@@ -426,55 +488,37 @@ document.addEventListener("DOMContentLoaded", async function () {
     const currentTrial = document.getElementById(`trial${trialNr - 1}`);
     const responseAudio = currentTrial.querySelector("audio.preResponse");
 
-    t1 = new Date().getTime();
+    clickTime = new Date().getTime();
 
-    // Clear borders on other images first
-    const currentImages = Array.from(currentTrial.getElementsByTagName("img"));
-    currentImages.forEach((img) => {
+    // Blue border on the chosen picture only
+    Array.from(currentTrial.getElementsByTagName("img")).forEach((img) => {
       if (img !== event.target && img.id !== "character" && img.id !== "background") {
         img.style.border = "transparent";
       }
     });
-
-    // Now show blue border on the clicked one
     event.target.style.border = "0.3cqw solid blue";
 
+    // Ella reacts to the choice ("Aha", "Mmh", ...); she is only shown talking for real words
     if (responseAudio) {
-      const bg = currentTrial.querySelector("#background");
-      const talk = currentTrial.querySelector("#background-talking");
-      const shouldTalk = responseAudio.src.indexOf("Mmh") === -1;
+      const isTalking = responseAudio.src.indexOf("Mmh") === -1;
+      if (isTalking) setTalkingBackground(currentTrial, true);
 
-      if (shouldTalk && bg && talk) {
-        bg.style.display = "none";
-        talk.style.display = "block";
-      }
-
-      button.disabled = true;
-
+      continueButton.disabled = true;
       await playAudioWebAudio(responseAudio);
-
-      if (bg && talk) {
-        bg.style.display = "block";
-        talk.style.display = "none";
-      }
-
-      button.disabled = false;
+      setTalkingBackground(currentTrial, false);
     }
 
-    button.disabled = false;
+    continueButton.disabled = false;
 
-    // save response
+    // Save the response (a later choice in the same trial overwrites the earlier one)
     responseLog.data[trialNr - 2] = {
-      timestamp: new Date(parseInt(t1)).toISOString(),
-      responseTime: t1 - t0,
+      timestamp: new Date(parseInt(clickTime)).toISOString(),
+      responseTime: clickTime - responseTimerStart,
       trial: trialNr,
-      targetObject: currentTrial
-        .querySelector('img[data-word-category="target"]')
-        .src.split("/")
-        .pop()
-        .replace(".svg", "")
-        .replace(".gif", ""),
-      chosenObject: event.target.src.split("/").pop().replace(".svg", "").replace(".gif", ""),
+      targetObject: objectNameFromSrc(
+        currentTrial.querySelector('img[data-word-category="target"]').src
+      ),
+      chosenObject: objectNameFromSrc(event.target.src),
       chosenCategory: event.target.dataset.wordCategory,
       chosenPosition: event.target.closest("div").id,
       repeatCount: repeatCount,
@@ -482,51 +526,32 @@ document.addEventListener("DOMContentLoaded", async function () {
       OS: DetectRTC.osName,
     };
 
-    button.addEventListener("click", handleContinueClick, {
-      capture: false,
-      once: true,
-    });
+    waitForContinueClick();
   };
 
-  //------------------------------------------------------------------
-  // HANDLE CONTINUE CLICK
-  //------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------------------------------
+  // CONTINUE CLICK: go to the next trial
+  // -------------------------------------------------------------------------------------------------------------------
   const handleContinueClick = async (event) => {
     event.preventDefault();
     repeatCount = 0;
     if (trialNr > 0) {
-      speaker.classList.add("disabled");
-      button.disabled = true;
+      speakerButton.classList.add("disabled");
+      continueButton.disabled = true;
     }
-    if (skipAdvance === false && trialNr > 0) {
-      const prevTrialIndex = trialNr - 1;
-      const prevTrial = document.getElementById(`trial${prevTrialIndex}`);
-      let prevResponseAudio = null;
 
-      if (prevTrial) {
-        prevResponseAudio = prevTrial.querySelector("audio.response");
-      }
-      if (prevResponseAudio) {
-        // Hide the image with id "background"
-        const backgroundImg = prevTrial.querySelector("#background");
-        if (backgroundImg) {
-          backgroundImg.style.display = "none";
-        }
-        // Show the image with id "background-talking"
-        const backgroundTalkingImg = prevTrial.querySelector("#background-talking");
-        if (backgroundTalkingImg) {
-          backgroundTalkingImg.style.display = "block";
-        }
+    // Trials with an <audio class="response"> play it after "continue"
+    // (no trial of the current version has one)
+    if (skipResponseAudio === false && trialNr > 0) {
+      const previousTrial = document.getElementById(`trial${trialNr - 1}`);
+      const previousResponseAudio = previousTrial
+        ? previousTrial.querySelector("audio.response")
+        : null;
 
-        await playAudioWebAudio(prevResponseAudio);
-
-        if (backgroundImg) {
-          backgroundImg.style.display = "block";
-        }
-
-        if (backgroundTalkingImg) {
-          backgroundTalkingImg.style.display = "none";
-        }
+      if (previousResponseAudio) {
+        setTalkingBackground(previousTrial, true);
+        await playAudioWebAudio(previousResponseAudio);
+        setTalkingBackground(previousTrial, false);
       }
     }
 
@@ -536,31 +561,26 @@ document.addEventListener("DOMContentLoaded", async function () {
       console.log(responseLog);
     }
 
-    // enable fullscreen and have short break, before first trial starts
+    // First click: unlock audio, go fullscreen and play the sound test
     if (trialNr === 0) {
-      // Unlock audio (very important for Android / iOS)
-      unlockAudio();
+      unlockAudio(); // very important for Android / iOS
 
       if (!devmode && !responseLog.meta.iOSSafari) openFullscreen();
       headingFullscreen.style.display = "none";
       headingTestsound.style.display = "inline";
-      speaker.style.display = "block";
+      speakerButton.style.display = "block";
 
       if (allAudios[trialNr]) {
         playAudioWebAudio(allAudios[trialNr]);
       }
 
-      button.addEventListener("click", handleContinueClick, {
-        capture: false,
-        once: true,
-      });
+      waitForContinueClick();
     }
 
-    // end of trials
-    if (trialNr === trialDivs.length) {
+    // End of trials: stop the recording, save the data, go to the goodbye page
+    if (trialNr === trials.length) {
       studyChoices.ID = responseLog.meta.subjID;
-      // Show fullscreen overlay (spinner
-      const overlay = document.querySelector("#uploadOverlay");
+      const overlay = document.querySelector("#uploadOverlay"); // full-screen spinner
       overlay.classList.remove("hidden");
       try {
         await stopRecording();
@@ -605,445 +625,246 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const currentTrial = document.getElementById(`trial${trialNr}`);
 
-    // transition images for trials that need multiple slides
-
+    // Single slide with Ella talking, no choice ("transitionEmpty")
     if (currentTrial.classList.contains("transitionEmpty")) {
       betweenTrialsBackground.src = "images/backgrounds/background_empty.svg";
       headingTestsound.style.display = "none";
-      const lastTrial = document.getElementById(`trial${trialNr - 1}`);
-      lastTrial.style.display = "none";
+      hideTrial(trialNr - 1);
 
       const trialAudio = currentTrial.querySelector("audio.prompt");
 
       betweenTrials.style.display = "none";
-
-      const flexWrapper = document.getElementById("flex-wrapper");
-      flexWrapper.style.backgroundColor = "transparent";
-
+      showTrialBackgrounds();
       currentTrial.style.display = "block";
 
       if (trialAudio) {
-        button.disabled = true;
-        speaker.classList.add("disabled");
+        continueButton.disabled = true;
+        speakerButton.classList.add("disabled");
 
         await playAudioWebAudio(trialAudio);
 
-        speaker.classList.remove("disabled");
-
-        const backgroundImg = currentTrial.querySelector("#background");
-        if (backgroundImg) {
-          backgroundImg.style.display = "block";
-        }
-
-        const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-        if (backgroundTalkingImg) {
-          backgroundTalkingImg.style.display = "none";
-        }
-
-        button.addEventListener("click", handleContinueClick, {
-          capture: false,
-          once: true,
-        });
-
-        button.disabled = false;
+        speakerButton.classList.remove("disabled");
+        setTalkingBackground(currentTrial, false);
+        waitForContinueClick();
+        continueButton.disabled = false;
       }
     }
 
-    // Transition blocks handling
-
+    // Transition block: play all its slides, then show its critical (choice) slide
     if (currentTrial.classList.contains("SpriteAudioTrials")) {
-      let BlockName = "";
-      let SkipAheadIndex = 0;
-      const blockSkipAhead = {
-        DiscourseNovelty: 5,
-        SpeakersPreference: 5,
-        GestureOne: 1,
-        GestureTwo: 1,
-        ConversationalPerspectiveTakingOne: 2,
-        IndirectRequest: 1,
-        EmotionalProsody: 3,
-        InformativenessTwo: 3,
-        intro: 4,
-        // DISABLED blocks: GestureThree: 1, ConversationalPerspectiveTakingTwo: 2,
-        // ConversationalPerspectiveTakingThree: 1, InformativenessOne: 3
-      };
-      BlockName =
-        Object.keys(blockSkipAhead).find((name) => currentTrial.classList.contains(name)) || "";
-      SkipAheadIndex = blockSkipAhead[BlockName] || 0;
-      const flexWrapper = document.getElementById("flex-wrapper");
-      flexWrapper.style.backgroundColor = "transparent";
+      const blockName = findBlockName(currentTrial);
+      const slidesToSkip = SLIDES_TO_SKIP[blockName] || 0;
+      showTrialBackgrounds();
       betweenTrials.style.display = "none";
       headingTestsound.style.display = "none";
-      const lastTrial = document.getElementById(`trial${trialNr - 1}`);
-      lastTrial.style.display = "none";
+      hideTrial(trialNr - 1);
 
-      await runTransitionBlock(BlockName, () => {
-        if (!BlockName.includes("intro")) {
-          const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
-          const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
-          const lastTrial = document.getElementById(`trial${trialNr - 1}`);
-          lastTrial.style.display = "none";
-          currentTrial.style.display = "block";
+      await runTransitionBlock(blockName, () => {
+        const criticalTrial = document.querySelector(`.trials.${blockName}.critical`);
+        hideTrial(trialNr - 1);
+        criticalTrial.style.display = "block";
 
-          // Start RT timing *after* everything appears
-          t0 = new Date().getTime();
-
-          currentImages.forEach((img) => {
-            img.style.pointerEvents = "auto";
-          });
-
-          const backgroundImg = currentTrial.querySelector("#background");
-          if (backgroundImg) {
-            backgroundImg.style.display = "block";
+        if (!blockName.includes("intro")) {
+          // Response time starts when the choice slide appears
+          responseTimerStart = new Date().getTime();
+          setTalkingBackground(criticalTrial, false);
+          speakerButton.classList.remove("disabled");
+          waitForChoice(Array.from(criticalTrial.querySelectorAll("img.object")));
+        } else {
+          // The intro has no choice: the child just continues
+          speakerButton.classList.remove("disabled");
+          continueButton.disabled = false;
+          const background = criticalTrial.querySelector("#background");
+          if (background) {
+            background.style.display = "block";
           }
-          // Hide the image with id "background-talking"
-          const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-          if (backgroundTalkingImg) {
-            backgroundTalkingImg.style.display = "none";
-          }
-
-          // enable speaker again
-          speaker.classList.remove("disabled");
-
-          currentImages.forEach((img) => {
-            img.addEventListener("click", handleResponseClick, {
-              capture: false,
-              once: false,
-            });
-          });
-        } else if (BlockName.includes("intro")) {
-          const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
-          const lastTrial = document.getElementById(`trial${trialNr - 1}`);
-          lastTrial.style.display = "none";
-          currentTrial.style.display = "block";
-          // enable speaker again
-          speaker.classList.remove("disabled");
-          button.disabled = false;
-          const backgroundImg = currentTrial.querySelector("#background");
-          if (backgroundImg) {
-            backgroundImg.style.display = "block";
-          }
-          button.addEventListener("click", handleContinueClick, {
-            capture: false,
-            once: true,
-          });
+          waitForContinueClick();
         }
-        trialNr = trialNr + SkipAheadIndex; // skip ahead past the discourse novelty trials
+        trialNr = trialNr + slidesToSkip; // jump over the block's other slides
       });
     }
-    // Normal blocks handling
 
+    // Normal trial: Ella asks for a picture, then the child chooses
     if (
       trialNr > 0 &&
-      currentTrial.classList.contains("transitionSlide") == false &&
-      currentTrial.classList.contains("transitionEmpty") == false
+      !currentTrial.classList.contains("transitionSlide") &&
+      !currentTrial.classList.contains("transitionEmpty")
     ) {
-      const imgEl = document.getElementById("background");
-      if (imgEl && window.localizedImages?.background) {
-        imgEl.src = window.localizedImages.background;
+      // Optional language-specific background pictures ("images" in the language file;
+      // no language file uses this at the moment)
+      const firstBackground = document.getElementById("background");
+      if (firstBackground && window.localizedImages?.background) {
+        firstBackground.src = window.localizedImages.background;
       }
-
-      const imgElTalk = document.getElementById("background-talking");
-      if (imgElTalk && window.localizedImages?.background) {
-        imgElTalk.src = window.localizedImages.background;
+      const firstTalkingBackground = document.getElementById("background-talking");
+      if (firstTalkingBackground && window.localizedImages?.background) {
+        firstTalkingBackground.src = window.localizedImages.background;
       }
 
       const currentTrial = document.getElementById(`trial${trialNr}`);
       headingTestsound.style.display = "none";
-
-      const lastTrial = document.getElementById(`trial${trialNr - 1}`);
-      lastTrial.style.display = "none";
+      hideTrial(trialNr - 1);
 
       const trialAudio = currentTrial.querySelector("audio.prompt");
-      const audioSrc = trialAudio.src;
-
-      // Play the audio element contained in currentTrial
-
-      // save response time start point
-      t0 = new Date().getTime();
 
       betweenTrials.style.display = "none";
 
-      if (!audioSrc.includes("Mmh")) {
-        const backgroundImg = currentTrial.querySelector("#background");
-        if (backgroundImg) {
-          backgroundImg.style.display = "none";
-        }
-        // Hide the image with id "background-talking"
-        const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-        if (backgroundTalkingImg) {
-          backgroundTalkingImg.style.display = "block";
-        }
+      // Ella is shown talking during the prompt, except for "Mmh" sounds
+      if (!trialAudio.src.includes("Mmh")) {
+        setTalkingBackground(currentTrial, true);
       }
 
-      const flexWrapper = document.getElementById("flex-wrapper");
-      flexWrapper.style.backgroundColor = "transparent";
-
+      showTrialBackgrounds();
       currentTrial.style.display = "block";
 
-      // play audio of current trial; the continue button stays disabled meanwhile
+      // Play the prompt; the continue button stays disabled meanwhile
       if (trialAudio) {
-        button.disabled = true;
+        continueButton.disabled = true;
         await playAudioWebAudio(trialAudio);
       }
 
-      // Start RT timing *after* everything appears
-      t0 = new Date().getTime();
+      // Response time starts when the prompt has finished
+      responseTimerStart = new Date().getTime();
 
-      const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
-
-      currentImages.forEach((img) => {
-        img.style.pointerEvents = "auto";
-      });
-
-      const backgroundImg = currentTrial.querySelector("#background");
-      if (backgroundImg) {
-        backgroundImg.style.display = "block";
-      }
-      // Hide the image with id "background-talking"
-      const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-      if (backgroundTalkingImg) {
-        backgroundTalkingImg.style.display = "none";
-      }
-
-      // enable speaker again
-      speaker.classList.remove("disabled");
-
-      currentImages.forEach((img) => {
-        img.addEventListener("click", handleResponseClick, {
-          capture: false,
-          once: false,
-        });
-      });
+      setTalkingBackground(currentTrial, false);
+      speakerButton.classList.remove("disabled");
+      waitForChoice(Array.from(currentTrial.querySelectorAll("img.object")));
     }
-    skipAdvance = false; // consume the flag so future continues behave normally
+    skipResponseAudio = false;
     trialNr++;
   };
 
-  //------------------------------------------------------------------
-  // HANDLE SPEAKER CLICK
-  //------------------------------------------------------------------
-
+  // -------------------------------------------------------------------------------------------------------------------
+  // SPEAKER CLICK: play the current prompt again (counted in "repeated")
+  // -------------------------------------------------------------------------------------------------------------------
   const handleSpeakerClick = async (event) => {
     event.preventDefault();
     repeatCount += 1;
     const currentTrial = document.getElementById(`trial${trialNr - 1}`);
     if (!currentTrial) return;
 
-    const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
+    const objectImages = Array.from(currentTrial.querySelectorAll("img.object"));
 
-    currentImages.forEach((img) => {
+    // No choice possible while the prompt is replayed
+    objectImages.forEach((img) => {
       img.style.pointerEvents = "none";
       img.style.border = "transparent";
     });
 
     if (currentTrial.classList.contains("SpriteAudioTrials")) {
-      let BlockName = "";
-      let SkipAheadIndex = 0;
-      const blockSkipAhead = {
-        DiscourseNovelty: 5,
-        SpeakersPreference: 5,
-        GestureOne: 1,
-        GestureTwo: 1,
-        ConversationalPerspectiveTakingOne: 2,
-        IndirectRequest: 1,
-        EmotionalProsody: 3,
-        InformativenessTwo: 3,
-        intro: 4,
-        // DISABLED blocks: GestureThree: 1, ConversationalPerspectiveTakingTwo: 2,
-        // ConversationalPerspectiveTakingThree: 1, InformativenessOne: 3
-      };
-      BlockName =
-        Object.keys(blockSkipAhead).find((name) => currentTrial.classList.contains(name)) || "";
-      SkipAheadIndex = blockSkipAhead[BlockName] || 0;
-      const lastTrial = document.getElementById(`trial${trialNr - 1}`);
-      lastTrial.style.display = "none";
-      trialNr = trialNr - (SkipAheadIndex + 1); // point to the trial you want
-      skipAdvance = true; // don’t auto ++ on this pass
-      const flexWrapper = document.getElementById("flex-wrapper");
-      flexWrapper.style.backgroundColor = "transparent";
+      // Replay the whole transition block from its first slide
+      const blockName = findBlockName(currentTrial);
+      const slidesToSkip = SLIDES_TO_SKIP[blockName] || 0;
+      hideTrial(trialNr - 1);
+      trialNr = trialNr - (slidesToSkip + 1); // back to the block's first slide
+      skipResponseAudio = true; // the next "continue" must not replay a response
+      showTrialBackgrounds();
       betweenTrials.style.display = "none";
       headingTestsound.style.display = "none";
-      if (!BlockName.includes("intro")) {
-        const backgroundImg = currentTrial.querySelector("#background");
-        if (backgroundImg) {
-          backgroundImg.style.display = "none";
-        }
-      } else {
-        const backgroundImg = currentTrial.querySelector("#background");
-        if (backgroundImg) {
-          backgroundImg.style.display = "block";
-        }
+
+      const background = currentTrial.querySelector("#background");
+      if (background) {
+        background.style.display = blockName.includes("intro") ? "block" : "none";
       }
-      const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-      if (backgroundTalkingImg) {
-        backgroundTalkingImg.style.display = "block";
+      const talkingBackground = currentTrial.querySelector("#background-talking");
+      if (talkingBackground) {
+        talkingBackground.style.display = "block";
       }
 
-      button.disabled = true; // prevent clicking until a new choice is made
-      speaker.classList.add("disabled");
-      currentImages.forEach((img) => {
+      continueButton.disabled = true; // no "continue" until a new choice is made
+      speakerButton.classList.add("disabled");
+      objectImages.forEach((img) => {
         img.style.pointerEvents = "none";
       });
 
-      button.removeEventListener("click", handleResponseClick);
+      continueButton.removeEventListener("click", handleResponseClick);
 
-      await runTransitionBlock(BlockName, () => {
-        if (!BlockName.includes("intro")) {
-          const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
-          const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
-          const lastTrial = document.getElementById(`trial${trialNr - 1}`);
-          lastTrial.style.display = "none";
-          currentTrial.style.display = "block";
+      await runTransitionBlock(blockName, () => {
+        const criticalTrial = document.querySelector(`.trials.${blockName}.critical`);
+        hideTrial(trialNr - 1);
+        criticalTrial.style.display = "block";
 
-          // Start RT timing *after* everything appears
-          t0 = new Date().getTime();
-
-          const backgroundImg = currentTrial.querySelector("#background");
-          if (backgroundImg) {
-            backgroundImg.style.display = "block";
+        if (!blockName.includes("intro")) {
+          // Response time starts when the choice slide appears
+          responseTimerStart = new Date().getTime();
+          setTalkingBackground(criticalTrial, false);
+          speakerButton.classList.remove("disabled");
+          continueButton.disabled = true;
+          waitForChoice(Array.from(criticalTrial.querySelectorAll("img.object")));
+        } else {
+          speakerButton.classList.remove("disabled");
+          continueButton.disabled = false;
+          const criticalBackground = criticalTrial.querySelector("#background");
+          if (criticalBackground) {
+            criticalBackground.style.display = "block";
           }
-          // Hide the image with id "background-talking"
-          const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-          if (backgroundTalkingImg) {
-            backgroundTalkingImg.style.display = "none";
-          }
-
-          // enable speaker again
-          speaker.classList.remove("disabled");
-
-          button.disabled = true;
-
-          currentImages.forEach((img) => {
-            img.style.pointerEvents = "auto";
-            img.addEventListener("click", handleResponseClick, {
-              capture: false,
-              once: false,
-            });
-          });
-        } else if (BlockName.includes("intro")) {
-          const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
-          const lastTrial = document.getElementById(`trial${trialNr - 1}`);
-          lastTrial.style.display = "none";
-          currentTrial.style.display = "block";
-          // enable speaker again
-          speaker.classList.remove("disabled");
-          button.disabled = false;
-          const backgroundImg = currentTrial.querySelector("#background");
-          if (backgroundImg) {
-            backgroundImg.style.display = "block";
-          }
-          button.addEventListener("click", handleContinueClick, {
-            capture: false,
-            once: true,
-          });
+          waitForContinueClick();
         }
-        trialNr = trialNr + (SkipAheadIndex + 1); // skip ahead past the discourse novelty trials
+        trialNr = trialNr + (slidesToSkip + 1); // back to where we were
       });
     } else if (currentTrial.classList.contains("transitionSlide")) {
-      const speakerButton = document.getElementById("speaker");
-      if (speakerButton) {
-        speakerButton.disabled = true; // make it inactive
-      }
+      speakerButton.disabled = true;
       return;
     } else if (currentTrial.classList.contains("transitionEmpty")) {
-      const trialId = currentTrial.id;
-      const trialAudio = currentTrial.querySelector(`audio#${trialId}`);
+      const trialAudio = currentTrial.querySelector(`audio#${currentTrial.id}`);
 
-      speaker.classList.add("disabled");
+      speakerButton.classList.add("disabled");
 
       if (!trialAudio) {
-        console.error("No <audio> found for transitionEmpty slide:", trialId);
+        console.error("No <audio> found for transitionEmpty slide:", currentTrial.id);
         return;
       }
 
-      button.disabled = true;
-
-      const backgroundImg = currentTrial.querySelector("#background");
-      if (backgroundImg) {
-        backgroundImg.style.display = "none";
-      }
-
-      const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-      if (backgroundTalkingImg) {
-        backgroundTalkingImg.style.display = "block";
-      }
+      continueButton.disabled = true;
+      setTalkingBackground(currentTrial, true);
 
       await playAudioWebAudio(trialAudio);
 
-      speaker.classList.remove("disabled");
-      button.disabled = false;
-
-      if (backgroundImg) {
-        backgroundImg.style.display = "block";
-      }
-
-      if (backgroundTalkingImg) {
-        backgroundTalkingImg.style.display = "none";
-      }
+      speakerButton.classList.remove("disabled");
+      continueButton.disabled = false;
+      setTalkingBackground(currentTrial, false);
     } else if (currentTrial.id === "trial0") {
-      if (TestSound) {
-        playAudioWebAudio(TestSound);
+      // Sound test
+      if (testSound) {
+        playAudioWebAudio(testSound);
       } else {
         console.warn('Element with ID "testsound" not found.');
       }
     } else {
-      // find the audio inside with the same id as the trial div
-      const trialId = currentTrial.id; // e.g. "trial0", "trial1"
-      const trialAudio = currentTrial.querySelector(`audio#${trialId}`);
+      // Normal trial: replay its prompt (the audio with the same id as the trial)
+      const trialAudio = currentTrial.querySelector(`audio#${currentTrial.id}`);
       if (!trialAudio) return;
 
       // The continue button stays disabled until a new choice is made
-      button.removeEventListener("click", handleResponseClick);
-      button.disabled = true;
+      continueButton.removeEventListener("click", handleResponseClick);
+      continueButton.disabled = true;
 
-      const backgroundImg = currentTrial.querySelector("#background");
-      if (backgroundImg) {
-        backgroundImg.style.display = "none";
-      }
-      // Hide the image with id "background-talking"
-      const backgroundTalkingImg = currentTrial.querySelector("#background-talking");
-      if (backgroundTalkingImg) {
-        backgroundTalkingImg.style.display = "block";
-      }
-
-      speaker.classList.add("disabled");
+      setTalkingBackground(currentTrial, true);
+      speakerButton.classList.add("disabled");
 
       await playAudioWebAudio(trialAudio);
 
-      speaker.classList.remove("disabled");
-
-      currentImages.forEach((img) => {
+      speakerButton.classList.remove("disabled");
+      objectImages.forEach((img) => {
         img.style.pointerEvents = "auto";
       });
-      // Show the image with id "background"
-      if (backgroundImg) {
-        backgroundImg.style.display = "block";
-      }
-      // Hide the image with id "background-talking"
-      if (backgroundTalkingImg) {
-        backgroundTalkingImg.style.display = "none";
-      }
+      setTalkingBackground(currentTrial, false);
     }
   };
 
-  //------------------------------------------------------------------
-  // add eventListeners
-  //------------------------------------------------------------------
-  button.addEventListener("click", handleContinueClick, {
+  continueButton.addEventListener("click", handleContinueClick, {
     capture: false,
     once: true,
   });
 
-  speaker.addEventListener("click", handleSpeakerClick, {
+  speakerButton.addEventListener("click", handleSpeakerClick, {
     capture: false,
     once: false,
   });
 
-  // ---------------------------------------------------------------------------------------------------------------------
-  // START TRIALS
-  // ---------------------------------------------------------------------------------------------------------------------
-  // browser takes time for webcam permission
+  // -------------------------------------------------------------------------------------------------------------------
+  // START: give the browser time for the webcam permission, then show the start button
+  // -------------------------------------------------------------------------------------------------------------------
   const startTrials = async () => {
     await pause(500);
 
@@ -1074,8 +895,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
     await pause(2500);
 
-    button.style.display = "inline";
-    button.disabled = false;
+    continueButton.style.display = "inline";
+    continueButton.disabled = false;
   };
   startTrials();
 
