@@ -1,3 +1,8 @@
+// ---------------------------------------------------------------------------------------------------------------------
+// WEBCAM RECORDING: start the camera/microphone, record, stop, and save or upload the video.
+// The recorded sound is the microphone mixed with the study's own audio (see recordingAudioMix.js).
+// Used by prabat.js (start/stop) and downloadVideo.js / uploadVideo.js (saving).
+// ---------------------------------------------------------------------------------------------------------------------
 import { getMixDestination, routeMicIntoMix } from "./recordingAudioMix.js";
 
 let mediaStream = null;

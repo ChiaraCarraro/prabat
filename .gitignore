@@ -1,8 +1,8 @@
 ### Our stuff
-# Configs
-src/scripts
+# Configs and private helper scripts (server logins etc.). Only the asset-list generator is shared.
+src/scripts/*
+!src/scripts/generateAssetList.js
 src/participant_data
-src/scripts
 # dist/
 Matched4Loudness/
 

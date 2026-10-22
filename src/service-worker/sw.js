@@ -1,4 +1,6 @@
 /// <reference lib="webworker" />
+// Service worker of the installable app (PWA): caches the study's files so it also works offline.
+// Built by vite-plugin-pwa (see vite.config.js); not needed to understand the study itself.
 import {
   cleanupOutdatedCaches,
   createHandlerBoundToURL,

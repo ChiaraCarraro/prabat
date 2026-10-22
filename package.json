@@ -10,8 +10,8 @@
         "build": "bun vite build",
         "preview": "bun vite preview",
         "format": "prettier --write src",
-        "generateImageJSON": "bun run src/scripts/generateImageJSON.js",
-        "generateAudioJSON": "bun run src/scripts/generateAudioJSON.js"
+        "generateImageJSON": "bun run src/scripts/generateAssetList.js images",
+        "generateAudioJSON": "bun run src/scripts/generateAssetList.js audio"
     },
     "keywords": [],
     "author": "",

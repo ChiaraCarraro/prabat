@@ -59,8 +59,8 @@ export async function buildSpriteForBlock(blockName) {
     })
   );
 
-  // 4. Basic consistency check: same sample rate.
-  // Mixing mono and stereo to reduce error
+  // 4. Clips may mix mono and stereo recordings: the sprite gets the largest channel
+  //    count and mono clips are copied into every channel (step 7). Sample rates should match.
   const firstBuf = decoded[0].buf;
   const numChannels = Math.max(...decoded.map(({ buf }) => buf.numberOfChannels));
   const sampleRate = firstBuf.sampleRate;

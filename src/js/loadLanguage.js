@@ -1,5 +1,8 @@
 // ---------------------------------------------------------------------------------------------------------------------
-// FUNCTION FOR LOADING LANGUAGE FILES
+// Put the texts of the chosen language (public/lang/<code>.json) into the page.
+// Each entry of textElements below links an element id in the HTML to a key in the language
+// file. To make a new text translatable: give the element an id, add the key to every language
+// file and add one line here. Used by every page.
 // ---------------------------------------------------------------------------------------------------------------------
 
 import ger from "../../public/lang/ger.json";

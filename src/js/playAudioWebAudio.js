@@ -1,3 +1,8 @@
+// ---------------------------------------------------------------------------------------------------------------------
+// Play the file of an <audio> element with Web Audio and wait until it has finished.
+// Used for every single clip of the study (prompts, reactions, sound test); the transition
+// blocks use buildSpriteForBlock.js instead. Decoded files are cached, so replays start at once.
+// ---------------------------------------------------------------------------------------------------------------------
 import { getSharedAudioContext } from "./sharedAudioContext.js";
 import { routeNodeToMix } from "./recordingAudioMix.js";
 

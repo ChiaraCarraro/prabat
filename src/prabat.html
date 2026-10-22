@@ -15,6 +15,36 @@
   </head>
 
   <body>
+    <!--
+      HOW THIS PAGE IS BUILT (the logic is in prabat.js)
+
+      Every trial is a <div class="flex-sheet trials ..."> below, all hidden at first.
+      prabat.js numbers them in page order (trial0, trial1, ...) and shows one at a time,
+      so THE ORDER OF THE DIVS IS THE ORDER OF THE STUDY. trial0 is the sound test.
+
+      Extra classes on a trial:
+        transitionEmpty    Ella only talks, nothing to choose; the child presses "continue".
+        SpriteAudioTrials transitionSlide BLOCKNAME
+                           one slide of a transition block (a short story over several slides).
+                           The audio of all slides of a block is joined and played without gaps.
+                           The last slide of a block also has the class "critical": the child chooses there.
+                           A block name must also be listed in BLOCK_NAMES and SLIDES_TO_SKIP in prabat.js.
+        silent             a transition slide shown for the length of its audio, without sound.
+        intro              the introduction block (no choice).
+        Other classes (mutex-noun, metaphors, adhocimp-ball, ...) only name the item type.
+
+      Inside a trial:
+        <audio class="prompt" data-audio="cat.mp3">         Ella's question (public/audio/LANGUAGE/cat.mp3)
+        <audio class="preResponse" data-audio="Aha.mp3">    Ella's reaction after the child chose
+        <img id="background" data-img="...">                the scene (public/images/LANGUAGE FOLDER/...)
+        <img id="background-talking" data-img="...">        the same scene with Ella talking
+        <img class="object" data-word-category="target | dist1 | dist2 | dist3">
+                           the pictures to choose from, inside <div id="left | center | right">.
+                           Category and position of the chosen picture are saved in the CSV.
+
+      To switch a trial off, put it inside an HTML comment and write
+      "DISABLED: not used in the current version of the study" above it (as done below).
+    -->
     <div id="flex-wrapper">
       <div class="flex-item">
         <p id="heading-fullscreen" class="fullscreen-message"></p>
