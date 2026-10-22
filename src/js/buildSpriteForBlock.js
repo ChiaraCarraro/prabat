@@ -7,7 +7,6 @@
 
 import { getSharedAudioContext } from "./sharedAudioContext.js";
 
-
 export async function buildSpriteForBlock(blockName) {
   const ctx = getSharedAudioContext();
   if (!ctx) {
@@ -15,14 +14,10 @@ export async function buildSpriteForBlock(blockName) {
   }
 
   // 1. Find all transition slides for this block, in DOM order
-  const slides = Array.from(
-    document.querySelectorAll(`.trials.transitionSlide.${blockName}`)
-  );
+  const slides = Array.from(document.querySelectorAll(`.trials.transitionSlide.${blockName}`));
 
   if (slides.length === 0) {
-    throw new Error(
-      `buildSpriteForBlock: no .transitionSlide found for block "${blockName}".`
-    );
+    throw new Error(`buildSpriteForBlock: no .transitionSlide found for block "${blockName}".`);
   }
 
   // 2. Collect all prompt audio clips (label + url)

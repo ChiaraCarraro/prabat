@@ -1,6 +1,6 @@
-import { posPermutations } from './posPermutations.js';
-import { newTrials } from './newTrials.js';
-import { shuffleArray } from './shuffleArray.js';
+import { posPermutations } from "./posPermutations.js";
+import { newTrials } from "./newTrials.js";
+import { shuffleArray } from "./shuffleArray.js";
 
 export const randomizeNewTrials = () => {
   // (1) each of the four positions gets quarter pictures for target words;

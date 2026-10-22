@@ -8,14 +8,14 @@
 
 input,
 select {
-   font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
 }
 
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: var(--ccp-minerva-green);
-    color: hsl(0 0% 10%);
-    overflow: show;
+  font-family: "Segoe UI", sans-serif;
+  background-color: var(--ccp-minerva-green);
+  color: hsl(0 0% 10%);
+  overflow: show;
 }
 
 .heading {
@@ -74,17 +74,15 @@ p {
   background-color: hsl(177, 100%, 36%) !important;
 }
 
-input[type='checkbox'] {
+input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
   vertical-align: middle;
 }
 
-input[type='checkbox']:checked {
-  accent-color: var(
-    --ccp-minerva-green
-  ); /* Changes the checkbox color when checked */
+input[type="checkbox"]:checked {
+  accent-color: var(--ccp-minerva-green); /* Changes the checkbox color when checked */
 }
 
 #video-img-item {

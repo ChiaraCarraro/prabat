@@ -21,7 +21,7 @@ export async function initMedia(constraints) {
   // Stop any existing raw camera/mic tracks (but NOT the shared mix
   // destination's audio track, which stays alive across recordings).
   if (rawUserMediaStream) {
-    rawUserMediaStream.getTracks().forEach(track => track.stop());
+    rawUserMediaStream.getTracks().forEach((track) => track.stop());
     rawUserMediaStream = null;
   }
   mediaStream = null;
@@ -29,7 +29,7 @@ export async function initMedia(constraints) {
   const defaultConstraints = {
     audio: true,
     video: {
-      width: { ideal: 640, max: 640 },   // lower resolution
+      width: { ideal: 640, max: 640 }, // lower resolution
       height: { ideal: 480, max: 480 },
       frameRate: { ideal: 10, max: 15 }, // low-ish fps
       facingMode: "user",
@@ -37,25 +37,22 @@ export async function initMedia(constraints) {
   };
 
   const finalConstraints = constraints || defaultConstraints;
-  
-  
+
   try {
     rawUserMediaStream = await navigator.mediaDevices.getUserMedia(finalConstraints);
-    
   } catch (err) {
-
     if (String(err).includes("No AVAudioSessionCaptureDevice")) {
       console.warn("iOS cannot access microphone. Retrying without audio...");
-      
+
       // Retry video-only
       rawUserMediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { ideal: 640, max: 640 },   // lower resolution
+          width: { ideal: 640, max: 640 }, // lower resolution
           height: { ideal: 480, max: 480 },
           frameRate: { ideal: 10, max: 15 }, // low-ish fps
           facingMode: "user",
         },
-        audio: false
+        audio: false,
       });
     } else {
       throw err;
@@ -107,7 +104,7 @@ export function startRecording() {
     videoBitsPerSecond: 150_000, // 150 kbps – quite low quality, video isn't the priority
     audioBitsPerSecond: 128_000, // keep speech (stimulus prompts + mic) clear
   };
-  
+
   try {
     mediaRecorder = supportedMimeType
       ? new MediaRecorder(mediaStream, recorderOptions)
@@ -118,13 +115,13 @@ export function startRecording() {
     //throw err;
   }
 
-  mediaRecorder.ondataavailable = event => {
+  mediaRecorder.ondataavailable = (event) => {
     if (event.data && event.data.size > 0) {
       recordedChunks.push(event.data);
     }
   };
 
-  mediaRecorder.onerror = event => {
+  mediaRecorder.onerror = (event) => {
     console.error("MediaRecorder error:", event.error);
   };
 
@@ -151,7 +148,7 @@ export function stopRecording() {
     return Promise.resolve(null);
   }
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     stopPromiseResolve = resolve;
     mediaRecorder.stop();
   });
@@ -224,7 +221,7 @@ export async function uploadLastRecordingInChunks(
     chunkSize = 1024 * 1024 * 5, // 5MB
     additionalData = {},
     fetchOptions = {},
-    onProgress
+    onProgress,
   } = {}
 ) {
   if (!lastRecordedBlob) {
@@ -235,8 +232,7 @@ export async function uploadLastRecordingInChunks(
   const totalChunks = Math.ceil(totalSize / chunkSize);
 
   // Unique ID for this upload (so the server can group chunks)
-  const uploadId =
-    Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
+  const uploadId = Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
 
   let uploadedBytes = 0;
   let lastResponse = null;
@@ -263,13 +259,11 @@ export async function uploadLastRecordingInChunks(
     const response = await fetch(endpointUrl, {
       method: "POST",
       body: formData,
-      ...fetchOptions
+      ...fetchOptions,
     });
 
     if (!response.ok) {
-      throw new Error(
-        `Chunk upload failed at index ${chunkIndex} with status ${response.status}`
-      );
+      throw new Error(`Chunk upload failed at index ${chunkIndex} with status ${response.status}`);
     }
 
     lastResponse = response;
@@ -282,15 +276,13 @@ export async function uploadLastRecordingInChunks(
         totalBytes: totalSize,
         chunkIndex,
         totalChunks,
-        uploadId
+        uploadId,
       });
     }
   }
 
   return lastResponse;
 }
-
-
 
 /**
  * Stop the current media stream (camera/mic).
@@ -302,7 +294,7 @@ export async function uploadLastRecordingInChunks(
  */
 export function stopMediaStream() {
   if (rawUserMediaStream) {
-    rawUserMediaStream.getTracks().forEach(track => track.stop());
+    rawUserMediaStream.getTracks().forEach((track) => track.stop());
     rawUserMediaStream = null;
   }
   mediaStream = null;

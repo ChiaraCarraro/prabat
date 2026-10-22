@@ -52,7 +52,7 @@ button.addEventListener("click", (event) => {
   }
 
   const webcam = getWebcamValue();
-  const lang  = studyChoices?.lang || "ger";
+  const lang = studyChoices?.lang || "ger";
 
   localStorage.setItem("storedChoices", JSON.stringify({ ID: subjID, webcam: webcam, lang: lang }));
   window.location.href = `./instructions.html`;
@@ -61,9 +61,9 @@ button.addEventListener("click", (event) => {
 // Init
 (async () => {
   const lang = studyChoices?.lang || "ger";
-  setButtonState(button, false);     // start disabled
+  setButtonState(button, false); // start disabled
 
-  await loadLanguage(lang);          // localization may re-render the form
-  wireUpWebcamHandlers();            // attach after DOM is ready
-  updateButtonState();               // compute once
+  await loadLanguage(lang); // localization may re-render the form
+  wireUpWebcamHandlers(); // attach after DOM is ready
+  updateButtonState(); // compute once
 })();

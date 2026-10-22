@@ -3,12 +3,12 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 // src/loadLanguage.js (adjust paths if this file lives in src/js/)
-import ger from '../../public/lang/ger.json';
-import sw  from '../../public/lang/sw.json';
-import ki  from '../../public/lang/ki.json';
-import en  from '../../public/lang/en.json';
-import tr  from '../../public/lang/tr.json';
-import ch  from '../../public/lang/ch.json';
+import ger from "../../public/lang/ger.json";
+import sw from "../../public/lang/sw.json";
+import ki from "../../public/lang/ki.json";
+import en from "../../public/lang/en.json";
+import tr from "../../public/lang/tr.json";
+import ch from "../../public/lang/ch.json";
 
 const DICT = { ger, sw, ki, en, tr, ch };
 
@@ -16,13 +16,11 @@ export async function loadLanguage(langCode) {
   const translations = DICT[langCode];
   try {
     if (translations.introImages) {
-        window.localizedIntroImages = translations.introImages;
+      window.localizedIntroImages = translations.introImages;
     }
     if (translations.images) {
-        window.localizedImages = translations.images; // store for later
+      window.localizedImages = translations.images; // store for later
     }
-
-
 
     // Text content
     const textElements = [
@@ -46,7 +44,7 @@ export async function loadLanguage(langCode) {
       { id: "goodbyeSeeYou", key: "goodbyeSeeYou" },
       { id: "goodbyeSignature", key: "goodbyeSignature", html: true },
       { id: "uploadMessage", key: "uploadMessage" },
-      { id: "rotateMessage", key: "rotateMessage" }
+      { id: "rotateMessage", key: "rotateMessage" },
     ];
 
     // html: true keeps <strong>/<br> markup from the language file
@@ -80,8 +78,6 @@ export async function loadLanguage(langCode) {
         }
       }
     }
-
-
   } catch (err) {
     console.error("Language load failed", err);
   }

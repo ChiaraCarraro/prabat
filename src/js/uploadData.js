@@ -3,28 +3,28 @@
 // ---------------------------------------------------------------------------------------------------------------------
 // target objects for trials that should be included in the analysis
 const ANALYZE_TARGETS = [
-  'dog_brown_shoes',
-  'black_ball',
-  'still_umbrella',
-  'novelMutex',
-  'balloon',
-  'weird_tshirt2',
-  'glass_of_water',
-  'pear',
-  'truck_B',
-  'few',
-  'normal_bottle',
-  'novel_J',
-  'plate_apple',
-  'novel_G',
-  'Gesture_item1_option2',
-  'boy_B_withDrawing_NoBack_talking',
-  'umbrella',
-  'carrot_cake',
-  'Gesture_item2_option2',
+  "dog_brown_shoes",
+  "black_ball",
+  "still_umbrella",
+  "novelMutex",
+  "balloon",
+  "weird_tshirt2",
+  "glass_of_water",
+  "pear",
+  "truck_B",
+  "few",
+  "normal_bottle",
+  "novel_J",
+  "plate_apple",
+  "novel_G",
+  "Gesture_item1_option2",
+  "boy_B_withDrawing_NoBack_talking",
+  "umbrella",
+  "carrot_cake",
+  "Gesture_item2_option2",
 ];
 
-export async function uploadData(safe, ID){
+export async function uploadData(safe, ID) {
   safe.forEach((item) => {
     item.subjID = ID;
     item.correct = item.targetObject === item.chosenObject;
@@ -33,35 +33,35 @@ export async function uploadData(safe, ID){
 
   // convert object into CSV string
   const titleKeys = [
-    'subjID',
-    'trial',
-    'targetObject',
-    'chosenObject',
-    'chosenPosition',
-    'chosenCategory',
-    'correct',
-    'analyze',
-    'timestamp',
-    'responseTime',
-    'repeatCount',
-    'browser',
-    'OS',
+    "subjID",
+    "trial",
+    "targetObject",
+    "chosenObject",
+    "chosenPosition",
+    "chosenCategory",
+    "correct",
+    "analyze",
+    "timestamp",
+    "responseTime",
+    "repeatCount",
+    "browser",
+    "OS",
   ];
 
   const columnNames = [
-    'id',
-    'trial',
-    'targetObject',
-    'chosenObject',
-    'chosen_position',
-    'chosenCategory',
-    'correct',
-    'analyze',
-    'timestamp',
-    'responsetime_ms',
-    'repeated',
-    'browser',
-    'OS',
+    "id",
+    "trial",
+    "targetObject",
+    "chosenObject",
+    "chosen_position",
+    "chosenCategory",
+    "correct",
+    "analyze",
+    "timestamp",
+    "responsetime_ms",
+    "repeated",
+    "browser",
+    "OS",
   ];
 
   const refinedData = [];
@@ -75,9 +75,9 @@ export async function uploadData(safe, ID){
     refinedData.push(row);
   });
 
-  let csvContent = '';
+  let csvContent = "";
   refinedData.forEach((row) => {
-    csvContent += row.join(',') + '\n';
+    csvContent += row.join(",") + "\n";
   });
 
   // save current date & time (note: UTC time!)
@@ -87,21 +87,21 @@ export async function uploadData(safe, ID){
   // Prepare form data to send the CSV data as a file
   const formData = new FormData();
   formData.append(
-    'csvFile',
-    new Blob([csvContent], { type: 'text/csv' }),
-    `prabat-${ID}-${day}-${time}.csv`,
+    "csvFile",
+    new Blob([csvContent], { type: "text/csv" }),
+    `prabat-${ID}-${day}-${time}.csv`
   );
- 
+
   // Send the data to the server
-  fetch('./data/data.php', {
-    method: 'POST',
+  fetch("./data/data.php", {
+    method: "POST",
     body: formData,
   })
     .then((response) => response.text())
     .then((result) => {
-      console.log('Success:', result);
+      console.log("Success:", result);
     })
     .catch((error) => {
-      console.error('Error:', error);
+      console.error("Error:", error);
     });
-};
+}

@@ -20,13 +20,12 @@ const lang = studyChoices?.lang ?? "ger";
 // const params = new URLSearchParams(window.location.search);
 // const lang = params.get("lang") || "en";
 
-
 // const webcam =
 //   new URL(document.location.href).searchParams.get('webcam') || false;
 
 // const subjID =
 // new URL(document.location.href).searchParams.get('ID') || 'testID';
-  
+
 // // Load localized text/images
 // (async () => {
 //   await loadLanguage(lang);

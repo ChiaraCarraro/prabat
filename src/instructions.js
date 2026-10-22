@@ -12,12 +12,12 @@ if (urlParams.toString()) {
   });
 
   // Save the object to localStorage for persistence
-  localStorage.setItem('storedChoices', JSON.stringify(storedChoices));
+  localStorage.setItem("storedChoices", JSON.stringify(storedChoices));
 
   // Hide the URL parameter after saving it in local storage
   window.history.replaceState(null, document.title, window.location.pathname);
 } else {
-  console.log('No URL parameters found.');
+  console.log("No URL parameters found.");
 }
 
 const storedChoices = localStorage.getItem("storedChoices");
@@ -29,14 +29,14 @@ if (storedChoices) {
 }
 
 // get and store parameters. If local storage is empty, set default values
-studyChoices.ID = studyChoices?.ID ?? 'testID';
-studyChoices.webcam = (studyChoices?.webcam=="true").toString();
+studyChoices.ID = studyChoices?.ID ?? "testID";
+studyChoices.webcam = (studyChoices?.webcam == "true").toString();
 
 const button = document.getElementById("instructions-button");
 
 // Get language from URL
 const lang = studyChoices?.lang ?? "ger";
-  
+
 // Load localized text/images
 (async () => {
   await loadLanguage(lang);
@@ -52,7 +52,7 @@ function applyLocalizedImagePaths(lang) {
     folder = lang;
   }
   const allImgs = document.querySelectorAll("[data-img]");
-  allImgs.forEach(img => {
+  allImgs.forEach((img) => {
     const relPath = img.getAttribute("data-img");
     img.src = `images/${folder}/${relPath}`;
     console.log(`Setting image src to: ${img.src}`);

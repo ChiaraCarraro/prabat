@@ -3,28 +3,28 @@
 // ---------------------------------------------------------------------------------------------------------------------
 // target objects for trials that should be in the analysis (set analyze column to true)
 const ANALYZE_TARGETS = [
-  'dog_brown_shoes',
-  'black_ball',
-  'still_umbrella',
-  'novelMutex',
-  'balloon',
-  'weird_tshirt2',
-  'glass_of_water',
-  'pear',
-  'truck_B',
-  'few',
-  'normal_bottle',
-  'novel_J',
-  'plate_apple',
-  'novel_G',
-  'Gesture_item1_option2',
-  'boy_B_withDrawing_NoBack_talking',
-  'umbrella',
-  'carrot_cake',
-  'Gesture_item2_option2',
+  "dog_brown_shoes",
+  "black_ball",
+  "still_umbrella",
+  "novelMutex",
+  "balloon",
+  "weird_tshirt2",
+  "glass_of_water",
+  "pear",
+  "truck_B",
+  "few",
+  "normal_bottle",
+  "novel_J",
+  "plate_apple",
+  "novel_G",
+  "Gesture_item1_option2",
+  "boy_B_withDrawing_NoBack_talking",
+  "umbrella",
+  "carrot_cake",
+  "Gesture_item2_option2",
 ];
 
-export async function downloadData(safe, ID){
+export async function downloadData(safe, ID) {
   safe.forEach((item) => {
     item.subjID = ID;
     item.correct = item.targetObject === item.chosenObject;
@@ -33,35 +33,35 @@ export async function downloadData(safe, ID){
 
   // convert object into CSV string
   const titleKeys = [
-    'subjID',
-    'trial',
-    'targetObject',
-    'chosenObject',
-    'chosenPosition',
-    'chosenCategory',
-    'correct',
-    'analyze',
-    'timestamp',
-    'responseTime',
-    'repeatCount',
-    'browser',
-    'OS',
+    "subjID",
+    "trial",
+    "targetObject",
+    "chosenObject",
+    "chosenPosition",
+    "chosenCategory",
+    "correct",
+    "analyze",
+    "timestamp",
+    "responseTime",
+    "repeatCount",
+    "browser",
+    "OS",
   ];
 
   const columnNames = [
-    'id',
-    'trial',
-    'targetObject',
-    'chosenObject',
-    'chosen_position',
-    'chosenCategory',
-    'correct',
-    'analyze',
-    'timestamp',
-    'responsetime_ms',
-    'repeated',
-    'browser',
-    'OS',
+    "id",
+    "trial",
+    "targetObject",
+    "chosenObject",
+    "chosen_position",
+    "chosenCategory",
+    "correct",
+    "analyze",
+    "timestamp",
+    "responsetime_ms",
+    "repeated",
+    "browser",
+    "OS",
   ];
 
   const refinedData = [];
@@ -75,9 +75,9 @@ export async function downloadData(safe, ID){
     refinedData.push(row);
   });
 
-  let csvContent = '';
+  let csvContent = "";
   refinedData.forEach((row) => {
-    csvContent += row.join(',') + '\n';
+    csvContent += row.join(",") + "\n";
   });
 
   // save current date & time (note: UTC time!)
@@ -85,10 +85,10 @@ export async function downloadData(safe, ID){
   const time = new Date().toISOString().substring(11, 19);
 
   // download via blob
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' });
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8," });
   const objUrl = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', objUrl);
-  link.setAttribute('download', `prabat-${ID}-${day}-${time}.csv`);
+  const link = document.createElement("a");
+  link.setAttribute("href", objUrl);
+  link.setAttribute("download", `prabat-${ID}-${day}-${time}.csv`);
   link.click();
 }

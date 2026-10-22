@@ -1,0 +1,10 @@
+# Built files, dependencies and assets are not formatted
+dist
+node_modules
+public
+*.min.js
+
+# Private server folders/scripts (not in git)
+src/participant_data
+src/scripts/*
+!src/scripts/generateAssetList.js

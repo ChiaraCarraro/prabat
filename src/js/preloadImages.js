@@ -1,19 +1,19 @@
 export async function preloadImages(lang) {
   const waitButton = document.getElementById("wait-button");
   const prabatButton = document.getElementById("prabat-button");
-  prabatButton.style.visibility = 'hidden';
+  prabatButton.style.visibility = "hidden";
   // prabatButton.style.visibility = 'visible';
   try {
-      let imageJsonName;
-      if (lang === "ki" || lang === "sw") {
-        imageJsonName = "images-ki.json"
-      } else if (lang === "ger" || lang === "en" || lang === "tr" || lang === "ch") {
-        imageJsonName = "images-ger.json"
-      }
-  
+    let imageJsonName;
+    if (lang === "ki" || lang === "sw") {
+      imageJsonName = "images-ki.json";
+    } else if (lang === "ger" || lang === "en" || lang === "tr" || lang === "ch") {
+      imageJsonName = "images-ger.json";
+    }
+
     // Build URL relative to current document so it works under subpaths
-    const url = document.baseURI.toString() + `images/${imageJsonName}`
-    console.log("document:"+ url);
+    const url = document.baseURI.toString() + `images/${imageJsonName}`;
+    console.log("document:" + url);
     //const jsonUrl = new URL(`images/${imageJsonName}`, document.baseURI).toString();
     const response = await fetch(url);
     if (!response.ok) {
@@ -27,7 +27,7 @@ export async function preloadImages(lang) {
         const pathStr = String(p).trim();
         if (/^https?:\/\//i.test(pathStr)) return pathStr;
         // join with current document path while handling leading slashes
-        return new URL(pathStr.replace(/^\//, ''), document.baseURI).href;
+        return new URL(pathStr.replace(/^\//, ""), document.baseURI).href;
       } catch (_) {
         return p;
       }
@@ -44,7 +44,7 @@ export async function preloadImages(lang) {
     let loaded = 0;
     const total = imageList.length;
 
-    const preloadPromises = normalizedList.map(src => {
+    const preloadPromises = normalizedList.map((src) => {
       return new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = () => {
@@ -65,9 +65,8 @@ export async function preloadImages(lang) {
     // Wait for all to complete
     await Promise.all(preloadPromises);
     console.log("All images loaded!");
-    waitButton.style.visibility = 'hidden';
-    prabatButton.style.visibility = 'visible';
-
+    waitButton.style.visibility = "hidden";
+    prabatButton.style.visibility = "visible";
   } catch (err) {
     console.log("Error loading images.json:", err);
     console.log("Error loading image list.");

@@ -1,41 +1,45 @@
-import { registerSW } from 'virtual:pwa-register';
+import { registerSW } from "virtual:pwa-register";
 
 /**@param app {HTMLDivElement}*/
 export function initPWA(app) {
   /**@type {HTMLDivElement}*/
-  const pwaToast = app.querySelector('#pwa-toast');
+  const pwaToast = app.querySelector("#pwa-toast");
   /**@type {HTMLDivElement}*/
-  const pwaToastMessage = pwaToast.querySelector('.message #toast-message');
+  const pwaToastMessage = pwaToast.querySelector(".message #toast-message");
   /**@type {HTMLButtonElement}*/
-  const pwaCloseBtn = pwaToast.querySelector('#pwa-close');
+  const pwaCloseBtn = pwaToast.querySelector("#pwa-close");
   /**@type {HTMLButtonElement}*/
-  const pwaRefreshBtn = pwaToast.querySelector('#pwa-refresh');
+  const pwaRefreshBtn = pwaToast.querySelector("#pwa-refresh");
 
-  console.log('⚙️ Setting up PWA functionality');
+  console.log("⚙️ Setting up PWA functionality");
 
   /**@type {(reloadPage?: boolean) => Promise<void>}*/
   let refreshSW;
 
-  const refreshCallback =  function () { refreshSW?.(true); }
+  const refreshCallback = function () {
+    refreshSW?.(true);
+  };
 
   /**@param raf {boolean}*/
   function hidePwaToast(raf) {
     if (raf) {
-      requestAnimationFrame(function () { hidePwaToast(false)});
+      requestAnimationFrame(function () {
+        hidePwaToast(false);
+      });
       return;
     }
-    if (pwaToast.classList.contains('refresh'))
-      pwaRefreshBtn.removeEventListener('click', refreshCallback);
+    if (pwaToast.classList.contains("refresh"))
+      pwaRefreshBtn.removeEventListener("click", refreshCallback);
 
-    pwaToast.classList.remove('show', 'refresh');
+    pwaToast.classList.remove("show", "refresh");
   }
   /**@param offline {boolean}*/
   function showPwaToast(offline) {
-    if (!offline) pwaRefreshBtn.addEventListener('click', refreshCallback);
-    requestAnimationFrame(function (){
+    if (!offline) pwaRefreshBtn.addEventListener("click", refreshCallback);
+    requestAnimationFrame(function () {
       hidePwaToast(false);
-      if (!offline) pwaToast.classList.add('refresh');
-      pwaToast.classList.add('show');
+      if (!offline) pwaToast.classList.add("refresh");
+      pwaToast.classList.add("show");
     });
   }
 
@@ -43,29 +47,30 @@ export function initPWA(app) {
   // check for updates every hour
   const period = 60 * 60 * 1000;
 
-  window.addEventListener('load', function () {
-    pwaCloseBtn.addEventListener('click', function () { hidePwaToast(true); });
+  window.addEventListener("load", function () {
+    pwaCloseBtn.addEventListener("click", function () {
+      hidePwaToast(true);
+    });
     refreshSW = registerSW({
       immediate: true,
       onOfflineReady() {
-        pwaToastMessage.innerHTML = 'App ready to work offline';
+        pwaToastMessage.innerHTML = "App ready to work offline";
         showPwaToast(true);
       },
       onNeedRefresh() {
-        pwaToastMessage.innerHTML =
-          'New content available, click on reload button to update';
+        pwaToastMessage.innerHTML = "New content available, click on reload button to update";
         showPwaToast(false);
       },
       onRegisteredSW(swUrl, r) {
         if (period <= 0) return;
-        if (r?.active?.state === 'activated') {
+        if (r?.active?.state === "activated") {
           swActivated = true;
           registerPeriodicSync(period, swUrl, r);
         } else if (r?.installing) {
-          r.installing.addEventListener('statechange', function (e) {
+          r.installing.addEventListener("statechange", function (e) {
             /**@type {ServiceWorker}*/
             const sw = e.target;
-            swActivated = sw.state === 'activated';
+            swActivated = sw.state === "activated";
             if (swActivated) registerPeriodicSync(period, swUrl, r);
           });
         }
@@ -85,13 +90,13 @@ function registerPeriodicSync(period, swUrl, r) {
   if (period <= 0) return;
 
   setInterval(async function () {
-    if ('onLine' in navigator && !navigator.onLine) return;
+    if ("onLine" in navigator && !navigator.onLine) return;
 
     const resp = await fetch(swUrl, {
-      cache: 'no-store',
+      cache: "no-store",
       headers: {
-        cache: 'no-store',
-        'cache-control': 'no-cache',
+        cache: "no-store",
+        "cache-control": "no-cache",
       },
     });
 

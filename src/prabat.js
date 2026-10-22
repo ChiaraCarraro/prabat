@@ -15,7 +15,12 @@ import { applyLocalizedAudioPaths } from "./js/applyLocalizedAudioPaths.js";
 import { applyLocalizedImagePaths } from "./js/applyLocalizedImagePaths.js";
 import { preloadAudios } from "./js/preloadAudios.js";
 import { preloadImages } from "./js/preloadImages.js";
-import { startRecording, initMedia, isMediaRecorderSupported, stopRecording } from "./js/mediaRecorderServices.js";
+import {
+  startRecording,
+  initMedia,
+  isMediaRecorderSupported,
+  stopRecording,
+} from "./js/mediaRecorderServices.js";
 import { allAudios } from "./js/playAudios.js";
 import { buildSpriteForBlock } from "./js/buildSpriteForBlock.js";
 import { getSharedAudioContext } from "./js/sharedAudioContext.js";
@@ -30,8 +35,6 @@ if (storedChoices) {
   console.error("No data found in local storage");
 }
 const lang = studyChoices?.lang || "ger"; // fallback to English
-
-
 
 function showBlockRestartPrompt(restartFn) {
   const overlay = document.getElementById("audio-unlock-overlay");
@@ -74,15 +77,13 @@ async function runTransitionBlock(blockName, onFinished) {
 
   // Use a gain node so we can control volume of transition blocks
   const spriteGain = ctx.createGain();
-  spriteGain.gain.value = 1; 
+  spriteGain.gain.value = 1;
   spriteGain.connect(ctx.destination);
   // Also feed the transition-block sprite audio into the recording mix,
   // so it's captured clearly in the webcam recording alongside the mic.
   routeNodeToMix(spriteGain);
 
-  const slides = Array.from(
-    document.querySelectorAll(`.trials.transitionSlide.${blockName}`)
-  );
+  const slides = Array.from(document.querySelectorAll(`.trials.transitionSlide.${blockName}`));
 
   if (!slides.length) {
     console.warn(`No transition slides found for block "${blockName}"`);
@@ -102,7 +103,7 @@ async function runTransitionBlock(blockName, onFinished) {
     // Stop any currently playing sprite segment
     if (currentSource) {
       try {
-        currentSource.onended = null;   // avoid calling callbacks after stop()
+        currentSource.onended = null; // avoid calling callbacks after stop()
         currentSource.stop();
       } catch (e) {
         console.warn("Error stopping currentSource:", e);
@@ -136,7 +137,6 @@ async function runTransitionBlock(blockName, onFinished) {
     showSlideAndPlay();
   }
 
-
   // Called when audio is blocked or segment never ends
   function handleBlocked() {
     // If the block already finished and we moved on,
@@ -153,7 +153,6 @@ async function runTransitionBlock(blockName, onFinished) {
 
     showBlockRestartPrompt(restartBlock);
   }
-
 
   // helper to play one sprite segment
   function playSegment(label, onEnded) {
@@ -193,7 +192,7 @@ async function runTransitionBlock(blockName, onFinished) {
     try {
       const source = ctx.createBufferSource();
       source.buffer = audioBuffer;
-      source.connect(spriteGain);      // 👈 use the ONE gain node we made above
+      source.connect(spriteGain); // 👈 use the ONE gain node we made above
       source.onended = safeEnd;
       source.start(ctx.currentTime, info.start, info.duration);
 
@@ -215,7 +214,6 @@ async function runTransitionBlock(blockName, onFinished) {
     }, fallbackMs);
   }
 
-
   function showSlideAndPlay() {
     const slide = slides[currentIndex];
 
@@ -230,7 +228,6 @@ async function runTransitionBlock(blockName, onFinished) {
       if (onFinished) onFinished();
       return;
     }
-
 
     if (previousSlide) {
       previousSlide.style.display = "none";
@@ -253,8 +250,8 @@ async function runTransitionBlock(blockName, onFinished) {
       return;
     }
 
-    const file = prompt.src.split("/").pop();      // "DiscNovLook.mp3"
-    const label = file.replace(/\.[^.]+$/, "");    // "DiscNovLook"
+    const file = prompt.src.split("/").pop(); // "DiscNovLook.mp3"
+    const label = file.replace(/\.[^.]+$/, ""); // "DiscNovLook"
 
     if (slide.classList.contains("silent")) {
       const info = timing[label];
@@ -277,11 +274,7 @@ async function runTransitionBlock(blockName, onFinished) {
   showSlideAndPlay();
 }
 
-
-
-
 const blockSprites = {}; // blockName -> { ctx, audioBuffer, timing }
-
 
 // ------------------------------------------------------------------
 // Global audio unlock helper (for Android / iOS)
@@ -314,17 +307,14 @@ function unlockAudio() {
   }
 }
 
-
-
 document.addEventListener("DOMContentLoaded", async function () {
-  try{
+  try {
     await loadLanguage(lang);
-    applyLocalizedImagePaths(lang); 
-    applyLocalizedAudioPaths(lang);  
+    applyLocalizedImagePaths(lang);
+    applyLocalizedAudioPaths(lang);
     await preloadAudios(lang);
     await preloadImages(lang);
-  }
-  catch (err){
+  } catch (err) {
     console.error("Error during initialization:", err);
     return;
   }
@@ -344,7 +334,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       // "InformativenessOne",
       "InformativenessTwo",
       "SpeakersPreference",
-      "intro"
+      "intro",
     ];
 
     for (const blockName of blockNames) {
@@ -362,7 +352,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const domAudios = [...document.querySelectorAll("audio")];
   allAudios.push(...domAudios);
-
 
   //------------------------------------------------------------------
   // automatically add running trial numbers as ids to html
@@ -406,8 +395,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     responseLog.meta.browser = DetectRTC.browser.name;
     responseLog.meta.browserVersion = JSON.stringify(DetectRTC.browser.version);
     responseLog.meta.safari = DetectRTC.browser.isSafari || false;
-    responseLog.meta.iOSSafari =
-      responseLog.meta.touchscreen && responseLog.meta.safari;
+    responseLog.meta.iOSSafari = responseLog.meta.touchscreen && responseLog.meta.safari;
 
     if (devmode) console.log(responseLog.meta);
   });
@@ -423,9 +411,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // get relevant elements
   //------------------------------------------------------------------
   const betweenTrials = document.getElementById("between-trials");
-  const betweenTrialsBackground = document.getElementById(
-    "between-trials-background"
-  );
+  const betweenTrialsBackground = document.getElementById("between-trials-background");
   const button = document.getElementById("prabat-button");
   const speaker = document.getElementById("speaker");
   const headingFullscreen = document.getElementById("heading-fullscreen");
@@ -447,21 +433,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const currentTrial = document.getElementById(`trial${trialNr - 1}`);
     console.log("currentTrial:", currentTrial, trialNr - 1);
-    const responseAudio = currentTrial.querySelector('audio.preResponse');
+    const responseAudio = currentTrial.querySelector("audio.preResponse");
     console.log("response audio:", responseAudio);
-
-
 
     t1 = new Date().getTime();
 
     // Clear borders on other images first
     const currentImages = Array.from(currentTrial.getElementsByTagName("img"));
     currentImages.forEach((img) => {
-      if (
-        img !== event.target &&
-        img.id !== "character" &&
-        img.id !== "background"
-      ) {
+      if (img !== event.target && img.id !== "character" && img.id !== "background") {
         img.style.border = "transparent";
       }
     });
@@ -506,11 +486,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         .pop()
         .replace(".svg", "")
         .replace(".gif", ""),
-      chosenObject: event.target.src
-        .split("/")
-        .pop()
-        .replace(".svg", "")
-        .replace(".gif", ""),
+      chosenObject: event.target.src.split("/").pop().replace(".svg", "").replace(".gif", ""),
       chosenCategory: event.target.dataset.wordCategory,
       chosenPosition: event.target.closest("div").id,
       repeatCount: repeatCount,
@@ -525,14 +501,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   };
 
-
   //------------------------------------------------------------------
   // HANDLE CONTINUE CLICK
   //------------------------------------------------------------------
   const handleContinueClick = async (event) => {
     event.preventDefault();
     repeatCount = 0;
-    if (trialNr > 0) {  
+    if (trialNr > 0) {
       speaker.classList.add("disabled");
       button.disabled = true;
     }
@@ -542,7 +517,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       let prevResponseAudio = null;
 
       if (prevTrial) {
-        prevResponseAudio = prevTrial.querySelector('audio.response');
+        prevResponseAudio = prevTrial.querySelector("audio.response");
       }
       if (prevResponseAudio) {
         // Hide the image with id "background"
@@ -633,7 +608,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         await pause(2000);
       } catch (err) {
         console.error("Error during data downloading processing:", err);
-      } 
+      }
       try {
         if (responseLog.meta.webcam === "true") {
           // !responseLog.meta.iOSSafari &&
@@ -642,7 +617,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
       } catch (err) {
         console.error("Error during video downloading processing:", err);
-      } 
+      }
       window.location.href = `./goodbye.html`;
       overlay.classList.add("hidden");
       // window.location.href = `https://devpsy.web.leuphana.de/prabat-consent/goodbye.html`;
@@ -674,11 +649,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       //betweenTrials.style.display = 'none';
 
       currentTrial.style.display = "block";
-      console.log( "transitionEmpty slide:", currentTrial);
+      console.log("transitionEmpty slide:", currentTrial);
 
       // Let Safari paint at least one frame
       // await pause(50);
-
 
       if (trialAudio) {
         button.disabled = true;
@@ -707,8 +681,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         button.disabled = false;
       }
-
-
     }
 
     // Transition blocks handling
@@ -717,21 +689,22 @@ document.addEventListener("DOMContentLoaded", async function () {
       let BlockName = "";
       let SkipAheadIndex = 0;
       const blockSkipAhead = {
-        "DiscourseNovelty": 5,
-        "SpeakersPreference": 5,
-        "GestureOne": 1,
-        "GestureTwo": 1,
+        DiscourseNovelty: 5,
+        SpeakersPreference: 5,
+        GestureOne: 1,
+        GestureTwo: 1,
         // "GestureThree": 1,
-        "ConversationalPerspectiveTakingOne": 2,
+        ConversationalPerspectiveTakingOne: 2,
         // "ConversationalPerspectiveTakingTwo": 2,
         // "ConversationalPerspectiveTakingThree": 1,
-        "IndirectRequest": 1,
-        "EmotionalProsody": 3,
+        IndirectRequest: 1,
+        EmotionalProsody: 3,
         // "InformativenessOne": 3,
-        "InformativenessTwo": 3,
-        "intro": 4
+        InformativenessTwo: 3,
+        intro: 4,
       };
-      BlockName = Object.keys(blockSkipAhead).find(name => currentTrial.classList.contains(name)) || "";
+      BlockName =
+        Object.keys(blockSkipAhead).find((name) => currentTrial.classList.contains(name)) || "";
       console.log("BlockName:", BlockName);
       SkipAheadIndex = blockSkipAhead[BlockName] || 0;
       const flexWrapper = document.getElementById("flex-wrapper");
@@ -745,7 +718,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       // button.disabled = true;
 
       // speaker.classList.add("disabled");
-      
+
       await runTransitionBlock(BlockName, () => {
         if (!BlockName.includes("intro")) {
           const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
@@ -758,11 +731,11 @@ document.addEventListener("DOMContentLoaded", async function () {
           t0 = new Date().getTime();
 
           console.log(currentImages);
-          
+
           currentImages.forEach((img) => {
             img.style.pointerEvents = "auto";
           });
-          
+
           const backgroundImg = currentTrial.querySelector("#background");
           if (backgroundImg) {
             backgroundImg.style.display = "block";
@@ -772,17 +745,17 @@ document.addEventListener("DOMContentLoaded", async function () {
           if (backgroundTalkingImg) {
             backgroundTalkingImg.style.display = "none";
           }
-          console.log("before adding event listener")
+          console.log("before adding event listener");
 
           // enable speaker again
           speaker.classList.remove("disabled");
           console.log("speaker enabled");
-          
+
           currentImages.forEach((img) => {
-            console.log("event listener added")
+            console.log("event listener added");
             img.addEventListener("click", handleResponseClick, {
-            capture: false,
-            once: false,
+              capture: false,
+              once: false,
             });
           });
         } else if (BlockName.includes("intro")) {
@@ -790,7 +763,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           const lastTrial = document.getElementById(`trial${trialNr - 1}`);
           lastTrial.style.display = "none";
           currentTrial.style.display = "block";
-          console.log("intro block - before adding event listener")
+          console.log("intro block - before adding event listener");
           // enable speaker again
           speaker.classList.remove("disabled");
           console.log("speaker enabled");
@@ -804,7 +777,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             once: true,
           });
         }
-        trialNr = trialNr +  SkipAheadIndex ; // skip ahead past the discourse novelty trials
+        trialNr = trialNr + SkipAheadIndex; // skip ahead past the discourse novelty trials
       });
     }
     // Normal blocks handling
@@ -829,13 +802,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       const lastTrial = document.getElementById(`trial${trialNr - 1}`);
       lastTrial.style.display = "none";
-      
 
       const trialAudio = currentTrial.querySelector("audio.prompt");
-      const audioSrc = (trialAudio.src);
+      const audioSrc = trialAudio.src;
 
       // Play the audio element contained in currentTrial
-      
+
       // save response time start point
       t0 = new Date().getTime();
 
@@ -860,8 +832,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       currentTrial.style.display = "block";
 
       // Let Safari paint at least one frame
-      // await pause(50);   
-      
+      // await pause(50);
+
       // play audio of current trial
       if (trialAudio) {
         // disable speaker during playback
@@ -878,7 +850,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         console.log("This is:", trialAudio);
         console.log("This is:", audioSrc);
-        
       }
 
       // Start RT timing *after* everything appears
@@ -887,13 +858,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       const currentImages = Array.from(currentTrial.querySelectorAll("img.object"));
       console.log(currentImages);
 
-
-        // Show the image with id "background"
+      // Show the image with id "background"
 
       currentImages.forEach((img) => {
         img.style.pointerEvents = "auto";
       });
-      
+
       const backgroundImg = currentTrial.querySelector("#background");
       if (backgroundImg) {
         backgroundImg.style.display = "block";
@@ -903,17 +873,17 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (backgroundTalkingImg) {
         backgroundTalkingImg.style.display = "none";
       }
-      console.log("before adding event listener")
+      console.log("before adding event listener");
 
       // enable speaker again
       speaker.classList.remove("disabled");
       console.log("speaker enabled");
-      
+
       currentImages.forEach((img) => {
-        console.log("event listener added")
+        console.log("event listener added");
         img.addEventListener("click", handleResponseClick, {
-        capture: false,
-        once: false,
+          capture: false,
+          once: false,
         });
       });
     }
@@ -944,28 +914,29 @@ document.addEventListener("DOMContentLoaded", async function () {
       let BlockName = "";
       let SkipAheadIndex = 0;
       const blockSkipAhead = {
-        "DiscourseNovelty": 5,
-        "SpeakersPreference": 5,
-        "GestureOne": 1,
-        "GestureTwo": 1,
+        DiscourseNovelty: 5,
+        SpeakersPreference: 5,
+        GestureOne: 1,
+        GestureTwo: 1,
         // "GestureThree": 1,
-        "ConversationalPerspectiveTakingOne": 2,
+        ConversationalPerspectiveTakingOne: 2,
         // "ConversationalPerspectiveTakingTwo": 2,
         // "ConversationalPerspectiveTakingThree": 1,
-        "IndirectRequest": 1,
-        "EmotionalProsody": 3,
+        IndirectRequest: 1,
+        EmotionalProsody: 3,
         // "InformativenessOne": 3,
-        "InformativenessTwo": 3,
-        "intro": 4
+        InformativenessTwo: 3,
+        intro: 4,
       };
-      BlockName = Object.keys(blockSkipAhead).find(name => currentTrial.classList.contains(name)) || "";
+      BlockName =
+        Object.keys(blockSkipAhead).find((name) => currentTrial.classList.contains(name)) || "";
       console.log("BlockName:", BlockName);
       SkipAheadIndex = blockSkipAhead[BlockName] || 0;
       //////////////
-      const lastTrial = document.getElementById(`trial${trialNr-1}`);
+      const lastTrial = document.getElementById(`trial${trialNr - 1}`);
       lastTrial.style.display = "none";
-      trialNr = trialNr - (SkipAheadIndex + 1);// point to the trial you want
-      skipAdvance = true;                 // don’t auto ++ on this pass
+      trialNr = trialNr - (SkipAheadIndex + 1); // point to the trial you want
+      skipAdvance = true; // don’t auto ++ on this pass
       const flexWrapper = document.getElementById("flex-wrapper");
       flexWrapper.style.backgroundColor = "transparent";
       betweenTrials.style.display = "none";
@@ -988,15 +959,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         backgroundTalkingImg.style.display = "block";
       }
 
-      button.disabled = true; // prevent clicking until a new choice is made    
+      button.disabled = true; // prevent clicking until a new choice is made
       speaker.classList.add("disabled");
-      console.log("speaker disabled");  
+      console.log("speaker disabled");
       currentImages.forEach((img) => {
         img.style.pointerEvents = "none";
       });
-      
+
       button.removeEventListener("click", handleResponseClick);
-      
+
       await runTransitionBlock(BlockName, () => {
         if (!BlockName.includes("intro")) {
           const currentTrial = document.querySelector(`.trials.${BlockName}.critical`);
@@ -1009,7 +980,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           t0 = new Date().getTime();
 
           console.log(currentImages);
-          
+
           const backgroundImg = currentTrial.querySelector("#background");
           if (backgroundImg) {
             backgroundImg.style.display = "block";
@@ -1019,20 +990,20 @@ document.addEventListener("DOMContentLoaded", async function () {
           if (backgroundTalkingImg) {
             backgroundTalkingImg.style.display = "none";
           }
-          console.log("before adding event listener")
+          console.log("before adding event listener");
 
           // enable speaker again
           speaker.classList.remove("disabled");
           console.log("speaker enabled");
 
           button.disabled = true;
-          
+
           currentImages.forEach((img) => {
             img.style.pointerEvents = "auto";
-            console.log("event listener added")
+            console.log("event listener added");
             img.addEventListener("click", handleResponseClick, {
-            capture: false,
-            once: false,
+              capture: false,
+              once: false,
             });
           });
         } else if (BlockName.includes("intro")) {
@@ -1040,7 +1011,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           const lastTrial = document.getElementById(`trial${trialNr - 1}`);
           lastTrial.style.display = "none";
           currentTrial.style.display = "block";
-          console.log("intro block - before adding event listener")
+          console.log("intro block - before adding event listener");
           // enable speaker again
           speaker.classList.remove("disabled");
           console.log("speaker enabled");
@@ -1054,12 +1025,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             once: true,
           });
         }
-        trialNr = trialNr +  (SkipAheadIndex + 1) ; // skip ahead past the discourse novelty trials
+        trialNr = trialNr + (SkipAheadIndex + 1); // skip ahead past the discourse novelty trials
       });
     } else if (currentTrial.classList.contains("transitionSlide")) {
       const speakerButton = document.getElementById("speaker");
       if (speakerButton) {
-        speakerButton.disabled = true;     // make it inactive
+        speakerButton.disabled = true; // make it inactive
       }
       return;
     } else if (currentTrial.classList.contains("transitionEmpty")) {
@@ -1099,7 +1070,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (backgroundTalkingImg) {
         backgroundTalkingImg.style.display = "none";
       }
-
     } else if (currentTrial.id === "trial0") {
       if (TestSound) {
         //TestSound.play();
@@ -1114,7 +1084,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const trialId = currentTrial.id; // e.g. "trial0", "trial1"
       const trialAudio = currentTrial.querySelector(`audio#${trialId}`);
       if (!trialAudio) return;
-      
+
       // -----------------------------------
       // DISABLE OR REMOVE CONTINUE BUTTON CLICK
       // -----------------------------------
@@ -1124,7 +1094,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         button.disabled = true; // prevent clicking until a new choice is made
       }
 
-        // --- Guard against missing audio tag ---
+      // --- Guard against missing audio tag ---
       if (!trialAudio) {
         console.error("No <audio> found for transitionEmpty slide:", trialId);
         return;
@@ -1192,16 +1162,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (responseLog.meta.webcam === "true") {
       // !responseLog.meta.iOSSafari &&
       if (!isMediaRecorderSupported()) {
-      console.log("MediaRecorder is not supported in this browser.");
-      }
-      else if (responseLog.meta.webcam === "true") {
+        console.log("MediaRecorder is not supported in this browser.");
+      } else if (responseLog.meta.webcam === "true") {
         try {
           console.log("Requesting camera/microphone...");
           await initMedia({
             audio: true,
             video: {
               frameRate: { min: 1, ideal: 5, max: 10 },
-              width: { min: 640, ideal: 640, max: 640 },   // keep it small
+              width: { min: 640, ideal: 640, max: 640 }, // keep it small
               height: { min: 480, ideal: 480, max: 480 },
               facingMode: "user",
             },
@@ -1209,7 +1178,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           console.log("Camera ready. You can start recording.");
 
           startRecording();
-        console.log("Recording started.");
+          console.log("Recording started.");
         } catch (error) {
           console.error("Failed to access camera/microphone:", error);
         }

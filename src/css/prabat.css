@@ -7,9 +7,9 @@
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
@@ -22,7 +22,7 @@ html {
    body must stay transparent: the scene backgrounds use z-index: -1 and
    would otherwise be painted underneath the body's background. */
 body {
-  font-family: 'PT Sans Narrow', sans-serif;
+  font-family: "PT Sans Narrow", sans-serif;
   background-color: transparent;
   margin: 0;
   color: black;
@@ -31,7 +31,7 @@ body {
   display: grid;
   place-items: center;
   height: 100vh;
-  height: 100dvh;       /* visible height on mobile browsers with toolbars */
+  height: 100dvh; /* visible height on mobile browsers with toolbars */
 }
 
 .heading {
@@ -60,8 +60,6 @@ body {
   /*border: 2px solid blue;*/
   /*background-color: #faf5e7;*/
 }
-
-
 
 .flex-item {
   display: block;
@@ -104,10 +102,9 @@ body {
   height: 83%;
   align-items: center;
   justify-content: center;
-  padding-bottom: 0px;  /* 👈 NEW: space for buttons */
+  padding-bottom: 0px; /* 👈 NEW: space for buttons */
   /*border: 2px solid rgb(0, 92, 0);*/
 }
-
 
 .flex-sheet {
   display: block;
@@ -118,10 +115,9 @@ body {
   justify-content: center;
   margin-top: 0;
   /*border: 2px solid rgb(77, 255, 71);*/
-
 }
 
-#background_between_trials{
+#background_between_trials {
   width: 30%;
   border: 0.3cqw solid transparent;
 }
@@ -134,7 +130,6 @@ body {
   height: 55%; /* 44%*/
   margin: 0 auto;
   margin-bottom: 5%;
-  
 }
 
 .character img {
@@ -213,7 +208,7 @@ body {
   }
 }
 
-.slide-down{
+.slide-down {
   animation: slideDown 3s ease forwards;
   animation-delay: 0s;
 }
@@ -252,7 +247,6 @@ body {
   pointer-events: none;
 }
 
-
 #between-trials-background {
   position: absolute;
   margin: 0;
@@ -269,7 +263,7 @@ body {
   display: none;
 }
 
-#background-talking { 
+#background-talking {
   position: absolute;
   margin: 0;
   top: 0;
@@ -304,8 +298,6 @@ body {
   justify-content: center;
 }
 
-
-
 /* Fullscreen overlay */
 .overlay {
   position: fixed;
@@ -338,10 +330,13 @@ body {
 
 /* Animation */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-
 
 .fullscreen-message {
   position: absolute;
@@ -349,7 +344,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   font-weight: bold;
-  
+
   max-width: 90cqw;
   max-height: 70cqh;
   box-sizing: border-box;
@@ -357,7 +352,7 @@ body {
   text-align: center;
   line-height: 1.3;
   word-wrap: break-word;
-  overflow-y: scroll;                /* ⬅️ forces scroll bar to appear */
+  overflow-y: scroll; /* ⬅️ forces scroll bar to appear */
   -webkit-overflow-scrolling: touch;
 
   font-size: clamp(0.85rem, 2cqw, 1.6rem);
@@ -367,39 +362,45 @@ body {
 
 /* Chrome, Safari, Edge */
 .fullscreen-message::-webkit-scrollbar {
-  width: 10px;                       /* width of vertical scrollbar */
+  width: 10px; /* width of vertical scrollbar */
 }
 
 .fullscreen-message::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.1);       /* light background */
+  background: rgba(0, 0, 0, 0.1); /* light background */
   border-radius: 5px;
 }
 
 .fullscreen-message::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.4);       /* darker handle */
+  background: rgba(0, 0, 0, 0.4); /* darker handle */
   border-radius: 5px;
 }
 
 .fullscreen-message::-webkit-scrollbar-thumb:hover {
-  background: rgba(0,0,0,0.6);       /* darker when touched */
+  background: rgba(0, 0, 0, 0.6); /* darker when touched */
 }
 
 /* Firefox */
 .fullscreen-message {
-  scrollbar-width: thin;             /* "auto" | "thin" | "none" */
-  scrollbar-color: rgba(0,0,0,0.4) rgba(0,0,0,0.1); /* thumb | track */
+  scrollbar-width: thin; /* "auto" | "thin" | "none" */
+  scrollbar-color: rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.1); /* thumb | track */
 }
 
 #speaker {
   width: 60px;
   height: 60px;
-  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease;
 }
 
 #prabat-button {
   font-size: 1.2rem;
   padding: 0.7rem 1.2rem;
-  transition: transform 0.2s ease, font-size 0.2s ease, padding 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    font-size 0.2s ease,
+    padding 0.2s ease;
 }
 
 /* ---------------------------------------- */
@@ -409,7 +410,7 @@ body {
 @container (max-height: 600px) {
   #prabat-button {
     font-size: 1rem !important;
-    padding: 0.4rem 0.8rem !important;   /* smaller padding */
+    padding: 0.4rem 0.8rem !important; /* smaller padding */
   }
   #speaker {
     width: 48px !important;
@@ -420,7 +421,7 @@ body {
 @container (max-height: 500px) {
   #prabat-button {
     font-size: 0.9rem !important;
-    padding: 0.3rem 0.6rem !important;   /* even smaller padding */
+    padding: 0.3rem 0.6rem !important; /* even smaller padding */
   }
   #speaker {
     width: 40px !important;
@@ -431,14 +432,13 @@ body {
 @container (max-height: 430px) {
   #prabat-button {
     font-size: 0.8rem !important;
-    padding: 0.25rem 0.5rem !important;  /* tiny padding */
+    padding: 0.25rem 0.5rem !important; /* tiny padding */
   }
   #speaker {
     width: 34px !important;
     height: 34px !important;
   }
 }
-
 
 /* ---------------------------------------- */
 /* PORTRAIT PHONES: ASK TO ROTATE           */

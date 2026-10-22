@@ -1,22 +1,22 @@
 export async function preloadAudios(lang) {
   const waitButton = document.getElementById("wait-button");
   const prabatButton = document.getElementById("prabat-button");
-  prabatButton.style.display = 'none';
+  prabatButton.style.display = "none";
   // prabatButton.style.visibility = 'visible';
   try {
-      let audioJsonName;
-      if (lang === "ki") {
-        audioJsonName = "audio-ki.json"
-      } else if (lang === "sw") {
-        audioJsonName = "audio-sw.json"
-      } else if (lang === "ger" || lang === "en" ) {
-        audioJsonName = "audio-ger.json"
-      } else if ( lang === "tr") {
-        audioJsonName = "audio-tr.json"
-      } else if ( lang === "ch") {
-        audioJsonName = "audio-ch.json"
-      }
-  
+    let audioJsonName;
+    if (lang === "ki") {
+      audioJsonName = "audio-ki.json";
+    } else if (lang === "sw") {
+      audioJsonName = "audio-sw.json";
+    } else if (lang === "ger" || lang === "en") {
+      audioJsonName = "audio-ger.json";
+    } else if (lang === "tr") {
+      audioJsonName = "audio-tr.json";
+    } else if (lang === "ch") {
+      audioJsonName = "audio-ch.json";
+    }
+
     // Build URL relative to current document so it works under subpaths
     const jsonUrl = new URL(`audio/${audioJsonName}`, document.baseURI).toString();
     const response = await fetch(jsonUrl);
@@ -31,7 +31,7 @@ export async function preloadAudios(lang) {
         const pathStr = String(p).trim();
         if (/^https?:\/\//i.test(pathStr)) return pathStr;
         // join with current document path while handling leading slashes
-        return new URL(pathStr.replace(/^\//, ''), document.baseURI).href;
+        return new URL(pathStr.replace(/^\//, ""), document.baseURI).href;
       } catch (_) {
         return p;
       }
@@ -49,14 +49,13 @@ export async function preloadAudios(lang) {
     const total = normalizedList.length;
     const checkPromises = normalizedList.map(async (src) => {
       try {
-        const res = await fetch(src, { method: 'HEAD', cache: 'no-store' });
+        const res = await fetch(src, { method: "HEAD", cache: "no-store" });
         checked++;
         if (!res.ok) {
           //console.log(`OK ${res.status}: ${src} (${checked}/${total})`);
           console.warn(`FAIL ${res.status}: ${src} (${checked}/${total})`);
-        } 
-      }
-      catch (e) {
+        }
+      } catch (e) {
         checked++;
         console.warn(`ERR: ${src} (${checked}/${total})`, e);
       }
@@ -65,9 +64,8 @@ export async function preloadAudios(lang) {
     // Wait for all to complete
     await Promise.all(checkPromises);
     console.log("Audio status checks complete.");
-    waitButton.style.display = 'none';
-    prabatButton.style.display = 'inline';
-
+    waitButton.style.display = "none";
+    prabatButton.style.display = "inline";
   } catch (err) {
     console.log("Error loading audio.json:", err);
     console.log("Error loading audio list.");

@@ -1,6 +1,6 @@
 // generateImageList.js
-import fs from 'fs'
-import path from 'path'
+import fs from "fs";
+import path from "path";
 
 /**
  * Returns a list of image file paths for the given language.
@@ -13,8 +13,8 @@ export function getImageList(lang = "ger") {
     const files = fs.readdirSync(folder);
 
     const imageList = files
-      .filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
-      .map(f => `images/${lang}/${f}`);
+      .filter((f) => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
+      .map((f) => `images/${lang}/${f}`);
 
     return imageList;
   } catch (err) {

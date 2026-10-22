@@ -2,7 +2,7 @@
 // FUNCTION FOR SETTING BUTTON STATE
 // ---------------------------------------------------------------------------------------------------------------------
 export const setButtonState = (btn, enabled) => {
-  if (btn && typeof btn.disabled !== 'undefined') {
+  if (btn && typeof btn.disabled !== "undefined") {
     btn.disabled = !enabled;
   }
 };

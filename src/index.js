@@ -18,7 +18,7 @@ const handleContinueClick = (event) => {
 
   // Store choices in localStorage
   const studyChoices = {
-    lang: selectedLang
+    lang: selectedLang,
   };
   localStorage.setItem("storedChoices", JSON.stringify(studyChoices));
 
@@ -27,4 +27,3 @@ const handleContinueClick = (event) => {
 };
 
 button.addEventListener("click", handleContinueClick);
-
