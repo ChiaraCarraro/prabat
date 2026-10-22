@@ -467,7 +467,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
     // Now show blue border on the clicked one
-    event.target.style.border = "0.3vw solid blue";
+    event.target.style.border = "0.3cqw solid blue";
 
     if (responseAudio) {
       const bg = currentTrial.querySelector("#background");

@@ -12,15 +12,26 @@
     padding: 0;
 }
 
+html {
+  height: 100%;
+  background-color: #1e1e1e;
+}
+
+/* The page centres one 16:9 stage (#flex-wrapper); the space around it is
+   filled dark grey by html. All trial artwork is 16:9.
+   body must stay transparent: the scene backgrounds use z-index: -1 and
+   would otherwise be painted underneath the body's background. */
 body {
   font-family: 'PT Sans Narrow', sans-serif;
-  background-color: var(--ccp-minerva-green);
+  background-color: transparent;
   margin: 0;
   color: black;
-  overflow-x: hidden;   /* no side scroll */
-  overflow-y: auto;     /* allow vertical scroll if needed */
+  overflow: hidden;
   padding: 0;
-  height: 100%;
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  height: 100dvh;       /* visible height on mobile browsers with toolbars */
 }
 
 .heading {
@@ -31,10 +42,18 @@ body {
   text-align: center;
 }
 
+/* 16:9 stage: as large as fits the screen. Everything inside is sized with
+   cqw/cqh (% of the stage) instead of vw/vh (% of the screen), so the layout
+   is identical on every device, only scaled. */
 #flex-wrapper {
-  width: 90vw;
-  min-height: 100vh;      /* 👈 allow taller than viewport if needed */
-  margin: 0 5vw;
+  position: relative;
+  width: min(100vw, 100vh * 16 / 9);
+  height: min(100vh, 100vw * 9 / 16);
+  width: min(100vw, 100dvh * 16 / 9);
+  height: min(100dvh, 100vw * 9 / 16);
+  margin: 0;
+  overflow: hidden;
+  container-type: size;
   display: flex;
   align-items: center;
   background-color: #f5f7fd;
@@ -46,9 +65,9 @@ body {
 
 .flex-item {
   display: block;
-  width: 100vw;
-  height: 100vh;
-  margin-top: 0vh;
+  width: 100%;
+  height: 100%;
+  margin-top: 0;
   text-align: center;
   /*border: 2px solid red;*/
 }
@@ -104,7 +123,7 @@ body {
 
 #background_between_trials{
   width: 30%;
-  border: 0.3vw solid transparent;
+  border: 0.3cqw solid transparent;
 }
 
 /* character + objects */
@@ -149,7 +168,7 @@ body {
 }
 
 /* .row img:hover {
-  border: 0.3vw solid var(--ccp-minerva-green);
+  border: 0.3cqw solid var(--ccp-minerva-green);
 } */
 
 .transition:hover {
@@ -185,7 +204,7 @@ body {
 
 @keyframes slideDown {
   from {
-    transform: translateY(-100vh);
+    transform: translateY(-100cqh);
     opacity: 0;
   }
   to {
@@ -206,8 +225,8 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center;
   z-index: -1;
@@ -223,8 +242,8 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center;
   z-index: -1;
@@ -241,8 +260,8 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center;
   z-index: -1;
@@ -257,8 +276,8 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center;
   z-index: -1;
@@ -331,8 +350,8 @@ body {
   transform: translate(-50%, -50%);
   font-weight: bold;
   
-  max-width: 90vw;
-  max-height: 70vh;
+  max-width: 90cqw;
+  max-height: 70cqh;
   box-sizing: border-box;
 
   text-align: center;
@@ -341,7 +360,7 @@ body {
   overflow-y: scroll;                /* ⬅️ forces scroll bar to appear */
   -webkit-overflow-scrolling: touch;
 
-  font-size: clamp(0.85rem, 2vw, 1.6rem);
+  font-size: clamp(0.85rem, 2cqw, 1.6rem);
 }
 
 /* ---- Scrollbar styling: visible, thin, and cross-browser ---- */
@@ -387,7 +406,7 @@ body {
 /* SMALL SCREEN BUTTON REDUCTION (STRONG)   */
 /* ---------------------------------------- */
 
-@media (max-height: 600px) {
+@container (max-height: 600px) {
   #prabat-button {
     font-size: 1rem !important;
     padding: 0.4rem 0.8rem !important;   /* smaller padding */
@@ -398,7 +417,7 @@ body {
   }
 }
 
-@media (max-height: 500px) {
+@container (max-height: 500px) {
   #prabat-button {
     font-size: 0.9rem !important;
     padding: 0.3rem 0.6rem !important;   /* even smaller padding */
@@ -409,7 +428,7 @@ body {
   }
 }
 
-@media (max-height: 430px) {
+@container (max-height: 430px) {
   #prabat-button {
     font-size: 0.8rem !important;
     padding: 0.25rem 0.5rem !important;  /* tiny padding */
@@ -420,3 +439,36 @@ body {
   }
 }
 
+
+/* ---------------------------------------- */
+/* PORTRAIT PHONES: ASK TO ROTATE           */
+/* ---------------------------------------- */
+
+/* Covers the page when a touch device is held upright; the trials need the
+   16:9 landscape stage. Narrow desktop windows (pointer: fine) are not blocked. */
+#rotate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  background-color: #1e1e1e;
+  color: white;
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+#rotate-overlay .rotate-icon {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+@media (orientation: portrait) and (pointer: coarse) {
+  #rotate-overlay {
+    display: flex;
+  }
+}

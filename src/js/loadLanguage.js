@@ -45,7 +45,8 @@ export async function loadLanguage(langCode) {
       { id: "goodbyeContact", key: "goodbyeContact" },
       { id: "goodbyeSeeYou", key: "goodbyeSeeYou" },
       { id: "goodbyeSignature", key: "goodbyeSignature", html: true },
-      { id: "uploadMessage", key: "uploadMessage" }
+      { id: "uploadMessage", key: "uploadMessage" },
+      { id: "rotateMessage", key: "rotateMessage" }
     ];
 
     // html: true keeps <strong>/<br> markup from the language file

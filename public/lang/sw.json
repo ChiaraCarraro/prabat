@@ -13,6 +13,7 @@
   "headingfullscreen": "Sasa tunaanza kurekodi. \n\n Ikiwa dirisha jingine ibukizi litatokea likiomba ruhusa ya kutumia kamera, tafadhali bonyeza tena 'Ruhusu'. \n\n Tafadhali bonyeza sasa 'ENDELEA' ili kuwasha hali ya skrini nzima.",
   "enterPseudo": "Tafadhali andika jina bandia hapa:",
   "noiseQuestion": "Je, umesikia sauti fupi ya mlio? \n\nNdiyo? Vizuri sana! Tafadhali rekebisha kiwango cha sauti ili mtoto wako aweze kuusikia mlio huo vizuri. \n\n Hapana? Tafadhali bonyeza alama ya spika ili kujaribu sauti tena. \n\nSasa tunaweza kuanza! Tafadhali bonyeza 'ENDELEA' ili kuanza mchezo.",
+  "rotateMessage": "Tafadhali geuza kifaa chako kiwe katika mkao wa mlalo.",
   "goodbyeMessage": "Utafiti umekamilika kwa mafanikio. Upakuaji wa data utaanza moja kwa moja (tafadhali angalia dirisha ibukizi).<br>Asante sana kwa kushiriki katika utafiti wetu!",
   "introImages": [
   "images/ki/backgrounds/start_1_waving.svg",
