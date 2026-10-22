@@ -4,7 +4,6 @@ import { uploadLastRecordingInChunks } from "./mediaRecorderServices";
 // ---------------------------------------------------------------------------------------------------------------------
 export async function uploadVideo(webcam, subjID) {
   try {
-    debugger;
     if (webcam === "true") {
       // give some time to create Video Blob
 

@@ -2,7 +2,6 @@ export async function preloadImages(lang) {
   const waitButton = document.getElementById("wait-button");
   const prabatButton = document.getElementById("prabat-button");
   prabatButton.style.visibility = "hidden";
-  // prabatButton.style.visibility = 'visible';
   try {
     let imageJsonName;
     if (lang === "ki" || lang === "sw") {
@@ -13,8 +12,6 @@ export async function preloadImages(lang) {
 
     // Build URL relative to current document so it works under subpaths
     const url = document.baseURI.toString() + `images/${imageJsonName}`;
-    console.log("document:" + url);
-    //const jsonUrl = new URL(`images/${imageJsonName}`, document.baseURI).toString();
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Failed to fetch ${response.url} (status ${response.status})`);
@@ -35,12 +32,11 @@ export async function preloadImages(lang) {
 
     if (!Array.isArray(imageList) || imageList.length === 0) {
       console.log(`No images found in ${imageJsonName}`);
-      console.log(`No images found!`);
       return;
     }
     console.log(`Found ${imageList.length} images. Loading...`);
 
-    //Preload all images and track progress
+    // Preload all images and track progress
     let loaded = 0;
     const total = imageList.length;
 
@@ -49,13 +45,11 @@ export async function preloadImages(lang) {
         const img = new Image();
         img.onload = () => {
           loaded++;
-          //console.log(`Loaded ${loaded}/${total}`);
           resolve();
         };
         img.onerror = () => {
           console.log(`Failed to load ${src}`);
           loaded++;
-          //console.log(`Loaded ${loaded}/${total} (some failed)`);
           resolve(); // still resolve, don’t block
         };
         img.src = src;
@@ -68,7 +62,6 @@ export async function preloadImages(lang) {
     waitButton.style.visibility = "hidden";
     prabatButton.style.visibility = "visible";
   } catch (err) {
-    console.log("Error loading images.json:", err);
-    console.log("Error loading image list.");
+    console.log("Error loading image list:", err);
   }
 }

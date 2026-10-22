@@ -2,7 +2,6 @@ export async function preloadAudios(lang) {
   const waitButton = document.getElementById("wait-button");
   const prabatButton = document.getElementById("prabat-button");
   prabatButton.style.display = "none";
-  // prabatButton.style.visibility = 'visible';
   try {
     let audioJsonName;
     if (lang === "ki") {
@@ -39,7 +38,6 @@ export async function preloadAudios(lang) {
 
     if (!Array.isArray(audioList) || audioList.length === 0) {
       console.log(`No audio found in ${audioJsonName}`);
-      console.log(`No audio found!`);
       return;
     }
     console.log(`Found ${audioList.length} audio. Checking HTTP status...`);
@@ -52,7 +50,6 @@ export async function preloadAudios(lang) {
         const res = await fetch(src, { method: "HEAD", cache: "no-store" });
         checked++;
         if (!res.ok) {
-          //console.log(`OK ${res.status}: ${src} (${checked}/${total})`);
           console.warn(`FAIL ${res.status}: ${src} (${checked}/${total})`);
         }
       } catch (e) {
@@ -67,7 +64,6 @@ export async function preloadAudios(lang) {
     waitButton.style.display = "none";
     prabatButton.style.display = "inline";
   } catch (err) {
-    console.log("Error loading audio.json:", err);
-    console.log("Error loading audio list.");
+    console.log("Error loading audio list:", err);
   }
 }

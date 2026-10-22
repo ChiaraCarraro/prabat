@@ -1,8 +1,8 @@
 // js/recordingAudioMix.js
 // ----------------------------------------------------------
-// Mixes every audio source the app itself plays (Web Audio
-// sprites + plain <audio> stimulus elements) together with
-// the microphone into ONE MediaStreamAudioDestinationNode,
+// Mixes every audio source the app itself plays (transition-block
+// sprites and single stimulus clips, both played with Web Audio)
+// together with the microphone into ONE MediaStreamAudioDestinationNode,
 // so the webcam recording captures a single clear track with
 // both the stimulus prompts and the speaker's voice.
 //
@@ -13,7 +13,6 @@
 import { getSharedAudioContext } from "./sharedAudioContext.js";
 
 let mixDestination = null;
-const routedElements = new WeakMap(); // <audio> element -> MediaElementAudioSourceNode
 
 /**
  * Lazily create (once) the shared MediaStreamAudioDestinationNode
@@ -30,39 +29,6 @@ export function getMixDestination() {
   }
 
   return mixDestination;
-}
-
-/**
- * Route a plain <audio> element's output into the mix, in addition
- * to its normal speaker output. Safe to call every time before
- * play() - the underlying MediaElementAudioSourceNode is created
- * only once per element (createMediaElementSource throws if called
- * twice on the same element).
- *
- * @param {HTMLMediaElement} audioEl
- */
-export function routeElementToMix(audioEl) {
-  if (!audioEl) return;
-
-  const ctx = getSharedAudioContext();
-  const destination = getMixDestination();
-  if (!ctx || !destination) return;
-
-  if (routedElements.has(audioEl)) return;
-
-  try {
-    const source = ctx.createMediaElementSource(audioEl);
-    // Routing an element through Web Audio replaces its default
-    // output, so we must reconnect it to the speakers ourselves.
-    source.connect(ctx.destination);
-    source.connect(destination);
-    routedElements.set(audioEl, source);
-  } catch (e) {
-    // Most likely a cross-origin <audio> source, or the element was
-    // already routed elsewhere. Playback still works normally via
-    // the element's default output - it just won't be in the mix.
-    console.warn("routeElementToMix: could not route element into recording mix:", e);
-  }
 }
 
 /**

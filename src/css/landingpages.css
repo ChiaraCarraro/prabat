@@ -86,7 +86,8 @@ body {
 
 /* mail encryption */
 
-/* .cryptedmail:after {
+/* DISABLED on purpose: the e-mail address is written out in the HTML instead.
+.cryptedmail:after {
     content: attr(data-name) '@' attr(data-domain) '.' attr(data-tld);
 } */
 

@@ -1,9 +1,8 @@
 import "./css/landingpages.css";
-import { loadLanguage } from "./js/loadLanguage.js"; // adjust path as needed
+import { loadLanguage } from "./js/loadLanguage.js";
 
 // Check if the URL contains any parameters
 const urlParams = new URLSearchParams(window.location.search);
-console.log(urlParams.toString());
 if (urlParams.toString()) {
   // If there are URL parameters, save them in an object
   const storedChoices = {};
@@ -16,8 +15,6 @@ if (urlParams.toString()) {
 
   // Hide the URL parameter after saving it in local storage
   window.history.replaceState(null, document.title, window.location.pathname);
-} else {
-  console.log("No URL parameters found.");
 }
 
 const storedChoices = localStorage.getItem("storedChoices");
@@ -55,7 +52,6 @@ function applyLocalizedImagePaths(lang) {
   allImgs.forEach((img) => {
     const relPath = img.getAttribute("data-img");
     img.src = `images/${folder}/${relPath}`;
-    console.log(`Setting image src to: ${img.src}`);
   });
 }
 

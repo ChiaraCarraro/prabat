@@ -1,3 +1,6 @@
+// DISABLED: not used in the current version of the study (the import in prabat.js is
+// commented out). Kept for a possible randomised item order; it needs a "newTrials.js"
+// file with the item list, which is not in the repository.
 import { posPermutations } from "./posPermutations.js";
 import { newTrials } from "./newTrials.js";
 import { shuffleArray } from "./shuffleArray.js";

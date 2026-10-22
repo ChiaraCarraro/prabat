@@ -112,7 +112,6 @@ export function startRecording() {
   } catch (err) {
     console.error("Failed to create MediaRecorder:", err);
     mediaRecorder = new MediaRecorder(mediaStream, recorderOptionsWithoutMimeType);
-    //throw err;
   }
 
   mediaRecorder.ondataavailable = (event) => {
@@ -143,7 +142,6 @@ export function startRecording() {
  */
 export function stopRecording() {
   if (!mediaRecorder || mediaRecorder.state !== "recording") {
-    //return Promise.reject(new Error("No active recording to stop."));
     console.warn("stopRecording called but there is no active recording.");
     return Promise.resolve(null);
   }
@@ -152,25 +150,6 @@ export function stopRecording() {
     stopPromiseResolve = resolve;
     mediaRecorder.stop();
   });
-}
-
-/**
- * Get the last recorded Blob (if any).
- *
- * @returns {Blob|null}
- */
-export function getLastRecordingBlob() {
-  return lastRecordedBlob;
-}
-
-/**
- * Create an object URL from the last recorded Blob.
- *
- * @returns {string|null} - URL for use in <video src>, <a href>, etc.
- */
-export function getLastRecordingUrl() {
-  if (!lastRecordedBlob) return null;
-  return URL.createObjectURL(lastRecordedBlob);
 }
 
 /**
@@ -282,22 +261,6 @@ export async function uploadLastRecordingInChunks(
   }
 
   return lastResponse;
-}
-
-/**
- * Stop the current media stream (camera/mic).
- * Useful when leaving the page or after user is done.
- *
- * Only stops the raw camera/mic tracks - the shared recording-mix
- * audio destination track (used to merge stimulus audio + mic) is
- * left running so it can keep serving future recordings.
- */
-export function stopMediaStream() {
-  if (rawUserMediaStream) {
-    rawUserMediaStream.getTracks().forEach((track) => track.stop());
-    rawUserMediaStream = null;
-  }
-  mediaStream = null;
 }
 
 /**

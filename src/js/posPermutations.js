@@ -1,3 +1,4 @@
+// Position permutations for randomizeNewTrials.js (DISABLED, see that file).
 import { shuffleArray } from "./shuffleArray.js";
 export const posPermutations = () => {
   let t1 = [

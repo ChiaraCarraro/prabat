@@ -4,7 +4,6 @@ import { downloadLastRecording } from "./mediaRecorderServices";
 // ---------------------------------------------------------------------------------------------------------------------
 export async function downloadVideo(webcam, subjID) {
   try {
-    debugger;
     if (webcam === "true") {
       // give some time to create Video Blob
 

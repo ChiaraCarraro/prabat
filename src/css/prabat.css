@@ -35,7 +35,6 @@ body {
 }
 
 .heading {
-  /* font-family: cholla-sans, sans-serif; */
   font-weight: 700;
   letter-spacing: calc(20rem / 1000);
   color: var(--ccp-minerva-green);
@@ -57,8 +56,6 @@ body {
   display: flex;
   align-items: center;
   background-color: #f5f7fd;
-  /*border: 2px solid blue;*/
-  /*background-color: #faf5e7;*/
 }
 
 .flex-item {
@@ -67,12 +64,12 @@ body {
   height: 100%;
   margin-top: 0;
   text-align: center;
-  /*border: 2px solid red;*/
 }
 
 /* mail encryption */
 
-/* .cryptedmail:after {
+/* DISABLED on purpose: the e-mail address is written out in the HTML instead.
+.cryptedmail:after {
   content: attr(data-name) '@' attr(data-domain) '.' attr(data-tld);
 } */
 
@@ -97,24 +94,19 @@ body {
 
 .main-flex-sheet {
   display: block;
-  /*flex-direction: row;*/
   width: 100%;
   height: 83%;
   align-items: center;
   justify-content: center;
   padding-bottom: 0px; /* 👈 NEW: space for buttons */
-  /*border: 2px solid rgb(0, 92, 0);*/
 }
 
 .flex-sheet {
   display: block;
-  /* max-width: 800px; */
   width: 100%;
   height: 80%;
-  /*flex-wrap: wrap;*/
   justify-content: center;
   margin-top: 0;
-  /*border: 2px solid rgb(77, 255, 71);*/
 }
 
 #background_between_trials {
@@ -141,15 +133,12 @@ body {
 
 .row {
   display: flex;
-  /*justify-content: space-between;*/
   align-items: center;
   width: 100%;
   height: 30%;
   margin-bottom: 0;
-  /*border: 2px solid rgb(120, 71, 255);*/
 }
 .row > div {
-  /*flex: 0 50%; */
   height: 100%;
   width: 80%;
   display: flex;
@@ -161,10 +150,6 @@ body {
   width: auto; /* Width adjusts based on the image's aspect ratio */
   max-width: 100%; /* Ensures it doesn't exceed the container's width */
 }
-
-/* .row img:hover {
-  border: 0.3cqw solid var(--ccp-minerva-green);
-} */
 
 .transition:hover {
   border: none !important;

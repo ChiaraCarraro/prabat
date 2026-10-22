@@ -7,11 +7,6 @@ document.getElementById("language-select").addEventListener("change", (e) => {
 });
 
 const button = document.getElementById("start-button");
-let continueIDOK = false;
-// let selectedLang = "ger"; // fallback default
-
-// Detect subject ID from URL
-
 // Continue button click
 const handleContinueClick = (event) => {
   event.preventDefault();
