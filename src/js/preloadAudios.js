@@ -1,56 +1,33 @@
+// ---------------------------------------------------------------------------------------------------------------------
+// Before the study starts: check that every audio file of the chosen language can be reached
+// (a quick HEAD request per file; problems are logged as warnings). When all checks are done,
+// the "wait" button is replaced by the start button. Called by prabat.js.
+// ---------------------------------------------------------------------------------------------------------------------
+import { getLanguageSettings } from "./languageSettings.js";
+import { loadAssetList } from "./loadAssetList.js";
+
 export async function preloadAudios(lang) {
   const waitButton = document.getElementById("wait-button");
   const prabatButton = document.getElementById("prabat-button");
   prabatButton.style.display = "none";
+
+  const { audioList } = getLanguageSettings(lang);
   try {
-    let audioJsonName;
-    if (lang === "ki") {
-      audioJsonName = "audio-ki.json";
-    } else if (lang === "sw") {
-      audioJsonName = "audio-sw.json";
-    } else if (lang === "ger" || lang === "en") {
-      audioJsonName = "audio-ger.json";
-    } else if (lang === "tr") {
-      audioJsonName = "audio-tr.json";
-    } else if (lang === "ch") {
-      audioJsonName = "audio-ch.json";
-    }
-
-    // Build URL relative to current document so it works under subpaths
-    const jsonUrl = new URL(`audio/${audioJsonName}`, document.baseURI).toString();
-    const response = await fetch(jsonUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${response.url} (status ${response.status})`);
-    }
-    const audioList = await response.json();
-
-    // Normalize audio URLs to work under any base path (subfolder deployments)
-    const normalizedList = audioList.map((p) => {
-      try {
-        const pathStr = String(p).trim();
-        if (/^https?:\/\//i.test(pathStr)) return pathStr;
-        // join with current document path while handling leading slashes
-        return new URL(pathStr.replace(/^\//, ""), document.baseURI).href;
-      } catch (_) {
-        return p;
-      }
-    });
-
-    if (!Array.isArray(audioList) || audioList.length === 0) {
-      console.log(`No audio found in ${audioJsonName}`);
+    const urls = await loadAssetList(`audio/${audioList}`);
+    if (urls.length === 0) {
+      console.log(`No audio found in ${audioList}`);
       return;
     }
-    console.log(`Found ${audioList.length} audio. Checking HTTP status...`);
+    console.log(`Found ${urls.length} audio. Checking HTTP status...`);
 
-    // Check each audio URL with a HEAD request, track progress
     let checked = 0;
-    const total = normalizedList.length;
-    const checkPromises = normalizedList.map(async (src) => {
+    const total = urls.length;
+    const checks = urls.map(async (src) => {
       try {
-        const res = await fetch(src, { method: "HEAD", cache: "no-store" });
+        const response = await fetch(src, { method: "HEAD", cache: "no-store" });
         checked++;
-        if (!res.ok) {
-          console.warn(`FAIL ${res.status}: ${src} (${checked}/${total})`);
+        if (!response.ok) {
+          console.warn(`FAIL ${response.status}: ${src} (${checked}/${total})`);
         }
       } catch (e) {
         checked++;
@@ -58,8 +35,7 @@ export async function preloadAudios(lang) {
       }
     });
 
-    // Wait for all to complete
-    await Promise.all(checkPromises);
+    await Promise.all(checks);
     console.log("Audio status checks complete.");
     waitButton.style.display = "none";
     prabatButton.style.display = "inline";

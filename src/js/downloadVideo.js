@@ -1,19 +1,17 @@
+// ---------------------------------------------------------------------------------------------------------------------
+// Save the webcam recording on the participant's device (only if the webcam was switched on).
+// Called at the end of the study by prabat.js, after the recording has been stopped.
+// ---------------------------------------------------------------------------------------------------------------------
 import { downloadLastRecording } from "./mediaRecorderServices";
-// ---------------------------------------------------------------------------------------------------------------------
-// FUNCTION FOR DOWNLOADING DATA LOCALLY; WITH BLOB
-// ---------------------------------------------------------------------------------------------------------------------
+import { buildFileName } from "./studyOutput.js";
+
 export async function downloadVideo(webcam, subjID) {
   try {
     if (webcam === "true") {
-      // give some time to create Video Blob
-
-      const day = new Date().toISOString().substring(0, 10);
-      const time = new Date().toISOString().substring(11, 19);
-      // save video on server
-
-      // save video locally
+      const fileName = buildFileName(subjID);
+      // wait 2 s so the recorder has finished creating the video file
       setTimeout(() => {
-        downloadLastRecording(`prabat-${subjID}-${day}-${time}`);
+        downloadLastRecording(fileName);
       }, 2000);
     }
   } catch (error) {

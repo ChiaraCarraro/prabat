@@ -1,36 +1,32 @@
+// ---------------------------------------------------------------------------------------------------------------------
+// ID PAGE (id.html): the participant enters a pseudonym (ID) and chooses whether the webcam
+// recording should run. The start button is enabled once both are filled in.
+// ---------------------------------------------------------------------------------------------------------------------
 import "./css/landingpages.css";
 import { loadLanguage } from "./js/loadLanguage.js";
 import { setButtonState } from "./js/setButtonState.js";
+import { getStudyChoices, saveStudyChoices } from "./js/studyChoices.js";
 
-const storedChoices = localStorage.getItem("storedChoices");
-let studyChoices;
-if (storedChoices) {
-  studyChoices = JSON.parse(storedChoices);
-} else {
-  console.error("No data found in local storage");
-}
+const studyChoices = getStudyChoices();
+const lang = studyChoices.lang || "ger";
 
-const button = document.getElementById("custom-button");
-const textField = document.getElementById("participant-id");
+const startButton = document.getElementById("custom-button");
+const idField = document.getElementById("participant-id");
 const idCounter = document.getElementById("id-counter");
 
-function getWebcamSelected() {
-  return !!document.querySelector('input[name="webcam-options"]:checked');
-}
-
-function getWebcamValue() {
-  const el = document.querySelector('input[name="webcam-options"]:checked');
-  return el ? el.value : "false";
+// The checked webcam radio button ("true" / "false"), or null if none is checked yet
+function getCheckedWebcamOption() {
+  return document.querySelector('input[name="webcam-options"]:checked');
 }
 
 function updateButtonState() {
-  const idVal = textField.value.trim();
-  if (idCounter) idCounter.textContent = `${idVal.length} / 8`;
-  setButtonState(button, idVal.length > 0 && getWebcamSelected());
+  const id = idField.value.trim();
+  if (idCounter) idCounter.textContent = `${id.length} / 8`;
+  setButtonState(startButton, id.length > 0 && !!getCheckedWebcamOption());
 }
 
-function wireUpWebcamHandlers() {
-  // Delegate so it still works if radios are re-rendered later
+function listenToWebcamOptions() {
+  // Listen on the document, so it still works if the radio buttons are re-rendered later
   document.addEventListener("change", (e) => {
     if (e.target && e.target.matches('input[name="webcam-options"]')) {
       updateButtonState();
@@ -38,32 +34,28 @@ function wireUpWebcamHandlers() {
   });
 }
 
-textField.addEventListener("input", updateButtonState);
+idField.addEventListener("input", updateButtonState);
 
-button.addEventListener("click", (event) => {
+startButton.addEventListener("click", (event) => {
   event.preventDefault();
 
-  const subjID = textField.value.trim();
-  const webcamSelected = getWebcamSelected();
+  const subjID = idField.value.trim();
+  const webcamOption = getCheckedWebcamOption();
 
-  if (!subjID || !webcamSelected) {
+  if (!subjID || !webcamOption) {
     alert("Please enter your ID and select a webcam option before continuing.");
     return;
   }
 
-  const webcam = getWebcamValue();
-  const lang = studyChoices?.lang || "ger";
-
-  localStorage.setItem("storedChoices", JSON.stringify({ ID: subjID, webcam: webcam, lang: lang }));
+  saveStudyChoices({ ID: subjID, webcam: webcamOption.value, lang: lang });
   window.location.href = `./instructions.html`;
 });
 
 // Init
 (async () => {
-  const lang = studyChoices?.lang || "ger";
-  setButtonState(button, false); // start disabled
+  setButtonState(startButton, false); // start disabled
 
   await loadLanguage(lang); // localization may re-render the form
-  wireUpWebcamHandlers(); // attach after DOM is ready
+  listenToWebcamOptions(); // attach after DOM is ready
   updateButtonState(); // compute once
 })();

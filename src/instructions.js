@@ -1,71 +1,35 @@
+// ---------------------------------------------------------------------------------------------------------------------
+// INSTRUCTIONS PAGE (instructions.html): shows the instructions in the chosen language,
+// then continues to the study (prabat.html).
+// ---------------------------------------------------------------------------------------------------------------------
 import "./css/landingpages.css";
 import { loadLanguage } from "./js/loadLanguage.js";
+import { applyLocalizedImagePaths } from "./js/applyLocalizedImagePaths.js";
+import { getStudyChoices, saveStudyChoices } from "./js/studyChoices.js";
 
-// Check if the URL contains any parameters
+// The page can also be opened directly with URL parameters,
+// e.g. instructions.html?lang=ger&ID=P001&webcam=true. Then save them as the participant's
+// choices and remove them from the address bar.
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.toString()) {
-  // If there are URL parameters, save them in an object
-  const storedChoices = {};
-  urlParams.forEach((value, key) => {
-    storedChoices[key] = value;
-  });
-
-  // Save the object to localStorage for persistence
-  localStorage.setItem("storedChoices", JSON.stringify(storedChoices));
-
-  // Hide the URL parameter after saving it in local storage
+  saveStudyChoices(Object.fromEntries(urlParams));
   window.history.replaceState(null, document.title, window.location.pathname);
 }
 
-const storedChoices = localStorage.getItem("storedChoices");
-let studyChoices;
-if (storedChoices) {
-  studyChoices = JSON.parse(storedChoices);
-} else {
-  console.error("No data found in local storage");
-}
+// Fill in defaults for anything that is missing
+const studyChoices = getStudyChoices();
+studyChoices.ID = studyChoices.ID ?? "testID";
+studyChoices.webcam = (studyChoices.webcam === "true").toString();
+studyChoices.lang = studyChoices.lang ?? "ger";
+const lang = studyChoices.lang;
 
-// get and store parameters. If local storage is empty, set default values
-studyChoices.ID = studyChoices?.ID ?? "testID";
-studyChoices.webcam = (studyChoices?.webcam == "true").toString();
-
-const button = document.getElementById("instructions-button");
-
-// Get language from URL
-const lang = studyChoices?.lang ?? "ger";
-
-// Load localized text/images
 (async () => {
   await loadLanguage(lang);
 })();
-
-function applyLocalizedImagePaths(lang) {
-  let folder;
-  if (lang === "ki" || lang === "sw") {
-    folder = "ki";
-  } else if (lang === "ger" || lang === "en" || lang === "tr" || lang === "ch") {
-    folder = "ger";
-  } else {
-    folder = lang;
-  }
-  const allImgs = document.querySelectorAll("[data-img]");
-  allImgs.forEach((img) => {
-    const relPath = img.getAttribute("data-img");
-    img.src = `images/${folder}/${relPath}`;
-  });
-}
-
 applyLocalizedImagePaths(lang);
 
-studyChoices.ID = studyChoices?.ID ?? "testID";
-studyChoices.webcam = studyChoices?.webcam ?? false;
-studyChoices.lang = studyChoices?.lang ?? "ger";
-
-// On continue, forward to prabat.html with language in URL
-const handleContinueClick = (event) => {
+document.getElementById("instructions-button").addEventListener("click", (event) => {
   event.preventDefault();
-  localStorage.setItem("storedChoices", JSON.stringify(studyChoices));
+  saveStudyChoices(studyChoices);
   window.location.href = `./prabat.html`;
-};
-
-button.addEventListener("click", handleContinueClick);
+});

@@ -27,15 +27,10 @@ import { buildSpriteForBlock } from "./js/buildSpriteForBlock.js";
 import { getSharedAudioContext } from "./js/sharedAudioContext.js";
 import { routeNodeToMix } from "./js/recordingAudioMix.js";
 import { playAudioWebAudio } from "./js/playAudioWebAudio.js";
+import { getStudyChoices } from "./js/studyChoices.js";
 
-const storedChoices = localStorage.getItem("storedChoices");
-let studyChoices;
-if (storedChoices) {
-  studyChoices = JSON.parse(storedChoices);
-} else {
-  console.error("No data found in local storage");
-}
-const lang = studyChoices?.lang || "ger"; // fallback: German
+const studyChoices = getStudyChoices();
+const lang = studyChoices.lang || "ger"; // fallback: German
 
 function showBlockRestartPrompt(restartFn) {
   const overlay = document.getElementById("audio-unlock-overlay");

@@ -1,63 +1,38 @@
+// ---------------------------------------------------------------------------------------------------------------------
+// Before the study starts: load every picture of the chosen language into the browser cache,
+// so trials appear without delay. When all pictures are loaded (or failed), the "wait" button
+// is hidden and the start button shown. Called by prabat.js.
+// ---------------------------------------------------------------------------------------------------------------------
+import { getLanguageSettings } from "./languageSettings.js";
+import { loadAssetList } from "./loadAssetList.js";
+
 export async function preloadImages(lang) {
   const waitButton = document.getElementById("wait-button");
   const prabatButton = document.getElementById("prabat-button");
   prabatButton.style.visibility = "hidden";
+
+  const { imageList } = getLanguageSettings(lang);
   try {
-    let imageJsonName;
-    if (lang === "ki" || lang === "sw") {
-      imageJsonName = "images-ki.json";
-    } else if (lang === "ger" || lang === "en" || lang === "tr" || lang === "ch") {
-      imageJsonName = "images-ger.json";
-    }
-
-    // Build URL relative to current document so it works under subpaths
-    const url = document.baseURI.toString() + `images/${imageJsonName}`;
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${response.url} (status ${response.status})`);
-    }
-    const imageList = await response.json();
-
-    // Normalize image URLs to work under any base path (subfolder deployments)
-    const normalizedList = imageList.map((p) => {
-      try {
-        const pathStr = String(p).trim();
-        if (/^https?:\/\//i.test(pathStr)) return pathStr;
-        // join with current document path while handling leading slashes
-        return new URL(pathStr.replace(/^\//, ""), document.baseURI).href;
-      } catch (_) {
-        return p;
-      }
-    });
-
-    if (!Array.isArray(imageList) || imageList.length === 0) {
-      console.log(`No images found in ${imageJsonName}`);
+    const urls = await loadAssetList(`images/${imageList}`);
+    if (urls.length === 0) {
+      console.log(`No images found in ${imageList}`);
       return;
     }
-    console.log(`Found ${imageList.length} images. Loading...`);
+    console.log(`Found ${urls.length} images. Loading...`);
 
-    // Preload all images and track progress
-    let loaded = 0;
-    const total = imageList.length;
-
-    const preloadPromises = normalizedList.map((src) => {
-      return new Promise((resolve, reject) => {
+    const loads = urls.map((src) => {
+      return new Promise((resolve) => {
         const img = new Image();
-        img.onload = () => {
-          loaded++;
-          resolve();
-        };
+        img.onload = () => resolve();
         img.onerror = () => {
           console.log(`Failed to load ${src}`);
-          loaded++;
-          resolve(); // still resolve, don’t block
+          resolve(); // a missing picture must not block the study
         };
         img.src = src;
       });
     });
 
-    // Wait for all to complete
-    await Promise.all(preloadPromises);
+    await Promise.all(loads);
     console.log("All images loaded!");
     waitButton.style.visibility = "hidden";
     prabatButton.style.visibility = "visible";

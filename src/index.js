@@ -1,24 +1,15 @@
+// ---------------------------------------------------------------------------------------------------------------------
+// START PAGE (index.html): the participant picks a language, then continues to id.html.
+// ---------------------------------------------------------------------------------------------------------------------
 import "./css/landingpages.css";
-let selectedLang = document.getElementById("language-select").value;
+import { saveStudyChoices } from "./js/studyChoices.js";
 
-// Language dropdown
-document.getElementById("language-select").addEventListener("change", (e) => {
-  selectedLang = e.target.value;
-});
+const languageSelect = document.getElementById("language-select");
+const startButton = document.getElementById("start-button");
 
-const button = document.getElementById("start-button");
-// Continue button click
-const handleContinueClick = (event) => {
+startButton.addEventListener("click", (event) => {
   event.preventDefault();
-
-  // Store choices in localStorage
-  const studyChoices = {
-    lang: selectedLang,
-  };
-  localStorage.setItem("storedChoices", JSON.stringify(studyChoices));
-
-  // Redirect to instructions with selected language
+  // Start a fresh set of choices with only the language; id.html adds ID and webcam choice
+  saveStudyChoices({ lang: languageSelect.value });
   window.location.href = `./id.html`;
-};
-
-button.addEventListener("click", handleContinueClick);
+});
