@@ -42,7 +42,7 @@ function showBlockRestartPrompt(restartFn) {
   }
 
   overlay.style.display = "flex";
-  btn.textContent = "Nochmal abspielen"; // e.g. “Play again”
+  btn.textContent = window.localizedPlayAgain ?? "Nochmal abspielen"; // "Play again"
 
   btn.onclick = () => {
     overlay.style.display = "none";

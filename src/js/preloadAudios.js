@@ -9,8 +9,10 @@ export async function preloadAudios(lang) {
         audioJsonName = "audio-ki.json"
       } else if (lang === "sw") {
         audioJsonName = "audio-sw.json"
-      } else if (lang === "ger" || lang === "en" ) {
+      } else if (lang === "ger") {
         audioJsonName = "audio-ger.json"
+      } else if (lang === "en") {
+        audioJsonName = "audio-en.json"
       } else if ( lang === "tr") {
         audioJsonName = "audio-tr.json"
       } else if ( lang === "ch") {

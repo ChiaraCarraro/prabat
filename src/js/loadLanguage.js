@@ -18,6 +18,9 @@ export async function loadLanguage(langCode) {
     if (translations.introImages) {
         window.localizedIntroImages = translations.introImages;
     }
+    if (translations.playAgain) {
+        window.localizedPlayAgain = translations.playAgain;
+    }
     if (translations.images) {
         window.localizedImages = translations.images; // store for later
     }

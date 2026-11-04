@@ -46,8 +46,10 @@ function applyLocalizedImagePaths(lang) {
   let folder;
   if (lang === "ki" || lang === "sw") {
     folder = "ki";
-  } else if (lang === "ger" || lang === "en" || lang === "tr" || lang === "ch") {
+  } else if (lang === "ger" || lang === "tr" || lang === "ch") {
     folder = "ger";
+  } else if (lang === "en") {
+    folder = "en"; // only example.png: the English copy shows "CONTINUE" on its button
   } else {
     folder = lang;
   }
