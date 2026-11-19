@@ -1,3 +1,4 @@
+import { ITEM_NAMES } from "./itemNames.js";
 // ---------------------------------------------------------------------------------------------------------------------
 // FUNCTION FOR DOWNLOADING DATA LOCALLY; WITH BLOB
 // ---------------------------------------------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ export async function downloadData(safe, ID){
     item.subjID = ID;
     item.correct = item.targetObject === item.chosenObject;
     item.analyze = ANALYZE_TARGETS.includes(item.targetObject);
+    item.itemName = ITEM_NAMES[item.targetObject] ?? "";
   });
 
   // convert object into CSV string
@@ -36,6 +38,7 @@ export async function downloadData(safe, ID){
     'subjID',
     'trial',
     'targetObject',
+    'itemName',
     'chosenObject',
     'chosenPosition',
     'chosenCategory',
@@ -52,6 +55,7 @@ export async function downloadData(safe, ID){
     'id',
     'trial',
     'targetObject',
+    'ItemName',
     'chosenObject',
     'chosen_position',
     'chosenCategory',
