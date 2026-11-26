@@ -10,7 +10,7 @@ if (storedChoices) {
   console.error("No data found in local storage");
 }
 
-const lang = studyChoices?.lang ?? "ger";
+const lang = studyChoices?.lang ?? "sw";
 
 (async () => {
   await loadLanguage(lang);
