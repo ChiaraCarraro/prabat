@@ -29,7 +29,7 @@ if (storedChoices) {
 } else {
   console.error("No data found in local storage");
 }
-const lang = studyChoices?.lang || "sw"; // fallback: Kiswahili
+const lang = studyChoices?.lang || "ki"; // fallback: Kikuyu
 
 
 

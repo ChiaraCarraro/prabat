@@ -21,7 +21,7 @@ if (urlParams.toString()) {
 }
 
 const storedChoices = localStorage.getItem("storedChoices");
-let studyChoices;
+let studyChoices = {}; // start empty, so the defaults below can be filled in
 if (storedChoices) {
   studyChoices = JSON.parse(storedChoices);
 } else {
@@ -35,7 +35,7 @@ studyChoices.webcam = (studyChoices?.webcam=="true").toString();
 const button = document.getElementById("instructions-button");
 
 // Get language from URL
-const lang = "sw";
+const lang = "ki";
   
 // Load localized text/images
 (async () => {
@@ -65,7 +65,7 @@ applyLocalizedImagePaths(lang);
 
 studyChoices.ID = studyChoices?.ID ?? "testID";
 studyChoices.webcam = studyChoices?.webcam ?? false;
-studyChoices.lang = "sw";
+studyChoices.lang = "ki";
 
 // On continue, forward to prabat.html with language in URL
 const handleContinueClick = (event) => {
